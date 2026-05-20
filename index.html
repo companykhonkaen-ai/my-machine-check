@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบเช็กสถานะกระสวยอีแปะ</title>
+    <title>เธฃเธฐเธเธเน€เธเนเธเธชเธ–เธฒเธเธฐเธเธฃเธฐเธชเธงเธขเธญเธตเนเธเธฐ</title>
     <style>
         * { box-sizing: border-box; font-family: sans-serif; }
         body { background-color: #f0f2f5; margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
@@ -23,16 +23,16 @@
 <body>
 
 <div class="card">
-    <h2 id="machineName">เครื่องทอผ้า</h2>
+    <h2 id="machineName">เน€เธเธฃเธทเนเธญเธเธ—เธญเธเนเธฒ</h2>
     <div class="machine-id" id="machineId">MC-01</div>
-    <div id="statusBox" class="status-box">กำลังคำนวณ...</div>
+    <div id="statusBox" class="status-box">เธเธณเธฅเธฑเธเธเธณเธเธงเธ“...</div>
     <div class="info-grid">
         <div class="info-item">
-            <span class="label">?? เริ่มทาสีล่าสุดเมื่อวันที่:</span>
+            <span class="label">?? เน€เธฃเธดเนเธกเธ—เธฒเธชเธตเธฅเนเธฒเธชเธธเธ”เน€เธกเธทเนเธญเธงเธฑเธเธ—เธตเน:</span>
             <span class="value" id="startDate">-- / -- / ----</span>
         </div>
         <div class="info-item end">
-            <span class="label">?? กำหนดสิ้นสุดรอบการทาสีใหม่:</span>
+            <span class="label">?? เธเธณเธซเธเธ”เธชเธดเนเธเธชเธธเธ”เธฃเธญเธเธเธฒเธฃเธ—เธฒเธชเธตเนเธซเธกเน:</span>
             <span class="value" id="endDate">-- / -- / ----</span>
         </div>
     </div>
@@ -40,13 +40,13 @@
 
 <script>
     // ==========================================
-    // ?? แก้ไขข้อมูลในเครื่องหมายคำพูด " " ตรงนี้ได้เลยครับ
+    // ?? เนเธเนเนเธเธเนเธญเธกเธนเธฅเนเธเน€เธเธฃเธทเนเธญเธเธซเธกเธฒเธขเธเธณเธเธนเธ” " " เธ•เธฃเธเธเธตเนเนเธ”เนเน€เธฅเธขเธเธฃเธฑเธ
     // ==========================================
     const CONFIG = {
-        machineName: "เครื่องทอผ้ากระสวยอีแปะ", 
-        machineId: "เครื่องจักรหมายเลข 01",   
-        startDate: "2026-05-01", // ปี-เดือน-วัน เริ่มทาสี           
-        endDate: "2026-06-01"   // ปี-เดือน-วัน สิ้นสุดรอบต้องทาใหม่           
+        machineName: "เน€เธเธฃเธทเนเธญเธเธ—เธญเธเนเธฒเธเธฃเธฐเธชเธงเธขเธญเธตเนเธเธฐ", 
+        machineId: "เน€เธเธฃเธทเนเธญเธเธเธฑเธเธฃเธซเธกเธฒเธขเน€เธฅเธ 01",   
+        startDate: "2026-05-01", // เธเธต-เน€เธ”เธทเธญเธ-เธงเธฑเธ เน€เธฃเธดเนเธกเธ—เธฒเธชเธต           
+        endDate: "2026-06-01"   // เธเธต-เน€เธ”เธทเธญเธ-เธงเธฑเธ เธชเธดเนเธเธชเธธเธ”เธฃเธญเธเธ•เนเธญเธเธ—เธฒเนเธซเธกเน           
     };
 
     function initStatus() {
@@ -63,13 +63,13 @@
 
         if (daysDiff > 0) {
             statusBox.className = "status-box status-safe";
-            statusBox.innerHTML = `? สภาพปกติ<br><span style="font-size:1rem; font-weight:normal;">เหลืออีก <b>${daysDiff}</b> วันต้องทาใหม่</span>`;
+            statusBox.innerHTML = `? เธชเธ เธฒเธเธเธเธ•เธด<br><span style="font-size:1rem; font-weight:normal;">เน€เธซเธฅเธทเธญเธญเธตเธ <b>${daysDiff}</b> เธงเธฑเธเธ•เนเธญเธเธ—เธฒเนเธซเธกเน</span>`;
         } else if (daysDiff === 0) {
             statusBox.className = "status-box status-warning";
-            statusBox.innerHTML = `?? ถึงกำหนดวันนี้!<br><span style="font-size:1rem; font-weight:normal;">ต้องถอดกระสวยไปทาสีทันที</span>`;
+            statusBox.innerHTML = `?? เธ–เธถเธเธเธณเธซเธเธ”เธงเธฑเธเธเธตเน!<br><span style="font-size:1rem; font-weight:normal;">เธ•เนเธญเธเธ–เธญเธ”เธเธฃเธฐเธชเธงเธขเนเธเธ—เธฒเธชเธตเธ—เธฑเธเธ—เธต</span>`;
         } else {
             statusBox.className = "status-box status-warning";
-            statusBox.innerHTML = `? เลยกำหนดแล้ว!<br><span style="font-size:1rem; font-weight:normal;">เลยกำหนดมาแล้ว <b>${Math.abs(daysDiff)}</b> วัน รีบทาสีด่วน</span>`;
+            statusBox.innerHTML = `? เน€เธฅเธขเธเธณเธซเธเธ”เนเธฅเนเธง!<br><span style="font-size:1rem; font-weight:normal;">เน€เธฅเธขเธเธณเธซเธเธ”เธกเธฒเนเธฅเนเธง <b>${Math.abs(daysDiff)}</b> เธงเธฑเธ เธฃเธตเธเธ—เธฒเธชเธตเธ”เนเธงเธ</span>`;
         }
     }
     initStatus();
