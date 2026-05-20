@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบเช็กสถานะกระสวยอีแปะ</title>
+    <title>ระบบเช็กสถานะกระสวยเครื่องทอ</title>
     <style>
         * { box-sizing: border-box; font-family: sans-serif; }
         body { background-color: #f0f2f5; margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
@@ -19,15 +19,18 @@
         .label { font-size: 0.9rem; color: #666; display: block; margin-bottom: 4px; }
         .value { font-size: 1.1rem; color: #222; font-weight: 600; }
         
-        /* ปุ่มสำหรับให้พนักงานกดบันทึกระหว่างทาง */
-        .btn-report { display: block; width: 100%; background-color: #ff9800; color: white; text-decoration: none; padding: 15px; border-radius: 10px; font-size: 1.1rem; font-weight: bold; margin-top: 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: background 0.2s; }
-        .btn-report:hover { background-color: #e68a00; }
+        /* ลูกเล่นส่วนบันทึกระหว่างทาง */
+        .mid-term-box { background-color: #fff3cd; border: 1px solid #ffeeba; border-radius: 10px; padding: 15px; margin-top: 25px; text-align: left; }
+        .mid-term-title { font-weight: bold; color: #856404; font-size: 1rem; margin-bottom: 10px; display: block; }
+        .date-input { width: 100%; padding: 10px; border: 1px solid #ced4da; border-radius: 5px; font-size: 1rem; margin-bottom: 10px; }
+        .btn-submit { display: block; width: 100%; background-color: #ff9800; color: white; border: none; padding: 12px; border-radius: 5px; font-size: 1rem; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .btn-submit:hover { background-color: #e68a00; }
     </style>
 </head>
 <body>
 
 <div class="card">
-    <h2 id="machineName">การตรวจเช็คกระสวยเครื่องทอ</h2>
+    <h2>การตรวจเช็คกระสวยเครื่องทอ</h2>
     <div class="machine-id" id="machineId">เครื่องจักรหมายเลข 01</div>
     
     <div id="statusBox" class="status-box">กำลังคำนวณ...</div>
@@ -43,39 +46,54 @@
         </div>
     </div>
 
-    <a href="ใส่ลิงก์_Google_Form_ของคุณตรงนี้" target="_blank" class="btn-report">
-        👉 กดบันทึก: ทาสีระหว่างทาง (ก่อนกำหนด)
-    </a>
+    <div class="mid-term-box">
+        <span class="mid-term-title">🎨 แจ้งทาสีระหว่างทาง (ก่อนกำหนด):</span>
+        <label for="inputDate" style="font-size: 0.85rem; color: #666;">ระบุวันที่แอบทาสีจริง:</label>
+        <input type="date" id="inputDate" class="date-input">
+        <button onclick="saveMidTermDate()" class="btn-submit">💾 บันทึกวันที่ทาสีระหว่างทาง</button>
+    </div>
 </div>
 
 <script>
     // ==========================================
-    // ⚙️ พิมพ์แก้ไขข้อมูล วัน/เดือน/ปี พ.ศ. ตรงนี้ได้เลย
+    // ⚙️ ตั้งค่าเริ่มต้น (วัน/เดือน/ปี พ.ศ.) ของแต่ละไฟล์ตรงนี้
     // ==========================================
     const CONFIG = {
-        machineId: "เครื่องจักรหมายเลข 01",   // แก้ไขหมายเลขเครื่อง
-        startDate: "01/05/2569",            // วันเริ่มทาสีล่าสุด (วัน/เดือน/ปี พ.ศ.)
-        endDate: "01/06/2569"               // วันกำหนดทาใหม่ (วัน/เดือน/ปี พ.ศ.)
+        machineId: "เครื่องจักรหมายเลข 01",   // หมายเลขเครื่องจักร
+        startDate: "20/05/2569",            // วันเริ่มทาสีหลัก 
+        endDate: "20/06/2569"               // วันสิ้นสุดรอบหลัก
     };
+
+    // ตัวจำประวัติในเครื่องคอมหรือมือถือ
+    const storageKey = 'midTerm_' + CONFIG.machineId;
 
     function parseThaiDate(dateStr) {
         const parts = dateStr.split('/');
-        const day = parseInt(parts[0], 10);
-        const month = parseInt(parts[1], 10) - 1;
-        const yearCE = parseInt(parts[2], 10) - 543;
-        return new Date(yearCE, month, day);
+        return new Date(parseInt(parts[2], 10) - 543, parseInt(parts[1], 10) - 1, parseInt(parts[0], 10));
+    }
+
+    function formatDateThai(date) {
+        return date.toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' });
     }
 
     function initStatus() {
         document.getElementById('machineId').innerText = CONFIG.machineId;
-        const start = parseThaiDate(CONFIG.startDate);
-        const end = parseThaiDate(CONFIG.endDate);
+        
+        let start = parseThaiDate(CONFIG.startDate);
+        let end = parseThaiDate(CONFIG.endDate);
+        
+        // เช็กว่าพนักงานเคยมากดปุ่มบันทึกระหว่างทางไว้ไหม
+        const savedDate = localStorage.getItem(storageKey);
+        if (savedDate) {
+            start = new Date(savedDate);
+            end = new Date(savedDate);
+            end.setDate(end.getDate() + 30); // ถ้าทาสีระหว่างทาง ให้บวกเวลารอบใหม่ไปอีก 30 วันทันที
+        }
+
+        document.getElementById('startDate').innerText = formatDateThai(start);
+        document.getElementById('endDate').innerText = formatDateThai(end);
+
         const today = new Date(); today.setHours(0,0,0,0);
-
-        const options = { year: 'numeric', month: 'long', day: 'numeric' };
-        document.getElementById('startDate').innerText = start.toLocaleDateString('th-TH', options);
-        document.getElementById('endDate').innerText = end.toLocaleDateString('th-TH', options);
-
         const timeDiff = end.getTime() - today.getTime();
         const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
         const statusBox = document.getElementById('statusBox');
@@ -91,8 +109,18 @@
             statusBox.innerHTML = `เลยกำหนดแล้ว!<br><span style="font-size:1rem; font-weight:normal;">เลยกำหนดมาแล้ว <b>${Math.abs(daysDiff)}</b> วัน รีบทาสีด่วน</span>`;
         }
     }
-    initStatus();
-</script>
 
-</body>
-</html>
+    // ฟังก์ชันเวลากดปุ่มบันทึก
+    function saveMidTermDate() {
+        const inputVal = document.getElementById('inputDate').value;
+        if (!inputVal) {
+            alert('กรุณาเลือกวันที่ก่อนกดบันทึกครับ!');
+            return;
+        }
+        localStorage.setItem(storageKey, inputVal);
+        alert('บันทึกข้อมูลการทาสีระหว่างทางเรียบร้อยแล้ว! ระบบกำลังคำนวณวันรอบใหม่ให้ครับ');
+        initStatus();
+    }
+
+    initStatus();
+</
