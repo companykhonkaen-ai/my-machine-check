@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบเช็กสถานะกระสวยอีแปะ</title>
+    <style>
+        * { box-sizing: border-box; font-family: sans-serif; }
+        body { background-color: #f0f2f5; margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .card { background: white; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 450px; padding: 25px; text-align: center; }
+        h2 { color: #333; margin-top: 0; margin-bottom: 5px; }
+        .machine-id { font-size: 1.2rem; color: #666; font-weight: bold; margin-bottom: 20px; }
+        .status-box { padding: 15px; border-radius: 10px; font-size: 1.3rem; font-weight: bold; margin-bottom: 25px; }
+        .status-safe { background-color: #d4edda; color: #155724; border: 2px solid #c3e6cb; }
+        .status-warning { background-color: #f8d7da; color: #721c24; border: 2px solid #f5c6cb; }
+        .info-grid { display: grid; grid-template-columns: 1fr; gap: 12px; text-align: left; margin-bottom: 20px; }
+        .info-item { background: #f8f9fa; padding: 12px 15px; border-radius: 8px; border-left: 5px solid #007bff; }
+        .info-item.end { border-left-color: #dc3545; }
+        .label { font-size: 0.9rem; color: #666; display: block; margin-bottom: 4px; }
+        .value { font-size: 1.1rem; color: #222; font-weight: 600; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2 id="machineName">การตรวจเช็คสีทากระสวยเครื่องทอ</h2>
+    <div class="machine-id" id="machineId">เครื่องจักรหมายเลข 01</div>
+    
+    <div id="statusBox" class="status-box">กำลังคำนวณ...</div>
+    
+    <div class="info-grid">
+        <div class="info-item">
+            <span class="label">เริ่มทาสีล่าสุดเมื่อวันที่:</span>
+            <span class="value" id="startDate">-- / -- / ----</span>
+        </div>
+        <div class="info-item end">
+            <span class="label">กำหนดสิ้นสุดรอบการทาสีใหม่:</span>
+            <span class="value" id="endDate">-- / -- / ----</span>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ========================================================
+    // ⚙️ พิมพ์แก้ไขข้อมูลเป็น "วัน/เดือน/ปี พ.ศ." ในเครื่องหมายคำพูดได้เลยครับ
+    // ========================================================
+    const CONFIG = {
+        machineId: "เครื่องจักรหมายเลข 16",   // <<-- แก้ไขหมายเลขเครื่องจักรตรงนี้
+        
+        startDate: "01/05/2569",            // <<-- วันเริ่มทาสีล่าสุด (ใส่วัน/เดือน/ปี พ.ศ.)
+        
+        endDate: "01/06/2569"               // <<-- วันกำหนดทาใหม่ (ใส่วัน/เดือน/ปี พ.ศ.)
+    };
+
+    function parseThaiDate(dateStr) {
+        const parts = dateStr.split('/');
+        const day = parseInt(parts[0], 10);
+        const month = parseInt(parts[1], 10) - 1;
+        const yearCE = parseInt(parts[2], 10) - 543; // แปลง พ.ศ. เป็น ค.ศ. เพื่อคำนวณ
+        return new Date(yearCE, month, day);
+    }
+
+    function initStatus() {
+        document.getElementById('machineId').innerText = CONFIG.machineId;
+        
+        const start = parseThaiDate(CONFIG.startDate);
+        const end = parseThaiDate(CONFIG.endDate);
+        const today = new Date(); today.setHours(0,0,0,0);
+
+        const options = { year: 'numeric', month: 'long', day: 'numeric' };
+        document.getElementById('startDate').innerText = start.toLocaleDateString('th-TH', options);
+        document.getElementById('endDate').innerText = end.toLocaleDateString('th-TH', options);
+
+        const timeDiff = end.getTime() - today.getTime();
+        const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+        const statusBox = document.getElementById('statusBox');
+
+        if (daysDiff > 0) {
+            statusBox.className = "status-box status-safe";
+            statusBox.innerHTML = `สภาพปกติ<br><span style="font-size:1rem; font-weight:normal;">เหลืออีก <b>${daysDiff}</b> วันต้องทาใหม่</span>`;
+        } else if (daysDiff === 0) {
+            statusBox.className = "status-box status-warning";
+            statusBox.innerHTML = `ถึงกำหนดวันนี้!<br><span style="font-size:1rem; font-weight:normal;">ต้องถอดกระสวยไปทาสีทันที</span>`;
+        } else {
+            statusBox.className = "status-box status-warning";
+            statusBox.innerHTML = `เลยกำหนดแล้ว!<br><span style="font-size:1rem; font-weight:normal;">เลยกำหนดมาแล้ว <b>${Math.abs(daysDiff)}</b> วัน รีบทาสีด่วน</span>`;
+        }
+    }
+    initStatus();
+</script>
+
+</body>
+</html>
