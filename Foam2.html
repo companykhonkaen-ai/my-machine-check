@@ -3,74 +3,98 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบเช็กสถานะกระสวยอีแปะ</title>
+    <title>ระบบเช็กสถานะกระสวยเครื่องทอ</title>
     <style>
-        * { box-sizing: border-box; font-family: sans-serif; }
-        body { background-color: #f0f2f5; margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-        .card { background: white; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 450px; padding: 25px; text-align: center; }
-        h2 { color: #333; margin-top: 0; margin-bottom: 5px; }
-        .machine-id { font-size: 1.2rem; color: #666; font-weight: bold; margin-bottom: 20px; }
-        .status-box { padding: 15px; border-radius: 10px; font-size: 1.3rem; font-weight: bold; margin-bottom: 25px; }
-        .status-safe { background-color: #d4edda; color: #155724; border: 2px solid #c3e6cb; }
-        .status-warning { background-color: #f8d7da; color: #721c24; border: 2px solid #f5c6cb; }
-        .info-grid { display: grid; grid-template-columns: 1fr; gap: 12px; text-align: left; margin-bottom: 20px; }
-        .info-item { background: #f8f9fa; padding: 12px 15px; border-radius: 8px; border-left: 5px solid #007bff; }
+        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #f4f6f9; margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .card { background: white; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.08); width: 100%; max-width: 450px; padding: 30px; text-align: center; }
+        h2 { color: #2c3e50; margin-top: 0; margin-bottom: 8px; font-size: 1.6rem; }
+        .machine-id { font-size: 1.2rem; color: #7f8c8d; font-weight: bold; margin-bottom: 25px; background: #eef2f5; padding: 5px 15px; border-radius: 50px; display: inline-block; }
+        .status-box { padding: 18px; border-radius: 12px; font-size: 1.4rem; font-weight: bold; margin-bottom: 25px; transition: all 0.3s ease; }
+        .status-safe { background-color: #d4edda; color: #155724; border: 2px solid #c3e6cb; box-shadow: 0 4px 10px rgba(40, 167, 69, 0.15); }
+        .status-warning { background-color: #f8d7da; color: #721c24; border: 2px solid #f5c6cb; box-shadow: 0 4px 10px rgba(220, 53, 69, 0.15); }
+        .info-grid { display: grid; grid-template-columns: 1fr; gap: 15px; text-align: left; margin-bottom: 25px; }
+        .info-item { background: #f8f9fa; padding: 15px; border-radius: 10px; border-left: 6px solid #007bff; }
         .info-item.end { border-left-color: #dc3545; }
-        .label { font-size: 0.9rem; color: #666; display: block; margin-bottom: 4px; }
-        .value { font-size: 1.1rem; color: #222; font-weight: 600; }
+        .label { font-size: 0.9rem; color: #7f8c8d; display: block; margin-bottom: 6px; font-weight: bold; }
+        .value { font-size: 1.15rem; color: #2c3e50; font-weight: 600; }
+        .action-box { background-color: #fff3cd; border: 1px solid #ffeeba; border-radius: 12px; padding: 20px; text-align: left; margin-top: 10px; }
+        .action-title { font-weight: bold; color: #856404; font-size: 1.05rem; margin-bottom: 12px; }
+        .date-input { width: 100%; padding: 12px; border: 1px solid #ced4da; border-radius: 8px; font-size: 1rem; margin-bottom: 12px; outline: none; background: white; }
+        .btn-submit { display: block; width: 100%; background-color: #ff9800; color: white; border: none; padding: 14px; border-radius: 8px; font-size: 1.1rem; font-weight: bold; cursor: pointer; box-shadow: 0 4px 6px rgba(255,152,0,0.2); }
+        .btn-submit:disabled { background-color: #cccccc; cursor: not-allowed; box-shadow: none; }
+        .btn-reset { display: block; width: 100%; background: none; color: #7f8c8d; border: none; font-size: 0.85rem; margin-top: 12px; cursor: pointer; text-decoration: underline; text-align: center; }
     </style>
 </head>
 <body>
 
 <div class="card">
-    <h2 id="machineName">การตรวจเช็คสีทากระสวยเครื่องทอ</h2>
-    <div class="machine-id" id="machineId">เครื่องจักรหมายเลข 01</div>
+    <h2>การตรวจเช็คกระสวยเครื่องทอ</h2>
+    <div class="machine-id" id="machineId">กำลังโหลด...</div>
     
     <div id="statusBox" class="status-box">กำลังคำนวณ...</div>
     
     <div class="info-grid">
         <div class="info-item">
-            <span class="label">เริ่มทาสีล่าสุดเมื่อวันที่:</span>
+            <span class="label">🎨 วันที่เริ่มทาสีล่าสุด:</span>
             <span class="value" id="startDate">-- / -- / ----</span>
         </div>
         <div class="info-item end">
-            <span class="label">กำหนดสิ้นสุดรอบการทาสีใหม่:</span>
+            <span class="label">📅 กำหนดสิ้นสุดรอบทาสีใหม่:</span>
             <span class="value" id="endDate">-- / -- / ----</span>
         </div>
+    </div>
+
+    <div class="action-box">
+        <span class="action-title">⚙️ บันทึกการทาสีระหว่างทาง</span>
+        <label for="inputDate" style="font-size: 0.85rem; color: #555; display:block; margin-bottom: 6px;">เลือกวันที่พนักงานแอบทาสีจริง:</label>
+        <input type="date" id="inputDate" class="date-input">
+        <button onclick="saveNewDate()" id="btnSubmit" class="btn-submit">💾 บันทึกส่งเข้า Google Sheets</button>
+        <button onclick="clearSavedData()" id="btnReset" class="btn-reset" style="display:none;">↩️ ล้างข้อมูลกลับไปใช้ค่าเริ่มต้น</button>
     </div>
 </div>
 
 <script>
-    // ========================================================
-    // ⚙️ พิมพ์แก้ไขข้อมูลเป็น "วัน/เดือน/ปี พ.ศ." ในเครื่องหมายคำพูดได้เลยครับ
-    // ========================================================
+    // ==========================================
+    // ⚙️ ตั้งค่าข้อมูลเครื่องจักรตรงนี้
+    // ==========================================
     const CONFIG = {
-        machineId: "เครื่องจักรหมายเลข 02",   // <<-- แก้ไขหมายเลขเครื่องจักรตรงนี้
-        
-        startDate: "01/05/2569",            // <<-- วันเริ่มทาสีล่าสุด (ใส่วัน/เดือน/ปี พ.ศ.)
-        
-        endDate: "01/06/2569"               // <<-- วันกำหนดทาใหม่ (ใส่วัน/เดือน/ปี พ.ศ.)
+        machineId: "E2",                                                
+        startDate: "20/05/2569",                                            
+        endDate: "20/06/2569",                                              
+        googleSheetUrl: "https://script.google.com/macros/s/AKfycbztJzTenKhjfpuJKOTqEGQgWI9U7B6rjgHPO_xov2jejoGauGwjd-C-sYjT6gYK8QwU/exec" 
     };
+
+    const storageKey = 'machine_date_logs_' + CONFIG.machineId;
 
     function parseThaiDate(dateStr) {
         const parts = dateStr.split('/');
-        const day = parseInt(parts[0], 10);
-        const month = parseInt(parts[1], 10) - 1;
-        const yearCE = parseInt(parts[2], 10) - 543; // แปลง พ.ศ. เป็น ค.ศ. เพื่อคำนวณ
-        return new Date(yearCE, month, day);
+        return new Date(parseInt(parts[2], 10) - 543, parseInt(parts[1], 10) - 1, parseInt(parts[0], 10));
+    }
+
+    function formatDateThai(date) {
+        return date.toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' });
     }
 
     function initStatus() {
         document.getElementById('machineId').innerText = CONFIG.machineId;
+        let start = parseThaiDate(CONFIG.startDate);
+        let end = parseThaiDate(CONFIG.endDate);
         
-        const start = parseThaiDate(CONFIG.startDate);
-        const end = parseThaiDate(CONFIG.endDate);
+        const savedDate = localStorage.getItem(storageKey);
+        if (savedDate) {
+            start = new Date(savedDate);
+            end = new Date(savedDate);
+            end.setDate(end.getDate() + 30);
+            document.getElementById('btnReset').style.display = 'block';
+        } else {
+            document.getElementById('btnReset').style.display = 'none';
+        }
+
+        document.getElementById('startDate').innerText = formatDateThai(start);
+        document.getElementById('endDate').innerText = formatDateThai(end);
+
         const today = new Date(); today.setHours(0,0,0,0);
-
-        const options = { year: 'numeric', month: 'long', day: 'numeric' };
-        document.getElementById('startDate').innerText = start.toLocaleDateString('th-TH', options);
-        document.getElementById('endDate').innerText = end.toLocaleDateString('th-TH', options);
-
         const timeDiff = end.getTime() - today.getTime();
         const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
         const statusBox = document.getElementById('statusBox');
@@ -86,6 +110,47 @@
             statusBox.innerHTML = `เลยกำหนดแล้ว!<br><span style="font-size:1rem; font-weight:normal;">เลยกำหนดมาแล้ว <b>${Math.abs(daysDiff)}</b> วัน รีบทาสีด่วน</span>`;
         }
     }
+
+    function saveNewDate() {
+        const inputVal = document.getElementById('inputDate').value;
+        if (!inputVal) {
+            alert('❌ กรุณาเลือกวันที่ก่อนกดบันทึกครับ!');
+            return;
+        }
+
+        const btn = document.getElementById('btnSubmit');
+        btn.disabled = true;
+        btn.innerText = '⏳ กำลังส่งข้อมูลเข้า Google Sheets...';
+
+        fetch(CONFIG.googleSheetUrl, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ machineId: CONFIG.machineId, savedDate: inputVal })
+        })
+        .then(() => {
+            localStorage.setItem(storageKey, inputVal);
+            alert('🎯 บันทึกสำเร็จ! ข้อมูลถูกส่งเข้า Google Sheets ปลายทางเรียบร้อยครับ');
+            initStatus();
+            document.getElementById('inputDate').value = '';
+        })
+        .catch(err => {
+            alert('เกิดข้อผิดพลาด: ' + err);
+        })
+        .finally(() => {
+            btn.disabled = false;
+            btn.innerText = '💾 บันทึกส่งเข้า Google Sheets';
+        });
+    }
+
+    function clearSavedData() {
+        if(confirm('คุณต้องการกลับไปใช้วันรอบหลักใช่ไหม?')) {
+            localStorage.removeItem(storageKey);
+            alert('ล้างข้อมูลเรียบร้อยแล้ว');
+            initStatus();
+        }
+    }
+
     initStatus();
 </script>
 
