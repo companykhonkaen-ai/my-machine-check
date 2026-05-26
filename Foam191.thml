@@ -1,0 +1,170 @@
+import pandas as pd
+from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
+from openpyxl.utils import get_column_letter
+
+# ==========================================
+# 1. ตั้งค่าชื่อไฟล์และชื่อคอลัมน์ (ปรับเปลี่ยนตรงนี้ได้)
+# ==========================================
+input_file = "bank_statement_10_years.xlsx"  # ไฟล์ข้อมูลดิบของคุณ
+output_file = "financial_summary_report.xlsx"  # ไฟล์ผลลัพธ์ที่จะได้
+
+col_date = "Date"
+col_deposit = "Deposit"
+col_withdraw = "Withdrawal"
+
+# ==========================================
+# 2. โหลดข้อมูลและประมวลผล (เหมือนเวอร์ชันก่อนหน้า)
+# ==========================================
+print("กำลังโหลดและคำนวณข้อมูล...")
+df = pd.read_excel(input_file)
+df[col_date] = pd.to_datetime(df[col_date], errors="coerce")
+df = df.dropna(subset=[col_date]).sort_values(by=col_date)
+
+df[col_deposit] = pd.to_numeric(df[col_deposit], errors="coerce").fillna(0)
+df[col_withdraw] = pd.to_numeric(df[col_withdraw], errors="coerce").fillna(0)
+
+df["Year"] = df[col_date].dt.year
+df["Year_Month"] = df[col_date].dt.to_period("M")
+
+# คำนวณรายวันเพื่อหาวันที่ฝาก/ถอนมากสุด
+daily = (
+    df.groupby([df[col_date].dt.to_period("M"), col_date])[
+        [col_deposit, col_withdraw]
+    ]
+    .sum()
+    .reset_index()
+)
+max_dep = daily.loc[
+    daily.groupby("Date")"Deposit".idxmax(), ["Date", col_date, col_deposit]
+]
+max_dep.columns = ["Year_Month", "วันที่ฝากมากสุด", "ยอดฝากมากสุดวันนั้น"]
+max_wth = daily.loc[
+    daily.groupby("Date")"Withdrawal".idxmax(),
+    ["Date", col_date, col_withdraw],
+]
+max_wth.columns = ["Year_Month", "วันที่ถอนมากสุด", "ยอดถอนมากสุดวันนั้น"]
+
+df["is_deposit"] = df[col_deposit] > 0
+df["is_withdraw"] = df[col_withdraw] > 0
+
+# สรุปรายเดือน
+m_stats = df.groupby("Year_Month").agg(
+    ยอดฝากรวม=(col_deposit, "sum"),
+    ยอดถอนรวม=(col_withdraw, "sum"),
+    จำนวนครั้งที่ฝาก=("is_deposit", "sum"),
+    จำนวนครั้งที่ถอน=("is_withdraw", "sum"),
+)
+m_stats["ยอดคงเหลือสุทธิเดือนนี้"] = (
+    m_stats["ยอดฝากรวม"] - m_stats["ยอดถอนรวม"]
+)
+m_stats["ยอดคงเหลือสะสมยกไป"] = m_stats["ยอดคงเหลือสุทธิเดือนนี้"].cumsum()
+m_report = m_stats.reset_index()
+m_report = pd.merge(m_report, max_dep, on="Year_Month", how="left")
+m_report = pd.merge(m_report, max_wth, on="Year_Month", how="left")
+m_report["วันที่ฝากมากสุด"] = m_report["วันที่ฝากมากสุด"].dt.strftime(
+    "%Y-%m-%d"
+)
+m_report["วันที่ถอนมากสุด"] = m_report["วันที่ถอนมากสุด"].dt.strftime(
+    "%Y-%m-%d"
+)
+m_report["Year_Month"] = m_report["Year_Month"].astype(str)
+m_report.columns = [
+    "ปี-เดือน",
+    "ยอดฝากรวม",
+    "ยอดถอนรวม",
+    "จำนวนครั้งที่ฝาก",
+    "จำนวนครั้งที่ถอน",
+    "ยอดคงเหลือสุทธิเดือนนี้",
+    "ยอดคงเหลือสะสมยกไป",
+    "วันที่ฝากมากสุด",
+    "ยอดฝากมากสุดวันนั้น",
+    "วันที่ถอนมากสุด",
+    "ยอดถอนมากสุดวันนั้น",
+]
+
+# สรุปรายปี
+y_stats = df.groupby("Year").agg(
+    ยอดฝากรวมทั้งปี=(col_deposit, "sum"),
+    ยอดถอนรวมทั้งปี=(col_withdraw, "sum"),
+    จำนวนครั้งที่ฝากทั้งปี=("is_deposit", "sum"),
+    จำนวนครั้งที่ถอนทั้งปี=("is_withdraw", "sum"),
+)
+y_stats["ยอดคงเหลือสุทธิปีนี้"] = (
+    y_stats["ยอดฝากรวมทั้งปี"] - y_stats["ยอดถอนรวมทั้งปี"]
+)
+y_stats["ยอดคงเหลือสะสมสุทธิ"] = y_stats["ยอดคงเหลือสุทธิปีนี้"].cumsum()
+y_report = y_stats.reset_index()
+y_report.columns = [
+    "ปี",
+    "ยอดฝากรวมทั้งปี",
+    "ยอดถอนรวมทั้งปี",
+    "จำนวนครั้งที่ฝากทั้งปี",
+    "จำนวนครั้งที่ถอนทั้งปี",
+    "ยอดคงเหลือสุทธิปีนี้",
+    "ยอดคงเหลือสะสมสุทธิ",
+]
+
+# ==========================================
+# 3. เขียนลง Excel พร้อมตกแต่งและใส่หัวข้อใหญ่
+# ==========================================
+print("กำลังสร้างและตกแต่งไฟล์ Excel...")
+
+with pd.ExcelWriter(output_file, engine="openpyxl") as writer:
+    # เขียนข้อมูลดิบลงไปโดยเว้น 4 แถวแรกไว้ใส่หัวข้อ
+    m_report.to_excel(
+        writer, sheet_name="สรุปรายเดือน", index=False, startrow=4
+    )
+    y_report.to_excel(writer, sheet_name="สรุปรายปี", index=False, startrow=4)
+
+    workbook = writer.book
+
+    # สไตล์การตกแต่ง
+    font_title = Font(name="Cordia New", size=18, bold=True, color="003366")
+    font_header = Font(name="Cordia New", size=14, bold=True, color="FFFFFF")
+    font_data = Font(name="Cordia New", size=13)
+    fill_header = PatternFill(
+        start_color="003366", end_color="003366", fill_type="solid"
+    )
+    thin_border = Border(
+        left=Side(style="thin", color="D3D3D3"),
+        right=Side(style="thin", color="D3D3D3"),
+        top=Side(style="thin", color="D3D3D3"),
+        bottom=Side(style="thin", color="D3D3D3"),
+    )
+
+    # วนลูปแต่งทีละ Sheet
+    for sheet_name in workbook.sheetnames:
+        worksheet = workbook[sheet_name]
+
+        # 🌟 ใส่หัวข้อใหญ่ที่แถวที่ 2
+        title_text = f"โปรแกรม ตรวจสอบเส้นเงิน ({sheet_name} ย้อนหลัง 10 ปี)"
+        worksheet["A2"] = title_text
+        worksheet["A2"].font = font_title
+
+        # จัดฟอร์แมตข้อมูลในตาราง
+        for row in worksheet.iter_rows(
+            min_row=5, max_row=worksheet.max_row, min_col=1, max_col=worksheet.max_column
+        ):
+            for cell in row:
+                cell.font = font_data
+                cell.border = thin_border
+                # ถ้าเป็นตัวเลข ให้ใส่คอมมา (เช่น 1,000,000.00)
+                if isinstance(cell.value, (int, float)) and cell.column > 1:
+                    if "จำนวนครั้ง" in worksheet.cell(row=5, column=cell.column).value:
+                        cell.number_format = "#,##0"
+                    else:
+                        cell.number_format = "#,##0.00"
+
+        # จัดหัวตาราง (แถวที่ 5)
+        for cell in worksheet[5]:
+            cell.font = font_header
+            cell.fill = fill_header
+            cell.alignment = Alignment(horizontal="center", vertical="center")
+
+        # ปรับความกว้างคอลัมน์อัตโนมัติให้พอดีตัวอักษร
+        for col in worksheet.columns:
+            max_len = max(len(str(cell.value or "")) for cell in col)
+            col_letter = get_column_letter(col[0].column)
+            worksheet.column_dimensions[col_letter].width = max(max_len + 3, 12)
+
+print(f"✨ เสร็จสมบูรณ์! สร้างไฟล์ '{output_file}' เรียบร้อยแล้วครับ")
