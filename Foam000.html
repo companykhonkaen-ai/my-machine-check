@@ -1,299 +1,311 @@
-import os
-import pandas as pd
-from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
-from openpyxl.utils import get_column_letter
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QC Audit Checklist - โต๊ะที่ 1</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-color: #1F4E79;
+            --secondary-color: #D9E1F2;
+            --success-color: #2e7d32;
+            --fail-color: #c62828;
+            --text-color: #333;
+            --bg-color: #f4f6f9;
+        }
 
-# ==========================================
-# 1. CONFIGURATION (ส่วนตั้งค่าระบบ)
-# ==========================================
-# ใส่ชื่อไฟล์ข้อมูลดิบของคุณที่นี่ (รองรับทั้ง .xlsx และ .csv)
-INPUT_FILE = "bank_statement_10_years.xlsx"
-OUTPUT_FILE = "รายงาน_ตรวจสอบเส้นเงิน_สรุปภาพรวม.xlsx"
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Sarabun', sans-serif;
+        }
 
-# ตรวจสอบชื่อคอลัมน์ในไฟล์จริงของคุณ แล้วแก้ไขให้ตรงกับ 3 ตัวแปรนี้:
-COL_DATE = "Date"  # คอลัมน์ วันที่
-COL_DEPOSIT = "Deposit"  # คอลัมน์ ยอดเงินฝาก/เข้า
-COL_WITHDRAW = "Withdrawal"  # คอลัมน์ ยอดเงินถอน/ออก
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding: 15px;
+        }
 
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+            padding: 20px;
+            padding-bottom: 120px; /* เว้นที่ให้แถบคะแนนด้านล่าง */
+        }
 
-def run_financial_analysis():
-    # ==========================================
-    # 2. DATA LOADING & CLEANING (โหลดและคลีนข้อมูล)
-    # ==========================================
-    if not os.path.exists(INPUT_FILE):
-        print(
-            f"❌ ไม่พบไฟล์ '{INPUT_FILE}' กรุณาตรวจสอบว่าชื่อไฟล์ถูกต้องและอยู่ในโฟลเดอร์เดียวกันหรือไม่"
-        )
-        return
+        .header {
+            text-align: center;
+            border-bottom: 3px solid var(--primary-color);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
 
-    print("🔄 ขั้นตอนที่ 1: กำลังโหลดข้อมูลเข้าสู่ระบบ...")
-    # รองรับการโหลดทั้ง Excel และ CSV
-    if INPUT_FILE.endswith(".csv"):
-        df = pd.read_csv(INPUT_FILE)
-    else:
-        df = pd.read_excel(INPUT_FILE)
+        .header h1 {
+            font-size: 1.4rem;
+            color: var(--primary-color);
+            font-weight: 700;
+        }
 
-    print(f"📊 โหลดข้อมูลสำเร็จ ตรวจพบข้อมูลดิบทั้งหมด {len(df):,} แถว")
+        .header p {
+            font-size: 0.95rem;
+            color: #666;
+            margin-top: 5px;
+        }
 
-    print("🧹 ขั้นตอนที่ 2: กำลังทำความสะอาดข้อมูล (Data Cleaning)...")
+        .meta-group {
+            background: #fafafa;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
 
-    # แปลงคอลัมน์วันที่: errors='coerce' จะเปลี่ยนวันที่ที่ผิดฟอร์แมตให้เป็น NaT (ว่าง) เพื่อไม่ให้โปรแกรมพัง
-    df[COL_DATE] = pd.to_datetime(df[COL_DATE], errors="coerce")
+        .form-control {
+            margin-bottom: 12px;
+        }
 
-    # ลบแถวที่ไม่มีข้อมูลวันที่ทิ้งไป
-    initial_count = len(df)
-    df = df.dropna(subset=[COL_DATE])
-    dropped_rows = initial_count - len(df)
-    if dropped_rows > 0:
-        print(
-            f"⚠️ หมายเหตุ: ตรวจพบและตัดแถวที่ไม่มีวันที่สมบูรณ์ออกจำนวน {dropped_rows:,} แถว"
-        )
+        .form-control:last-child {
+            margin-bottom: 0;
+        }
 
-    # เรียงลำดับข้อมูลตามวันที่จากเก่าที่สุดไปใหม่ที่สุด (สำคัญมากสำหรับการคำนวณยอดสะสม)
-    df = df.sort_values(by=COL_DATE).reset_index(drop=True)
+        .form-control label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
 
-    # แปลงคอลัมน์เงินให้เป็นตัวเลข: ถ้ามีตัวอักษรปนมาจะเปลี่ยนเป็น 0 แทนการแจ้ง Error
-    df[COL_DEPOSIT] = (
-        pd.to_numeric(df[COL_DEPOSIT], errors="coerce").fillna(0).astype(float)
-    )
-    df[COL_WITHDRAW] = (
-        pd.to_numeric(df[COL_WITHDRAW], errors="coerce").fillna(0).astype(float)
-    )
+        .form-control input[type="text"], 
+        .form-control input[type="datetime-local"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 0.95rem;
+        }
 
-    # สร้างคอลัมน์จำแนกกลุ่มเวลา
-    df["Year"] = df[COL_DATE].dt.year
-    df["Year_Month"] = df[COL_DATE].dt.to_period("M")
+        .section-title {
+            background: var(--primary-color);
+            color: #fff;
+            padding: 10px 15px;
+            border-radius: 6px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
 
-    # สร้างสถานะการทำรายการเพื่อใช้นับจำนวนครั้ง
-    df["is_deposit"] = df[COL_DEPOSIT] > 0
-    df["is_withdraw"] = df[COL_WITHDRAW] > 0
+        .card {
+            background: #fff;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+        }
 
-    # ==========================================
-    # 3. STATISTICAL PROCESSING (ประมวลผลสถิติเชิงลึก)
-    # ==========================================
-    print("🧮 ขั้นตอนที่ 3: กำลังประมวลผลสถิติและเส้นทางการเงิน...")
+        .card:hover {
+            border-color: #b0bec5;
+        }
 
-    # --- ส่วนที่ 3.1: คำนวณยอดรวมรายวันเพื่อค้นหาวันที่ทำรายการสูงสุด ---
-    daily_sums = (
-        df.groupby([df[COL_DATE].dt.to_period("M"), COL_DATE])[
-            [COL_DEPOSIT, COL_WITHDRAW]
-        ]
-        .sum()
-        .reset_index()
-    )
+        .check-point {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #111;
+            margin-bottom: 4px;
+        }
 
-    # หาวันที่ฝากเงินมากที่สุดในแต่ละเดือน
-    idx_max_dep = daily_sums.groupby(COL_DATE)[COL_DEPOSIT].idxmax()
-    max_dep_per_month = daily_sums.loc[
-        idx_max_dep, [COL_DATE, COL_DATE, COL_DEPOSIT]
-    ]
-    max_dep_per_month.columns = [
-        "Year_Month",
-        "วันที่ฝากมากที่สุด",
-        "ยอดฝากมากที่สุดในวันนั้น",
-    ]
+        .check-method {
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 12px;
+            background: #f8f9fa;
+            padding: 6px 10px;
+            border-left: 3px solid #b0bec5;
+            border-radius: 0 4px 4px 0;
+        }
 
-    # หาวันที่ถอนเงินมากที่สุดในแต่ละเดือน
-    idx_max_wth = daily_sums.groupby(COL_DATE)[COL_WITHDRAW].idxmax()
-    max_wth_per_month = daily_sums.loc[
-        idx_max_wth, [COL_DATE, COL_DATE, COL_WITHDRAW]
-    ]
-    max_wth_per_month.columns = [
-        "Year_Month",
-        "วันที่ถอนมากที่สุด",
-        "ยอดถอนมากที่สุดในวันนั้น",
-    ]
+        .action-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
 
-    # --- ส่วนที่ 3.2: จัดทำตารางสรุปรายเดือน ---
-    monthly_summary = df.groupby("Year_Month").agg(
-        ยอดฝากรวม=("Deposit", "sum"),
-        ยอดถอนรวม=("Withdrawal", "sum"),
-        จำนวนครั้งที่ฝาก=("is_deposit", "sum"),
-        จำนวนครั้งที่ถอน=("is_withdraw", "sum"),
-    )
+        .btn-status {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            background: #fff;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
 
-    # คำนวณยอดกระแสเงินสดสุทธิ และ ยอดคงเหลือสะสมยกไปสะสมไปเรื่อยๆ 10 ปี
-    monthly_summary["ผลต่างฝากถอนเดือนนี้"] = (
-        monthly_summary["ยอดฝากรวม"] - monthly_summary["ยอดถอนรวม"]
-    )
-    monthly_summary["ยอดคงเหลือสะสมสุทธิ"] = monthly_summary[
-        "ผลต่างฝากถอนเดือนนี้"
-    ].cumsum()
+        .btn-pass.active {
+            background-color: #e8f5e9;
+            border-color: var(--success-color);
+            color: var(--success-color);
+        }
 
-    # ยุบรวมข้อมูลวันที่พีคที่สุดเข้าตารางสรุปรายเดือน
-    monthly_final = monthly_summary.reset_index()
-    monthly_final = pd.merge(
-        monthly_final, max_dep_per_month, on="Year_Month", how="left"
-    )
-    monthly_final = pd.merge(
-        monthly_final, max_wth_per_month, on="Year_Month", how="left"
-    )
+        .btn-fail.active {
+            background-color: #ffebee;
+            border-color: var(--fail-color);
+            color: var(--fail-color);
+        }
 
-    # แปลงฟอร์แมตการแสดงผลเวลาให้สวยงามใน Excel
-    monthly_final["วันที่ฝากมากที่สุด"] = monthly_final[
-        "วันที่ฝากมากที่สุด"
-    ].dt.strftime("%Y-%m-%d")
-    monthly_final["วันที่ถอนมากที่สุด"] = monthly_final[
-        "วันที่ถอนมากที่สุด"
-    ].dt.strftime("%Y-%m-%d")
-    monthly_final["Year_Month"] = monthly_final["Year_Month"].astype(str)
+        .note-input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            margin-top: 10px;
+        }
 
-    # เปลี่ยนชื่อคอลัมน์ให้เป็นภาษาไทยที่อ่านง่ายชัดเจน
-    monthly_final.columns = [
-        "ปี-เดือน",
-        "ยอดฝากรวม (บาท)",
-        "ยอดถอนรวม (บาท)",
-        "จำนวนครั้งที่ฝาก (ครั้ง)",
-        "จำนวนครั้งที่ถอน (ครั้ง)",
-        "กระแสเงินสดสุทธิเดือนนี้",
-        "ยอดเงินคงเหลือสะสมสิ้นเดือน",
-        "วันที่ฝากมากที่สุด",
-        "ยอดฝากสูงสุดในวันนั้น",
-        "วันที่ถอนมากที่สุด",
-        "ยอดถอนสูงสุดในวันนั้น",
-    ]
+        .photo-upload {
+            margin-top: 10px;
+        }
 
-    # --- ส่วนที่ 3.3: จัดทำตารางสรุปรายปี ---
-    yearly_final = df.groupby("Year").agg(
-        ยอดฝากรวมทั้งปี=(COL_DEPOSIT, "sum"),
-        ยอดถอนรวมทั้งปี=(COL_WITHDRAW, "sum"),
-        จำนวนครั้งที่ฝากทั้งปี=("is_deposit", "sum"),
-        จำนวนครั้งที่ถอนทั้งปี=("is_withdraw", "sum"),
-    )
-    yearly_final["ผลต่างสุทธิรายปี"] = (
-        yearly_final["ยอดฝากรวมทั้งปี"] - yearly_final["ยอดถอนรวมทั้งปี"]
-    )
-    yearly_final["ยอดคงเหลือสะสมสิ้นปี"] = yearly_final[
-        "ผลต่างสุทธิรายปี"
-    ].cumsum()
-    yearly_final = yearly_final.reset_index()
-    yearly_final.columns = [
-        "ปี (Year)",
-        "ยอดฝากรวมทั้งปี",
-        "ยอดถอนรวมทั้งปี",
-        "จำนวนครั้งที่ฝากทั้งปี",
-        "จำนวนครั้งที่ถอนทั้งปี",
-        "กระแสเงินสดสุทธิรายปี",
-        "ยอดเงินคงเหลือสะสมสิ้นปี",
-    ]
+        .file-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: #eceff1;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            border: 1px solid #cfd8dc;
+        }
 
-    # ==========================================
-    # 4. EXCEL EXPORT & FORMATTING (ส่งออกและตกแต่งตาราง)
-    # ==========================================
-    print("🎨 ขั้นตอนที่ 4: กำลังเขียนไฟล์ Excel และจัดฟอร์แมตรายงาน...")
+        /* ส่วนแสดงรูปตัวอย่างที่เลือก */
+        .preview-img {
+            max-width: 100px;
+            max-height: 100px;
+            margin-top: 8px;
+            display: none;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
 
-    with pd.ExcelWriter(OUTPUT_FILE, engine="openpyxl") as writer:
-        # เขียนข้อมูลลงชีตโดยเว้นแถวด้านบนไว้ 4 แถวเพื่อใส่หัวข้อใหญ่
-        monthly_final.to_excel(
-            writer, sheet_name="สรุปรายเดือนย้อนหลัง", index=False, startrow=4
-        )
-        yearly_final.to_excel(
-            writer, sheet_name="สรุปภาพรวมรายปี", index=False, startrow=4
-        )
+        /* แถบสรุปคะแนนฟิกซ์ไว้ด้านล่างหน้าจอ */
+        .score-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #fff;
+            box-shadow: 0 -4px 15px rgba(0,0,0,0.15);
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 600px;
+            margin: 0 auto;
+            border-radius: 12px 12px 0 0;
+            z-index: 1000;
+        }
 
-        workbook = writer.book
+        .score-info h3 {
+            font-size: 1.1rem;
+            color: var(--primary-color);
+        }
 
-        # กำหนดสไตล์ฟอนต์ สี และเส้นตาราง
-        font_main_title = Font(
-            name="Cordia New", size=22, bold=True, color="1B365D"
-        )
-        font_sub_title = Font(
-            name="Cordia New", size=14, italic=True, color="555555"
-        )
-        font_header = Font(
-            name="Cordia New", size=14, bold=True, color="FFFFFF"
-        )
-        font_data = Font(name="Cordia New", size=13)
+        .score-info p {
+            font-size: 0.85rem;
+            color: #555;
+        }
 
-        fill_header = PatternFill(
-            start_color="1B365D", end_color="1B365D", fill_type="solid"
-        )  # สีน้ำเงินเข้มหรูหรา
-        fill_zebra = PatternFill(
-            start_color="F9FAFB", end_color="F9FAFB", fill_type="solid"
-        )  # สีพื้นหลังสลับแถวกันลายตา
+        .btn-submit {
+            background: var(--primary-color);
+            color: #fff;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
 
-        grid_border = Border(
-            left=Side(style="thin", color="E5E7EB"),
-            right=Side(style="thin", color="E5E7EB"),
-            top=Side(style="thin", color="E5E7EB"),
-            bottom=Side(style="thin", color="E5E7EB"),
-        )
+        .btn-submit:hover {
+            background: #153654;
+        }
+    </style>
+</head>
+<body>
 
-        # ทำการวนลูปเพื่อตกแต่งทีละ Sheet
-        for sheet_name in workbook.sheetnames:
-            ws = workbook[sheet_name]
+<div class="container">
+    <div class="header">
+        <h1>แบบฟอร์มการตรวจสอบคุณภาพส่วนกลาง</h1>
+        <p>หน่วยงาน QC ส่วนกลาง แผนก: โต๊ะที่ 1</p>
+    </div>
 
-            # 🌟 4.1 ใส่หัวข้อใหญ่ประจำโปรแกรม (Main Header)
-            ws["A2"] = "📊 โปรแกรม ตรวจสอบเส้นเงิน ย้อนหลัง 10 ปี"
-            ws["A2"].font = font_main_title
+    <div class="meta-group">
+        <div class="form-control">
+            <label><i class="fa-solid fa-user"></i> ชื่อพนักงานกรอ</label>
+            <input type="text" id="workerName" placeholder="พิมพ์ชื่อ-นามสกุลพนักงาน">
+        </div>
+        <div class="form-control">
+            <label><i class="fa-solid fa-calendar-days"></i> วันที่และเวลาตรวจสอบ</label>
+            <input type="datetime-local" id="auditTime">
+        </div>
+    </div>
 
-            ws["A3"] = (
-                f"รายงานประเภท: {sheet_name} | จัดทำข้อมูลอัตโนมัติด้วยระบบวิเคราะห์ข้อมูล Python"
-            )
-            ws["A3"].font = font_sub_title
+    <form id="auditForm">
+        <div class="section-title"><i class="fa-solid fa-layer-group"></i> 1. ใยปน</div>
+        
+        <div class="card" data-id="1">
+            <div class="check-point">ความถูกต้องของเบอร์ใย</div>
+            <div class="check-method">วิธีการตรวจ: ดูหลอดใยขนาดกรอที่โต๊ะกรอ</div>
+            <div class="action-row">
+                <button type="button" class="btn-status btn-pass" onclick="setStatus(this, 'P')"><i class="fa-solid fa-circle-check"></i> ผ่าน (P)</button>
+                <button type="button" class="btn-status btn-fail" onclick="setStatus(this, 'F')"><i class="fa-solid fa-circle-xmark"></i> ไม่ผ่าน (F)</button>
+            </div>
+            <input type="text" class="note-input" placeholder="ระบุหมายเหตุ (ถ้ามี)">
+            <div class="photo-upload">
+                <label class="file-label"><i class="fa-solid fa-camera"></i> ถ่ายรูป/แนบไฟล์<input type="file" accept="image/*" style="display:none;" onchange="previewImage(this)"></label>
+                <img class="preview-img" src="" alt="preview">
+            </div>
+        </div>
 
-            # 🌟 4.2 ตกแต่งแถวหัวตาราง (แถวที่ 5)
-            ws.row_dimensions[5].height = 28  # ปรับให้หัวตารางสูงขึ้น ไม่เบียดกัน
-            for cell in ws[5]:
-                cell.font = font_header
-                cell.fill = fill_header
-                cell.alignment = Alignment(
-                    horizontal="center", vertical="center", wrap_text=True
-                )
+        <div class="card" data-id="2">
+            <div class="check-point">ความถูกต้องของสัญลักษณ์อีแปะ</div>
+            <div class="check-method">วิธีการตรวจ: ดูแผ่นอีแปะขณะกรอที่โต๊ะกรอ</div>
+            <div class="action-row">
+                <button type="button" class="btn-status btn-pass" onclick="setStatus(this, 'P')"><i class="fa-solid fa-circle-check"></i> ผ่าน (P)</button>
+                <button type="button" class="btn-status btn-fail" onclick="setStatus(this, 'F')"><i class="fa-solid fa-circle-xmark"></i> ไม่ผ่าน (F)</button>
+            </div>
+            <input type="text" class="note-input" placeholder="ระ集中หมายเหตุ (ถ้ามี)">
+            <div class="photo-upload">
+                <label class="file-label"><i class="fa-solid fa-camera"></i> ถ่ายรูป/แนบไฟล์<input type="file" accept="image/*" style="display:none;" onchange="previewImage(this)"></label>
+                <img class="preview-img" src="" alt="preview">
+            </div>
+        </div>
 
-            # 🌟 4.3 ตกแต่งข้อมูลในเซลล์ตาราง (แถวที่ 6 เป็นต้นไป)
-            for row_idx, row in enumerate(
-                ws.iter_rows(
-                    min_row=6,
-                    max_row=ws.max_row,
-                    min_col=1,
-                    max_col=ws.max_column,
-                ),
-                start=6,
-            ):
-                ws.row_dimensions[row_idx].height = 20  # ปรับความสูงแถวข้อมูล
-
-                for cell in row:
-                    cell.font = font_data
-                    cell.border = grid_border
-
-                    # สลับสีแถวเว้นแถว (Zebra Striping) เพื่อให้อ่านข้อมูลสิบล้านแถวได้ง่ายขึ้น
-                    if row_idx % 2 == 0:
-                        cell.fill = fill_zebra
-
-                    # จัดการรูปแบบตัวเลข (Number Formatting)
-                    val = cell.value
-                    if isinstance(val, (int, float)):
-                        header_name = str(ws.cell(row=5, column=cell.column).value)
-                        if "จำนวนครั้ง" in header_name or "ปี" in header_name:
-                            cell.number_format = (
-                                "#,##0"  # จำนวนครั้งไม่มีทศนิยม
-                            )
-                            cell.alignment = Alignment(horizontal="center")
-                        else:
-                            cell.number_format = (
-                                "#,##0.00"  # ยอดเงินมีทศนิยม 2 ตำแหน่ง
-                            )
-                            cell.alignment = Alignment(horizontal="right")
-                    else:
-                        # ข้อความธรรมดาหรือวันที่ ให้จัดวางไว้ตรงกลาง
-                        cell.alignment = Alignment(horizontal="center")
-
-            # 🌟 4.4 ปรับขนาดความกว้างของคอลัมน์อัตโนมัติ (Auto-fit Columns)
-            for col in ws.columns:
-                max_len = 0
-                col_letter = get_column_letter(col[0].column)
-                for cell in col:
-                    # คำนวณความกว้างโดยไม่นับรวมแถวหัวข้อใหญ่ในแถวที่ 2 และ 3
-                    if cell.row in [2, 3]:
-                        continue
-                    if cell.value:
-                        max_len = max(max_len, len(str(cell.value)))
-                # กำหนดความกว้างคอลัมน์ + เผื่อพื้นที่ระยะห่างไว้เล็กน้อย
-                ws.column_dimensions[col_letter].width = max(max_len + 4, 15)
-
-    print(f"🥇 [ความสำเร็จ] โปรแกรมทำงานเสร็จสิ้น ผลลัพธ์ถูกบันทึกที่: {OUTPUT_FILE}")
-
-
-if __name__ == "__main__":
-    run_financial_analysis()
+        <div class="card" data-id="3">
+            <div class="check-point">ดูสลับสติ๊กเกอร์อีแปะตรงกับสติ๊กหลอดใยไหม</div>
+            <div class="check-method">วิธีการตรวจเช็ค: ตรวจสอบความถูกต้องของการติดสติ๊กเกอร์เปรียบเทียบทั้งสองจุด</div>
+            <div class="action-row">
+                <button type="button" class="btn-status btn-pass" onclick="setStatus(this, 'P')"><i class="fa-solid fa-circle-check"></i> ผ่าน (P)</button>
+                <button type="button" class="btn-status btn-fail" onclick="setStatus(this, 'F')"><i class="fa-solid fa-circle-xmark"></i> ไม่ผ่าน (F)</button>
+            </div>
+            <input type="text" class="note-input" placeholder="ระบุหมายเหตุ (ถ้ามี)">
+            <div class="photo-upload">
+                <label class="file-label"><i class="fa-solid fa-camera"></i> ถ่ายรูป/แนบไฟล์<input type="file" accept="image/*"
