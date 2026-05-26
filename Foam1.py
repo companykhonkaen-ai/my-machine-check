@@ -1,0 +1,299 @@
+import os
+import pandas as pd
+from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
+from openpyxl.utils import get_column_letter
+
+# ==========================================
+# 1. CONFIGURATION (ส่วนตั้งค่าระบบ)
+# ==========================================
+# ใส่ชื่อไฟล์ข้อมูลดิบของคุณที่นี่ (รองรับทั้ง .xlsx และ .csv)
+INPUT_FILE = "bank_statement_10_years.xlsx"
+OUTPUT_FILE = "รายงาน_ตรวจสอบเส้นเงิน_สรุปภาพรวม.xlsx"
+
+# ตรวจสอบชื่อคอลัมน์ในไฟล์จริงของคุณ แล้วแก้ไขให้ตรงกับ 3 ตัวแปรนี้:
+COL_DATE = "Date"  # คอลัมน์ วันที่
+COL_DEPOSIT = "Deposit"  # คอลัมน์ ยอดเงินฝาก/เข้า
+COL_WITHDRAW = "Withdrawal"  # คอลัมน์ ยอดเงินถอน/ออก
+
+
+def run_financial_analysis():
+    # ==========================================
+    # 2. DATA LOADING & CLEANING (โหลดและคลีนข้อมูล)
+    # ==========================================
+    if not os.path.exists(INPUT_FILE):
+        print(
+            f"❌ ไม่พบไฟล์ '{INPUT_FILE}' กรุณาตรวจสอบว่าชื่อไฟล์ถูกต้องและอยู่ในโฟลเดอร์เดียวกันหรือไม่"
+        )
+        return
+
+    print("🔄 ขั้นตอนที่ 1: กำลังโหลดข้อมูลเข้าสู่ระบบ...")
+    # รองรับการโหลดทั้ง Excel และ CSV
+    if INPUT_FILE.endswith(".csv"):
+        df = pd.read_csv(INPUT_FILE)
+    else:
+        df = pd.read_excel(INPUT_FILE)
+
+    print(f"📊 โหลดข้อมูลสำเร็จ ตรวจพบข้อมูลดิบทั้งหมด {len(df):,} แถว")
+
+    print("🧹 ขั้นตอนที่ 2: กำลังทำความสะอาดข้อมูล (Data Cleaning)...")
+
+    # แปลงคอลัมน์วันที่: errors='coerce' จะเปลี่ยนวันที่ที่ผิดฟอร์แมตให้เป็น NaT (ว่าง) เพื่อไม่ให้โปรแกรมพัง
+    df[COL_DATE] = pd.to_datetime(df[COL_DATE], errors="coerce")
+
+    # ลบแถวที่ไม่มีข้อมูลวันที่ทิ้งไป
+    initial_count = len(df)
+    df = df.dropna(subset=[COL_DATE])
+    dropped_rows = initial_count - len(df)
+    if dropped_rows > 0:
+        print(
+            f"⚠️ หมายเหตุ: ตรวจพบและตัดแถวที่ไม่มีวันที่สมบูรณ์ออกจำนวน {dropped_rows:,} แถว"
+        )
+
+    # เรียงลำดับข้อมูลตามวันที่จากเก่าที่สุดไปใหม่ที่สุด (สำคัญมากสำหรับการคำนวณยอดสะสม)
+    df = df.sort_values(by=COL_DATE).reset_index(drop=True)
+
+    # แปลงคอลัมน์เงินให้เป็นตัวเลข: ถ้ามีตัวอักษรปนมาจะเปลี่ยนเป็น 0 แทนการแจ้ง Error
+    df[COL_DEPOSIT] = (
+        pd.to_numeric(df[COL_DEPOSIT], errors="coerce").fillna(0).astype(float)
+    )
+    df[COL_WITHDRAW] = (
+        pd.to_numeric(df[COL_WITHDRAW], errors="coerce").fillna(0).astype(float)
+    )
+
+    # สร้างคอลัมน์จำแนกกลุ่มเวลา
+    df["Year"] = df[COL_DATE].dt.year
+    df["Year_Month"] = df[COL_DATE].dt.to_period("M")
+
+    # สร้างสถานะการทำรายการเพื่อใช้นับจำนวนครั้ง
+    df["is_deposit"] = df[COL_DEPOSIT] > 0
+    df["is_withdraw"] = df[COL_WITHDRAW] > 0
+
+    # ==========================================
+    # 3. STATISTICAL PROCESSING (ประมวลผลสถิติเชิงลึก)
+    # ==========================================
+    print("🧮 ขั้นตอนที่ 3: กำลังประมวลผลสถิติและเส้นทางการเงิน...")
+
+    # --- ส่วนที่ 3.1: คำนวณยอดรวมรายวันเพื่อค้นหาวันที่ทำรายการสูงสุด ---
+    daily_sums = (
+        df.groupby([df[COL_DATE].dt.to_period("M"), COL_DATE])[
+            [COL_DEPOSIT, COL_WITHDRAW]
+        ]
+        .sum()
+        .reset_index()
+    )
+
+    # หาวันที่ฝากเงินมากที่สุดในแต่ละเดือน
+    idx_max_dep = daily_sums.groupby(COL_DATE)[COL_DEPOSIT].idxmax()
+    max_dep_per_month = daily_sums.loc[
+        idx_max_dep, [COL_DATE, COL_DATE, COL_DEPOSIT]
+    ]
+    max_dep_per_month.columns = [
+        "Year_Month",
+        "วันที่ฝากมากที่สุด",
+        "ยอดฝากมากที่สุดในวันนั้น",
+    ]
+
+    # หาวันที่ถอนเงินมากที่สุดในแต่ละเดือน
+    idx_max_wth = daily_sums.groupby(COL_DATE)[COL_WITHDRAW].idxmax()
+    max_wth_per_month = daily_sums.loc[
+        idx_max_wth, [COL_DATE, COL_DATE, COL_WITHDRAW]
+    ]
+    max_wth_per_month.columns = [
+        "Year_Month",
+        "วันที่ถอนมากที่สุด",
+        "ยอดถอนมากที่สุดในวันนั้น",
+    ]
+
+    # --- ส่วนที่ 3.2: จัดทำตารางสรุปรายเดือน ---
+    monthly_summary = df.groupby("Year_Month").agg(
+        ยอดฝากรวม=("Deposit", "sum"),
+        ยอดถอนรวม=("Withdrawal", "sum"),
+        จำนวนครั้งที่ฝาก=("is_deposit", "sum"),
+        จำนวนครั้งที่ถอน=("is_withdraw", "sum"),
+    )
+
+    # คำนวณยอดกระแสเงินสดสุทธิ และ ยอดคงเหลือสะสมยกไปสะสมไปเรื่อยๆ 10 ปี
+    monthly_summary["ผลต่างฝากถอนเดือนนี้"] = (
+        monthly_summary["ยอดฝากรวม"] - monthly_summary["ยอดถอนรวม"]
+    )
+    monthly_summary["ยอดคงเหลือสะสมสุทธิ"] = monthly_summary[
+        "ผลต่างฝากถอนเดือนนี้"
+    ].cumsum()
+
+    # ยุบรวมข้อมูลวันที่พีคที่สุดเข้าตารางสรุปรายเดือน
+    monthly_final = monthly_summary.reset_index()
+    monthly_final = pd.merge(
+        monthly_final, max_dep_per_month, on="Year_Month", how="left"
+    )
+    monthly_final = pd.merge(
+        monthly_final, max_wth_per_month, on="Year_Month", how="left"
+    )
+
+    # แปลงฟอร์แมตการแสดงผลเวลาให้สวยงามใน Excel
+    monthly_final["วันที่ฝากมากที่สุด"] = monthly_final[
+        "วันที่ฝากมากที่สุด"
+    ].dt.strftime("%Y-%m-%d")
+    monthly_final["วันที่ถอนมากที่สุด"] = monthly_final[
+        "วันที่ถอนมากที่สุด"
+    ].dt.strftime("%Y-%m-%d")
+    monthly_final["Year_Month"] = monthly_final["Year_Month"].astype(str)
+
+    # เปลี่ยนชื่อคอลัมน์ให้เป็นภาษาไทยที่อ่านง่ายชัดเจน
+    monthly_final.columns = [
+        "ปี-เดือน",
+        "ยอดฝากรวม (บาท)",
+        "ยอดถอนรวม (บาท)",
+        "จำนวนครั้งที่ฝาก (ครั้ง)",
+        "จำนวนครั้งที่ถอน (ครั้ง)",
+        "กระแสเงินสดสุทธิเดือนนี้",
+        "ยอดเงินคงเหลือสะสมสิ้นเดือน",
+        "วันที่ฝากมากที่สุด",
+        "ยอดฝากสูงสุดในวันนั้น",
+        "วันที่ถอนมากที่สุด",
+        "ยอดถอนสูงสุดในวันนั้น",
+    ]
+
+    # --- ส่วนที่ 3.3: จัดทำตารางสรุปรายปี ---
+    yearly_final = df.groupby("Year").agg(
+        ยอดฝากรวมทั้งปี=(COL_DEPOSIT, "sum"),
+        ยอดถอนรวมทั้งปี=(COL_WITHDRAW, "sum"),
+        จำนวนครั้งที่ฝากทั้งปี=("is_deposit", "sum"),
+        จำนวนครั้งที่ถอนทั้งปี=("is_withdraw", "sum"),
+    )
+    yearly_final["ผลต่างสุทธิรายปี"] = (
+        yearly_final["ยอดฝากรวมทั้งปี"] - yearly_final["ยอดถอนรวมทั้งปี"]
+    )
+    yearly_final["ยอดคงเหลือสะสมสิ้นปี"] = yearly_final[
+        "ผลต่างสุทธิรายปี"
+    ].cumsum()
+    yearly_final = yearly_final.reset_index()
+    yearly_final.columns = [
+        "ปี (Year)",
+        "ยอดฝากรวมทั้งปี",
+        "ยอดถอนรวมทั้งปี",
+        "จำนวนครั้งที่ฝากทั้งปี",
+        "จำนวนครั้งที่ถอนทั้งปี",
+        "กระแสเงินสดสุทธิรายปี",
+        "ยอดเงินคงเหลือสะสมสิ้นปี",
+    ]
+
+    # ==========================================
+    # 4. EXCEL EXPORT & FORMATTING (ส่งออกและตกแต่งตาราง)
+    # ==========================================
+    print("🎨 ขั้นตอนที่ 4: กำลังเขียนไฟล์ Excel และจัดฟอร์แมตรายงาน...")
+
+    with pd.ExcelWriter(OUTPUT_FILE, engine="openpyxl") as writer:
+        # เขียนข้อมูลลงชีตโดยเว้นแถวด้านบนไว้ 4 แถวเพื่อใส่หัวข้อใหญ่
+        monthly_final.to_excel(
+            writer, sheet_name="สรุปรายเดือนย้อนหลัง", index=False, startrow=4
+        )
+        yearly_final.to_excel(
+            writer, sheet_name="สรุปภาพรวมรายปี", index=False, startrow=4
+        )
+
+        workbook = writer.book
+
+        # กำหนดสไตล์ฟอนต์ สี และเส้นตาราง
+        font_main_title = Font(
+            name="Cordia New", size=22, bold=True, color="1B365D"
+        )
+        font_sub_title = Font(
+            name="Cordia New", size=14, italic=True, color="555555"
+        )
+        font_header = Font(
+            name="Cordia New", size=14, bold=True, color="FFFFFF"
+        )
+        font_data = Font(name="Cordia New", size=13)
+
+        fill_header = PatternFill(
+            start_color="1B365D", end_color="1B365D", fill_type="solid"
+        )  # สีน้ำเงินเข้มหรูหรา
+        fill_zebra = PatternFill(
+            start_color="F9FAFB", end_color="F9FAFB", fill_type="solid"
+        )  # สีพื้นหลังสลับแถวกันลายตา
+
+        grid_border = Border(
+            left=Side(style="thin", color="E5E7EB"),
+            right=Side(style="thin", color="E5E7EB"),
+            top=Side(style="thin", color="E5E7EB"),
+            bottom=Side(style="thin", color="E5E7EB"),
+        )
+
+        # ทำการวนลูปเพื่อตกแต่งทีละ Sheet
+        for sheet_name in workbook.sheetnames:
+            ws = workbook[sheet_name]
+
+            # 🌟 4.1 ใส่หัวข้อใหญ่ประจำโปรแกรม (Main Header)
+            ws["A2"] = "📊 โปรแกรม ตรวจสอบเส้นเงิน ย้อนหลัง 10 ปี"
+            ws["A2"].font = font_main_title
+
+            ws["A3"] = (
+                f"รายงานประเภท: {sheet_name} | จัดทำข้อมูลอัตโนมัติด้วยระบบวิเคราะห์ข้อมูล Python"
+            )
+            ws["A3"].font = font_sub_title
+
+            # 🌟 4.2 ตกแต่งแถวหัวตาราง (แถวที่ 5)
+            ws.row_dimensions[5].height = 28  # ปรับให้หัวตารางสูงขึ้น ไม่เบียดกัน
+            for cell in ws[5]:
+                cell.font = font_header
+                cell.fill = fill_header
+                cell.alignment = Alignment(
+                    horizontal="center", vertical="center", wrap_text=True
+                )
+
+            # 🌟 4.3 ตกแต่งข้อมูลในเซลล์ตาราง (แถวที่ 6 เป็นต้นไป)
+            for row_idx, row in enumerate(
+                ws.iter_rows(
+                    min_row=6,
+                    max_row=ws.max_row,
+                    min_col=1,
+                    max_col=ws.max_column,
+                ),
+                start=6,
+            ):
+                ws.row_dimensions[row_idx].height = 20  # ปรับความสูงแถวข้อมูล
+
+                for cell in row:
+                    cell.font = font_data
+                    cell.border = grid_border
+
+                    # สลับสีแถวเว้นแถว (Zebra Striping) เพื่อให้อ่านข้อมูลสิบล้านแถวได้ง่ายขึ้น
+                    if row_idx % 2 == 0:
+                        cell.fill = fill_zebra
+
+                    # จัดการรูปแบบตัวเลข (Number Formatting)
+                    val = cell.value
+                    if isinstance(val, (int, float)):
+                        header_name = str(ws.cell(row=5, column=cell.column).value)
+                        if "จำนวนครั้ง" in header_name or "ปี" in header_name:
+                            cell.number_format = (
+                                "#,##0"  # จำนวนครั้งไม่มีทศนิยม
+                            )
+                            cell.alignment = Alignment(horizontal="center")
+                        else:
+                            cell.number_format = (
+                                "#,##0.00"  # ยอดเงินมีทศนิยม 2 ตำแหน่ง
+                            )
+                            cell.alignment = Alignment(horizontal="right")
+                    else:
+                        # ข้อความธรรมดาหรือวันที่ ให้จัดวางไว้ตรงกลาง
+                        cell.alignment = Alignment(horizontal="center")
+
+            # 🌟 4.4 ปรับขนาดความกว้างของคอลัมน์อัตโนมัติ (Auto-fit Columns)
+            for col in ws.columns:
+                max_len = 0
+                col_letter = get_column_letter(col[0].column)
+                for cell in col:
+                    # คำนวณความกว้างโดยไม่นับรวมแถวหัวข้อใหญ่ในแถวที่ 2 และ 3
+                    if cell.row in [2, 3]:
+                        continue
+                    if cell.value:
+                        max_len = max(max_len, len(str(cell.value)))
+                # กำหนดความกว้างคอลัมน์ + เผื่อพื้นที่ระยะห่างไว้เล็กน้อย
+                ws.column_dimensions[col_letter].width = max(max_len + 4, 15)
+
+    print(f"🥇 [ความสำเร็จ] โปรแกรมทำงานเสร็จสิ้น ผลลัพธ์ถูกบันทึกที่: {OUTPUT_FILE}")
+
+
+if __name__ == "__main__":
+    run_financial_analysis()
