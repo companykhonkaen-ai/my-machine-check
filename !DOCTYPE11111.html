@@ -17,236 +17,33 @@
             --bg-color: #f4f6f9;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Sarabun', sans-serif;
-        }
-
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            padding: 15px;
-        }
-
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            background: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-            padding: 20px;
-            padding-bottom: 120px; /* เว้นที่ให้แถบคะแนนด้านล่าง */
-        }
-
-        .header {
-            text-align: center;
-            border-bottom: 3px solid var(--primary-color);
-            padding-bottom: 15px;
-            margin-bottom: 20px;
-        }
-
-        .header h1 {
-            font-size: 1.4rem;
-            color: var(--primary-color);
-            font-weight: 700;
-        }
-
-        .header p {
-            font-size: 0.95rem;
-            color: #666;
-            margin-top: 5px;
-        }
-
-        .meta-group {
-            background: #fafafa;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 20px;
-        }
-
-        .form-control {
-            margin-bottom: 12px;
-        }
-
-        .form-control:last-child {
-            margin-bottom: 0;
-        }
-
-        .form-control label {
-            display: block;
-            font-size: 0.9rem;
-            font-weight: 600;
-            margin-bottom: 5px;
-        }
-
-        .form-control input[type="text"], 
-        .form-control input[type="datetime-local"] {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            font-size: 0.95rem;
-        }
-
-        .section-title {
-            background: var(--primary-color);
-            color: #fff;
-            padding: 10px 15px;
-            border-radius: 6px;
-            font-size: 1.05rem;
-            font-weight: 600;
-            margin-top: 25px;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .card {
-            background: #fff;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 15px;
-            transition: all 0.3s;
-        }
-
-        .card:hover {
-            border-color: #b0bec5;
-        }
-
-        .check-point {
-            font-size: 0.95rem;
-            font-weight: 600;
-            color: #111;
-            margin-bottom: 4px;
-        }
-
-        .check-method {
-            font-size: 0.85rem;
-            color: #666;
-            margin-bottom: 12px;
-            background: #f8f9fa;
-            padding: 6px 10px;
-            border-left: 3px solid #b0bec5;
-            border-radius: 0 4px 4px 0;
-        }
-
-        .action-row {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-
-        .btn-status {
-            flex: 1;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            background: #fff;
-            font-weight: bold;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 5px;
-            font-size: 0.9rem;
-            transition: all 0.2s;
-        }
-
-        .btn-pass.active {
-            background-color: #e8f5e9;
-            border-color: var(--success-color);
-            color: var(--success-color);
-        }
-
-        .btn-fail.active {
-            background-color: #ffebee;
-            border-color: var(--fail-color);
-            color: var(--fail-color);
-        }
-
-        .note-input {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #e0e0e0;
-            border-radius: 6px;
-            font-size: 0.85rem;
-            margin-top: 10px;
-        }
-
-        .photo-upload {
-            margin-top: 10px;
-        }
-
-        .file-label {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            background: #eceff1;
-            padding: 6px 12px;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            cursor: pointer;
-            border: 1px solid #cfd8dc;
-        }
-
-        /* ส่วนแสดงรูปตัวอย่างที่เลือก */
-        .preview-img {
-            max-width: 100px;
-            max-height: 100px;
-            margin-top: 8px;
-            display: none;
-            border-radius: 4px;
-            border: 1px solid #ccc;
-        }
-
-        /* แถบสรุปคะแนนฟิกซ์ไว้ด้านล่างหน้าจอ */
-        .score-bar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: #fff;
-            box-shadow: 0 -4px 15px rgba(0,0,0,0.15);
-            padding: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            max-width: 600px;
-            margin: 0 auto;
-            border-radius: 12px 12px 0 0;
-            z-index: 1000;
-        }
-
-        .score-info h3 {
-            font-size: 1.1rem;
-            color: var(--primary-color);
-        }
-
-        .score-info p {
-            font-size: 0.85rem;
-            color: #555;
-        }
-
-        .btn-submit {
-            background: var(--primary-color);
-            color: #fff;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        }
-
-        .btn-submit:hover {
-            background: #153654;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Sarabun', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-color); padding: 15px; }
+        .container { max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); padding: 20px; padding-bottom: 120px; }
+        .header { text-align: center; border-bottom: 3px solid var(--primary-color); padding-bottom: 15px; margin-bottom: 20px; }
+        .header h1 { font-size: 1.4rem; color: var(--primary-color); font-weight: 700; }
+        .header p { font-size: 0.95rem; color: #666; margin-top: 5px; }
+        .meta-group { background: #fafafa; border: 1px solid #e0e0e0; border-radius: 8px; padding: 15px; margin-bottom: 20px; }
+        .form-control { margin-bottom: 12px; }
+        .form-control label { display: block; font-size: 0.9rem; font-weight: 600; margin-bottom: 5px; }
+        .form-control input[type="text"], .form-control input[type="datetime-local"] { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 0.95rem; }
+        .section-title { background: var(--primary-color); color: #fff; padding: 10px 15px; border-radius: 6px; font-size: 1.05rem; font-weight: 600; margin-top: 25px; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
+        .card { background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 15px; margin-bottom: 15px; }
+        .check-point { font-size: 0.95rem; font-weight: 600; color: #111; margin-bottom: 4px; }
+        .check-method { font-size: 0.85rem; color: #666; margin-bottom: 12px; background: #f8f9fa; padding: 6px 10px; border-left: 3px solid #b0bec5; border-radius: 0 4px 4px 0; }
+        .action-row { display: flex; gap: 10px; align-items: center; }
+        .btn-status { flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 6px; background: #fff; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; font-size: 0.9rem; }
+        .btn-pass.active { background-color: #e8f5e9; border-color: var(--success-color); color: var(--success-color); }
+        .btn-fail.active { background-color: #ffebee; border-color: var(--fail-color); color: var(--fail-color); }
+        .note-input { width: 100%; padding: 8px; border: 1px solid #e0e0e0; border-radius: 6px; font-size: 0.85rem; margin-top: 10px; }
+        .photo-upload { margin-top: 10px; }
+        .file-label { display: inline-flex; align-items: center; gap: 5px; background: #eceff1; padding: 6px 12px; border-radius: 4px; font-size: 0.8rem; cursor: pointer; border: 1px solid #cfd8dc; }
+        .preview-img { max-width: 100px; max-height: 100px; margin-top: 8px; display: none; border-radius: 4px; border: 1px solid #ccc; }
+        .score-bar { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; box-shadow: 0 -4px 15px rgba(0,0,0,0.15); padding: 15px; display: flex; justify-content: space-between; align-items: center; max-width: 600px; margin: 0 auto; border-radius: 12px 12px 0 0; z-index: 1000; }
+        .score-info h3 { font-size: 1.1rem; color: var(--primary-color); }
+        .score-info p { font-size: 0.85rem; color: #555; }
+        .btn-submit { background: var(--primary-color); color: #fff; border: none; padding: 12px 24px; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; }
+        .btn-submit:disabled { background: #999; cursor: not-allowed; }
     </style>
 </head>
 <body>
@@ -270,209 +67,97 @@
 
     <form id="auditForm">
         <div class="section-title"><i class="fa-solid fa-layer-group"></i> 1. ใยปน</div>
-        
         <div class="card" data-id="1">
             <div class="check-point">ความถูกต้องของเบอร์ใย</div>
             <div class="check-method">วิธีการตรวจ: ดูหลอดใยขนาดกรอที่โต๊ะกรอ</div>
-            <div class="action-row">
-                <button type="button" class="btn-status btn-pass" onclick="setStatus(this, 'P')"><i class="fa-solid fa-circle-check"></i> ผ่าน (P)</button>
-                <button type="button" class="btn-status btn-fail" onclick="setStatus(this, 'F')"><i class="fa-solid fa-circle-xmark"></i> ไม่ผ่าน (F)</button>
-            </div>
+            <div class="action-row"><button type="button" class="btn-status btn-pass" onclick="setStatus(this, 'P')">ผ่าน (P)</button><button type="button" class="btn-status btn-fail" onclick="setStatus(this, 'F')">ไม่ผ่าน (F)</button></div>
             <input type="text" class="note-input" placeholder="ระบุหมายเหตุ (ถ้ามี)">
-            <div class="photo-upload">
-                <label class="file-label"><i class="fa-solid fa-camera"></i> ถ่ายรูป/แนบไฟล์<input type="file" accept="image/*" style="display:none;" onchange="previewImage(this)"></label>
-                <img class="preview-img" src="" alt="preview">
-            </div>
         </div>
-
         <div class="card" data-id="2">
             <div class="check-point">ความถูกต้องของสัญลักษณ์อีแปะ</div>
             <div class="check-method">วิธีการตรวจ: ดูแผ่นอีแปะขณะกรอที่โต๊ะกรอ</div>
-            <div class="action-row">
-                <button type="button" class="btn-status btn-pass" onclick="setStatus(this, 'P')"><i class="fa-solid fa-circle-check"></i> ผ่าน (P)</button>
-                <button type="button" class="btn-status btn-fail" onclick="setStatus(this, 'F')"><i class="fa-solid fa-circle-xmark"></i> ไม่ผ่าน (F)</button>
-            </div>
-            <input type="text" class="note-input" placeholder="ระ集中หมายเหตุ (ถ้ามี)">
-            <div class="photo-upload">
-                <label class="file-label"><i class="fa-solid fa-camera"></i> ถ่ายรูป/แนบไฟล์<input type="file" accept="image/*" style="display:none;" onchange="previewImage(this)"></label>
-                <img class="preview-img" src="" alt="preview">
-            </div>
+            <div class="action-row"><button type="button" class="btn-status btn-pass" onclick="setStatus(this, 'P')">ผ่าน (P)</button><button type="button" class="btn-status btn-fail" onclick="setStatus(this, 'F')">ไม่ผ่าน (F)</button></div>
+            <input type="text" class="note-input" placeholder="ระบุหมายเหตุ (ถ้ามี)">
         </div>
-
         <div class="card" data-id="3">
             <div class="check-point">ดูสลับสติ๊กเกอร์อีแปะตรงกับสติ๊กหลอดใยไหม</div>
             <div class="check-method">วิธีการตรวจเช็ค: ตรวจสอบความถูกต้องของการติดสติ๊กเกอร์เปรียบเทียบทั้งสองจุด</div>
-            <div class="action-row">
-                <button type="button" class="btn-status btn-pass" onclick="setStatus(this, 'P')"><i class="fa-solid fa-circle-check"></i> ผ่าน (P)</button>
-                <button type="button" class="btn-status btn-fail" onclick="setStatus(this, 'F')"><i class="fa-solid fa-circle-xmark"></i> ไม่ผ่าน (F)</button>
-            </div>
+            <div class="action-row"><button type="button" class="btn-status btn-pass" onclick="setStatus(this, 'P')">ผ่าน (P)</button><button type="button" class="btn-status btn-fail" onclick="setStatus(this, 'F')">ไม่ผ่าน (F)</button></div>
             <input type="text" class="note-input" placeholder="ระบุหมายเหตุ (ถ้ามี)">
-            <div class="photo-upload">
-                <label class="file-label"><i class="fa-solid fa-camera"></i> ถ่ายรูป/แนบไฟล์<input type="file" accept="image/*" style="display:none;" onchange="previewImage(this)"></label>
-                <img class="preview-img" src="" alt="preview">
-            </div>
         </div>
-
         <div class="card" data-id="4">
             <div class="check-point">ป้ายที่ติดเขียนรายละเอียดครบไหม</div>
             <div class="check-method">วิธีการเช็ค: ตรวจสอบข้อมูลบนป้ายชี้บ่งสถานะรอบโต๊ะกรอให้ครบถ้วนตาม WI</div>
-            <div class="action-row">
-                <button type="button" class="btn-status btn-pass" onclick="setStatus(this, 'P')"><i class="fa-solid fa-circle-check"></i> ผ่าน (P)</button>
-                <button type="button" class="btn-status btn-fail" onclick="setStatus(this, 'F')"><i class="fa-solid fa-circle-xmark"></i> ไม่ผ่าน (F)</button>
-            </div>
+            <div class="action-row"><button type="button" class="btn-status btn-pass" onclick="setStatus(this, 'P')">ผ่าน (P)</button><button type="button" class="btn-status btn-fail" onclick="setStatus(this, 'F')">ไม่ผ่าน (F)</button></div>
             <input type="text" class="note-input" placeholder="ระบุหมายเหตุ (ถ้ามี)">
-            <div class="photo-upload">
-                <label class="file-label"><i class="fa-solid fa-camera"></i> ถ่ายรูป/แนบไฟล์<input type="file" accept="image/*" style="display:none;" onchange="previewImage(this)"></label>
-                <img class="preview-img" src="" alt="preview">
-            </div>
         </div>
-
         <div class="card" data-id="5">
             <div class="check-point">มาตรฐานเปลี่ยนใยกรอ</div>
             <div class="check-method">วิธีการตรวจ: ใบบันทึก (WI การเปลี่ยนใยโต๊ะกรอ) ป้ายที่ติดระบุ</div>
-            <div class="action-row">
-                <button type="button" class="btn-status btn-pass" onclick="setStatus(this, 'P')"><i class="fa-solid fa-circle-check"></i> ผ่าน (P)</button>
-                <button type="button" class="btn-status btn-fail" onclick="setStatus(this, 'F')"><i class="fa-solid fa-circle-xmark"></i> ไม่ผ่าน (F)</button>
-            </div>
+            <div class="action-row"><button type="button" class="btn-status btn-pass" onclick="setStatus(this, 'P')">ผ่าน (P)</button><button type="button" class="btn-status btn-fail" onclick="setStatus(this, 'F')">ไม่ผ่าน (F)</button></div>
             <input type="text" class="note-input" placeholder="ระบุหมายเหตุ (ถ้ามี)">
-            <div class="photo-upload">
-                <label class="file-label"><i class="fa-solid fa-camera"></i> ถ่ายรูป/แนบไฟล์<input type="file" accept="image/*" style="display:none;" onchange="previewImage(this)"></label>
-                <img class="preview-img" src="" alt="preview">
-            </div>
         </div>
-
         <div class="card" data-id="6">
             <div class="check-point">พื้นที่จัดวางเป็นไปตามมาตรฐานโต๊ะกรอ</div>
             <div class="check-method">วิธีการตรวจเช็ค: อ้างอิงมาตรฐานพื้นที่โต๊ะกรอ</div>
-            <div class="action-row">
-                <button type="button" class="btn-status btn-pass" onclick="setStatus(this, 'P')"><i class="fa-solid fa-circle-check"></i> ผ่าน (P)</button>
-                <button type="button" class="btn-status btn-fail" onclick="setStatus(this, 'F')"><i class="fa-solid fa-circle-xmark"></i> ไม่ผ่าน (F)</button>
-            </div>
+            <div class="action-row"><button type="button" class="btn-status btn-pass" onclick="setStatus(this, 'P')">ผ่าน (P)</button><button type="button" class="btn-status btn-fail" onclick="setStatus(this, 'F')">ไม่ผ่าน (F)</button></div>
             <input type="text" class="note-input" placeholder="ระบุหมายเหตุ (ถ้ามี)">
-            <div class="photo-upload">
-                <label class="file-label"><i class="fa-solid fa-camera"></i> ถ่ายรูป/แนบไฟล์<input type="file" accept="image/*" style="display:none;" onchange="previewImage(this)"></label>
-                <img class="preview-img" src="" alt="preview">
-            </div>
         </div>
 
         <div class="section-title"><i class="fa-solid fa-circle-dot"></i> 2. รูปลักษณะของอีแปะ</div>
-
         <div class="card" data-id="7">
             <div class="check-point">อีแปะบิดเบี้ยว</div>
             <div class="check-method">วิธีการเช็ค: สุ่มตรวจโครงสร้างรูปร่างของแผ่นอีแปะระหว่างและหลังกรอ</div>
-            <div class="action-row">
-                <button type="button" class="btn-status btn-pass" onclick="setStatus(this, 'P')"><i class="fa-solid fa-circle-check"></i> ผ่าน (P)</button>
-                <button type="button" class="btn-status btn-fail" onclick="setStatus(this, 'F')"><i class="fa-solid fa-circle-xmark"></i> ไม่ผ่าน (F)</button>
-            </div>
+            <div class="action-row"><button type="button" class="btn-status btn-pass" onclick="setStatus(this, 'P')">ผ่าน (P)</button><button type="button" class="btn-status btn-fail" onclick="setStatus(this, 'F')">ไม่ผ่าน (F)</button></div>
             <input type="text" class="note-input" placeholder="ระบุหมายเหตุ (ถ้ามี)">
-            <div class="photo-upload">
-                <label class="file-label"><i class="fa-solid fa-camera"></i> ถ่ายรูป/แนบไฟล์<input type="file" accept="image/*" style="display:none;" onchange="previewImage(this)"></label>
-                <img class="preview-img" src="" alt="preview">
-            </div>
         </div>
-
         <div class="card" data-id="8">
             <div class="check-point">ปิ่นบุบ</div>
             <div class="check-method">วิธีการเช็ค: ตรวจสอบบริเวณขอบและผิวหน้าของอีแปะว่ามีรอยบิ่นหรือบุบชำรุดหรือไม่</div>
-            <div class="action-row">
-                <button type="button" class="btn-status btn-pass" onclick="setStatus(this, 'P')"><i class="fa-solid fa-circle-check"></i> ผ่าน (P)</button>
-                <button type="button" class="btn-status btn-fail" onclick="setStatus(this, 'F')"><i class="fa-solid fa-circle-xmark"></i> ไม่ผ่าน (F)</button>
-            </div>
+            <div class="action-row"><button type="button" class="btn-status btn-pass" onclick="setStatus(this, 'P')">ผ่าน (P)</button><button type="button" class="btn-status btn-fail" onclick="setStatus(this, 'F')">ไม่ผ่าน (F)</button></div>
             <input type="text" class="note-input" placeholder="ระบุหมายเหตุ (ถ้ามี)">
-            <div class="photo-upload">
-                <label class="file-label"><i class="fa-solid fa-camera"></i> ถ่ายรูป/แนบไฟล์<input type="file" accept="image/*" style="display:none;" onchange="previewImage(this)"></label>
-                <img class="preview-img" src="" alt="preview">
-            </div>
         </div>
 
         <div class="section-title"><i class="fa-solid fa-box-open"></i> 3. กรอไม่เต็ม</div>
-
         <div class="card" data-id="9">
             <div class="check-point">ตรวจการตั้งระยะเซ็นเซอร์ตัดเต็มตรงตามมาตรฐานหัวกรอ</div>
             <div class="check-method">วิธีการตรวจ: ตรวจระยะมาตรฐานเทียบกับการตั้งจริงทุกหัวกรอ</div>
-            <div class="action-row">
-                <button type="button" class="btn-status btn-pass" onclick="setStatus(this, 'P')"><i class="fa-solid fa-circle-check"></i> ผ่าน (P)</button>
-                <button type="button" class="btn-status btn-fail" onclick="setStatus(this, 'F')"><i class="fa-solid fa-circle-xmark"></i> ไม่ผ่าน (F)</button>
-            </div>
+            <div class="action-row"><button type="button" class="btn-status btn-pass" onclick="setStatus(this, 'P')">ผ่าน (P)</button><button type="button" class="btn-status btn-fail" onclick="setStatus(this, 'F')">ไม่ผ่าน (F)</button></div>
             <input type="text" class="note-input" placeholder="ระบุหมายเหตุ (ถ้ามี)">
-            <div class="photo-upload">
-                <label class="file-label"><i class="fa-solid fa-camera"></i> ถ่ายรูป/แนบไฟล์<input type="file" accept="image/*" style="display:none;" onchange="previewImage(this)"></label>
-                <img class="preview-img" src="" alt="preview">
-            </div>
         </div>
-
         <div class="card" data-id="10">
             <div class="check-point">ตรวจแผ่นอีแปะที่กรอเต็ม</div>
             <div class="check-method">วิธีการตรวจ: ดูแผ่นอีแปะที่กรอเสร็จแล้วเทียบแผ่นตัวอย่าง</div>
-            <div class="action-row">
-                <button type="button" class="btn-status btn-pass" onclick="setStatus(this, 'P')"><i class="fa-solid fa-circle-check"></i> ผ่าน (P)</button>
-                <button type="button" class="btn-status btn-fail" onclick="setStatus(this, 'F')"><i class="fa-solid fa-circle-xmark"></i> ไม่ผ่าน (F)</button>
-            </div>
+            <div class="action-row"><button type="button" class="btn-status btn-pass" onclick="setStatus(this, 'P')">ผ่าน (P)</button><button type="button" class="btn-status btn-fail" onclick="setStatus(this, 'F')">ไม่ผ่าน (F)</button></div>
             <input type="text" class="note-input" placeholder="ระบุหมายเหตุ (ถ้ามี)">
-            <div class="photo-upload">
-                <label class="file-label"><i class="fa-solid fa-camera"></i> ถ่ายรูป/แนบไฟล์<input type="file" accept="image/*" style="display:none;" onchange="previewImage(this)"></label>
-                <img class="preview-img" src="" alt="preview">
-            </div>
         </div>
 
         <div class="section-title"><i class="fa-solid fa-scissors"></i> 4. อีแปะฟู / อีแปะอ้า</div>
-
         <div class="card" data-id="11">
             <div class="check-point">ตรวจรอบหัวกรอเทียบมาตรฐาน</div>
-            <div class="check-method">วิธีการตรวจ: ดูรอบ Inverter เทียบเป้าหมาย, กรณีโต๊ะแบบสายพานให้ดูรอบเทียบผลการตรวจวันช่ากรอ</div>
-            <div class="action-row">
-                <button type="button" class="btn-status btn-pass" onclick="setStatus(this, 'P')"><i class="fa-solid fa-circle-check"></i> ผ่าน (P)</button>
-                <button type="button" class="btn-status btn-fail" onclick="setStatus(this, 'F')"><i class="fa-solid fa-circle-xmark"></i> ไม่ผ่าน (F)</button>
-            </div>
+            <div class="check-method">วิธีการตรวจ: ดูรอบ Inverter เทียบเป้าหมาย</div>
+            <div class="action-row"><button type="button" class="btn-status btn-pass" onclick="setStatus(this, 'P')">ผ่าน (P)</button><button type="button" class="btn-status btn-fail" onclick="setStatus(this, 'F')">ไม่ผ่าน (F)</button></div>
             <input type="text" class="note-input" placeholder="ระบุหมายเหตุ (ถ้ามี)">
-            <div class="photo-upload">
-                <label class="file-label"><i class="fa-solid fa-camera"></i> ถ่ายรูป/แนบไฟล์<input type="file" accept="image/*" style="display:none;" onchange="previewImage(this)"></label>
-                <img class="preview-img" src="" alt="preview">
-            </div>
         </div>
-
         <div class="card" data-id="12">
             <div class="check-point">ตรวจการร้อยด้ายผ่านจุดผ่านด้าย</div>
             <div class="check-method">วิธีการตรวจ: ดูการร้อยด้ายเทียบมาตรฐาน</div>
-            <div class="action-row">
-                <button type="button" class="btn-status btn-pass" onclick="setStatus(this, 'P')"><i class="fa-solid fa-circle-check"></i> ผ่าน (P)</button>
-                <button type="button" class="btn-status btn-fail" onclick="setStatus(this, 'F')"><i class="fa-solid fa-circle-xmark"></i> ไม่ผ่าน (F)</button>
-            </div>
+            <div class="action-row"><button type="button" class="btn-status btn-pass" onclick="setStatus(this, 'P')">ผ่าน (P)</button><button type="button" class="btn-status btn-fail" onclick="setStatus(this, 'F')">ไม่ผ่าน (F)</button></div>
             <input type="text" class="note-input" placeholder="ระบุหมายเหตุ (ถ้ามี)">
-            <div class="photo-upload">
-                <label class="file-label"><i class="fa-solid fa-camera"></i> ถ่ายรูป/แนบไฟล์<input type="file" accept="image/*" style="display:none;" onchange="previewImage(this)"></label>
-                <img class="preview-img" src="" alt="preview">
-            </div>
         </div>
-
         <div class="card" data-id="13">
             <div class="check-point">ตรวจอีแปะตัดก่อนกรอ คัดอีแปะชำรุดอีแปะอ้า</div>
             <div class="check-method">วิธีการตรวจ: ตรวจเช็คอีแปะตัดบนโต๊ะกรอ</div>
-            <div class="action-row">
-                <button type="button" class="btn-status btn-pass" onclick="setStatus(this, 'P')"><i class="fa-solid fa-circle-check"></i> ผ่าน (P)</button>
-                <button type="button" class="btn-status btn-fail" onclick="setStatus(this, 'F')"><i class="fa-solid fa-circle-xmark"></i> ไม่ผ่าน (F)</button>
-            </div>
+            <div class="action-row"><button type="button" class="btn-status btn-pass" onclick="setStatus(this, 'P')">ผ่าน (P)</button><button type="button" class="btn-status btn-fail" onclick="setStatus(this, 'F')">ไม่ผ่าน (F)</button></div>
             <input type="text" class="note-input" placeholder="ระบุหมายเหตุ (ถ้ามี)">
-            <div class="photo-upload">
-                <label class="file-label"><i class="fa-solid fa-camera"></i> ถ่ายรูป/แนบไฟล์<input type="file" accept="image/*" style="display:none;" onchange="previewImage(this)"></label>
-                <img class="preview-img" src="" alt="preview">
-            </div>
         </div>
 
         <div class="section-title"><i class="fa-solid fa-link-slash"></i> 5. หลุดปม</div>
-
         <div class="card" data-id="14">
             <div class="check-point">ตรวจวิธีการต่อด้าย</div>
             <div class="check-method">วิธีการตรวจ: ตรวจวิธีการต่อด้ายตามมาตรฐาน ขณะกรออีแปะ</div>
-            <div class="action-row">
-                <button type="button" class="btn-status btn-pass" onclick="setStatus(this, 'P')"><i class="fa-solid fa-circle-check"></i> ผ่าน (P)</button>
-                <button type="button" class="btn-status btn-fail" onclick="setStatus(this, 'F')"><i class="fa-solid fa-circle-xmark"></i> ไม่ผ่าน (F)</button>
-            </div>
+            <div class="action-row"><button type="button" class="btn-status btn-pass" onclick="setStatus(this, 'P')">ผ่าน (P)</button><button type="button" class="btn-status btn-fail" onclick="setStatus(this, 'F')">ไม่ผ่าน (F)</button></div>
             <input type="text" class="note-input" placeholder="ระบุหมายเหตุ (ถ้ามี)">
-            <div class="photo-upload">
-                <label class="file-label"><i class="fa-solid fa-camera"></i> ถ่ายรูป/แนบไฟล์<input type="file" accept="image/*" style="display:none;" onchange="previewImage(this)"></label>
-                <img class="preview-img" src="" alt="preview">
-            </div>
         </div>
     </form>
 </div>
@@ -482,40 +167,31 @@
         <h3>คะแนนรวม: <span id="totalScore">0</span> / 14</h3>
         <p>คิดเป็น: <span id="percentage">0%</span> | ผลตรวจ: <span id="grade">-</span></p>
     </div>
-    <button type="button" class="btn-submit" onclick="submitForm()">ส่งข้อมูล</button>
+    <button type="button" class="btn-submit" id="submitBtn" onclick="submitForm()">ส่งข้อมูลเข้า Sheets</button>
 </div>
 
 <script>
-    // ดึงเวลาปัจจุบันมาเซ็ตค่าเริ่มต้น
-    document.getElementById('auditTime').value = new Date().toISOString().slice(0, 16);
+    // *** สำคัญมาก: นำลิงก์ Web App URL ที่ได้จากขั้นตอนแรกมาวางแทนที่ด้านล่างนี้ ***
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwkq2Pf6CMQ8XfR0CAn7i3Ajj89B_D5JzD4MSg_cYEFvzTWApSjesTRrlkUmwiMOnt-TA/exec";
 
+    document.getElementById('auditTime').value = new Date().toISOString().slice(0, 16);
     let scores = {};
-    const totalItems = 14; // ปรับเป็น 14 หัวข้อตามข้อมูลใหม่
+    const totalItems = 14;
 
     function setStatus(button, status) {
         const card = button.closest('.card');
         const cardId = card.getAttribute('data-id');
-        
         const buttons = card.querySelectorAll('.btn-status');
         buttons.forEach(btn => btn.classList.remove('active'));
-        
         button.classList.add('active');
-        
-        // บันทึกผล: ผ่าน = 1 คะแนน, ไม่ผ่าน = 0 คะแนน
         scores[cardId] = (status === 'P') ? 1 : 0;
-        
         calculateScore();
     }
 
     function calculateScore() {
         let total = 0;
-        
-        for (let key in scores) {
-            total += scores[key];
-        }
-        
+        for (let key in scores) { total += scores[key]; }
         document.getElementById('totalScore').innerText = total;
-        
         let percent = Math.round((total / totalItems) * 100);
         document.getElementById('percentage').innerText = percent + "%";
         
@@ -529,30 +205,48 @@
         }
     }
 
-    // ฟังก์ชันเสริมแสดงตัวอย่างภาพขนาดจิ๋วเมื่ออัปโหลดรูป
-    function previewImage(input) {
-        const file = input.files[0];
-        const preview = input.closest('.photo-upload').querySelector('.preview-img');
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                preview.src = e.target.result;
-                preview.style.display = 'block';
-            }
-            reader.readAsDataURL(file);
-        }
-    }
-
     function submitForm() {
         const workerName = document.getElementById('workerName').value;
-        if (!workerName) {
-            alert("กรุณากรอกชื่อพนักงานกรอก่อนส่งข้อมูล!");
+        const auditTime = document.getElementById('auditTime').value;
+        if (!workerName) { alert("กรุณากรอกชื่อพนักงานกรอก่อนส่งข้อมูล!"); return; }
+        
+        // ตรวจสอบว่าเช็คครบทุกข้อหรือยัง
+        if(Object.keys(scores).length < totalItems) {
+            alert("กรุณาตรวจสอบให้ครบทั้ง 14 ข้อก่อนกดส่งข้อมูล!");
             return;
         }
-        
-        alert("บันทึกข้อมูลสำเร็จ! คะแนนของโต๊ะที่ 1 คือ " + document.getElementById('totalScore').innerText + " / 14 คะแนน");
+
+        const submitBtn = document.getElementById('submitBtn');
+        submitBtn.disabled = true;
+        submitBtn.innerText = "กำลังบันทึก...";
+
+        const payload = {
+            workerName: workerName,
+            auditTime: auditTime,
+            scores: scores,
+            totalScore: document.getElementById('totalScore').innerText,
+            percentage: document.getElementById('percentage').innerText,
+            grade: document.getElementById('grade').innerText
+        };
+
+        // ยิงข้อมูลตรงเข้า Google Sheets หลังบ้าน
+        fetch(WEB_APP_URL, {
+            method: "POST",
+            mode: "no-cors",
+            cache: "no-cache",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        })
+        .then(() => {
+            alert("🎉 บันทึกข้อมูลลง Google Sheets สำเร็จเรียบร้อย!");
+            location.reload();
+        })
+        .catch(err => {
+            alert("เกิดข้อผิดพลาด: " + err.toString());
+            submitBtn.disabled = false;
+            submitBtn.innerText = "ส่งข้อมูลเข้า Sheets";
+        });
     }
 </script>
-
 </body>
 </html>
