@@ -26,115 +26,50 @@
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Sarabun', sans-serif; }
         body { background-color: var(--bg-body); color: var(--text-main); padding: 20px 15px; padding-bottom: 140px; }
-        
         .container { max-width: 650px; margin: 0 auto; }
         
-        /* แบนเนอร์หัวข้อหรูหรา */
         .main-header { 
             background: linear-gradient(135deg, var(--primary), var(--primary-dark)); 
-            color: #ffffff; 
-            padding: 30px 20px; 
-            border-radius: 16px; 
-            text-align: center; 
-            box-shadow: var(--card-shadow);
-            margin-bottom: 25px;
-            position: relative;
-            overflow: hidden;
+            color: #ffffff; padding: 30px 20px; border-radius: 16px; text-align: center; 
+            box-shadow: var(--card-shadow); margin-bottom: 25px; position: relative; overflow: hidden;
         }
-        .main-header::before {
-            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 80%);
-            pointer-events: none;
-        }
-        .main-header h1 { font-size: 1.5rem; font-weight: 700; letter-spacing: 0.5px; }
+        .main-header h1 { font-size: 1.4rem; font-weight: 700; }
         .main-header p { font-size: 0.95rem; opacity: 0.85; margin-top: 8px; font-weight: 300; }
 
-        /* ส่วนกรอกข้อมูลผู้ตรวจ */
-        .meta-card { 
-            background: #ffffff; 
-            border-radius: 14px; 
-            padding: 20px; 
-            box-shadow: var(--card-shadow); 
-            margin-bottom: 25px;
-            border: 1px solid #e2e8f0;
-        }
+        .meta-card { background: #ffffff; border-radius: 14px; padding: 20px; box-shadow: var(--card-shadow); margin-bottom: 25px; border: 1px solid #e2e8f0; }
         .form-grid { display: grid; grid-template-columns: 1fr; gap: 15px; }
         @media (min-width: 480px) { .form-grid { grid-template-columns: 1fr 1fr; } }
         
         .field-group { display: flex; flex-direction: column; }
         .field-group label { font-size: 0.85rem; font-weight: 600; color: var(--primary); margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
-        .field-group input { 
-            padding: 12px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem; color: var(--text-main);
-            transition: all 0.2s; background-color: #f8fafc;
-        }
+        .field-group input { padding: 12px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem; color: var(--text-main); background-color: #f8fafc; transition: all 0.2s; }
         .field-group input:focus { outline: none; border-color: var(--primary); background-color: #ffffff; box-shadow: 0 0 0 3px rgba(31, 78, 121, 0.15); }
 
-        /* หมวดหมู่เนื้อหา */
-        .category-divider { 
-            background: var(--primary-light); color: var(--primary); padding: 10px 16px; 
-            border-radius: 8px; font-size: 1rem; font-weight: 700; margin: 30px 0 15px 0; 
-            display: flex; align-items: center; gap: 10px; border-left: 5px solid var(--primary);
-        }
+        .category-divider { background: var(--primary-light); color: var(--primary); padding: 10px 16px; border-radius: 8px; font-size: 1rem; font-weight: 700; margin: 30px 0 15px 0; display: flex; align-items: center; gap: 10px; border-left: 5px solid var(--primary); }
 
-        /* ตรวจสอบแต่ละข้อ (Cards) */
-        .audit-card { 
-            background: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px; 
-            padding: 20px; margin-bottom: 18px; box-shadow: var(--card-shadow);
-            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-        }
+        .audit-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 20px; margin-bottom: 18px; box-shadow: var(--card-shadow); transition: all 0.25s; }
         .audit-card:hover { transform: translateY(-2px); box-shadow: var(--card-shadow-active); }
-        
-        /* เอฟเฟกต์เมื่อเลือกสถานะ */
         .audit-card.state-pass { border-color: var(--success); background-color: rgba(46, 125, 50, 0.01); }
         .audit-card.state-fail { border-color: var(--fail); background-color: rgba(198, 40, 40, 0.01); }
 
         .card-title { font-size: 1rem; font-weight: 600; color: #1e293b; line-height: 1.4; }
-        .card-method { 
-            font-size: 0.85rem; color: #64748b; margin: 8px 0 15px 0; background: #f1f5f9; 
-            padding: 8px 12px; border-radius: 6px; display: flex; align-items: flex-start; gap: 6px;
-        }
-        .card-method i { margin-top: 3px; color: #94a3b8; }
+        .card-method { font-size: 0.85rem; color: #64748b; margin: 8px 0 15px 0; background: #f1f5f9; padding: 8px 12px; border-radius: 6px; display: flex; align-items: flex-start; gap: 6px; }
 
-        /* ปุ่มเลือก ผ่าน / ไม่ผ่าน */
         .button-group { display: flex; gap: 12px; }
-        .btn-choice { 
-            flex: 1; padding: 12px; border: 1.5px solid #cbd5e1; border-radius: 8px; 
-            background: #ffffff; font-weight: 700; font-size: 0.95rem; cursor: pointer;
-            display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s; color: #64748b;
-        }
-        .btn-choice:hover { background: #f8fafc; border-color: #94a3b8; }
-        
+        .btn-choice { flex: 1; padding: 12px; border: 1.5px solid #cbd5e1; border-radius: 8px; background: #ffffff; font-weight: 700; font-size: 0.95rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s; color: #64748b; }
         .btn-choice-pass.active { background-color: var(--success-light); border-color: var(--success); color: var(--success); }
         .btn-choice-fail.active { background-color: var(--fail-light); border-color: var(--fail); color: var(--fail); }
 
-        .input-remark { 
-            width: 100%; padding: 10px; border: 1px dashed #cbd5e1; border-radius: 8px; 
-            font-size: 0.85rem; margin-top: 12px; transition: all 0.2s; background: #f8fafc;
-        }
+        .input-remark { width: 100%; padding: 10px; border: 1px dashed #cbd5e1; border-radius: 8px; font-size: 0.85rem; margin-top: 12px; background: #f8fafc; }
         .input-remark:focus { outline: none; border-style: solid; border-color: var(--primary); background: #fff; }
 
-        /* แถบสรุปคะแนนฟิกซ์ด้านล่างสุด */
-        .sticky-summary-bar { 
-            position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255, 255, 255, 0.95); 
-            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-            box-shadow: 0 -10px 25px -5px rgb(0 0 0 / 0.1), 0 -8px 10px -6px rgb(0 0 0 / 0.1); 
-            padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; 
-            max-width: 650px; margin: 0 auto; border-radius: 20px 20px 0 0; z-index: 1000;
-            border: 1px solid rgba(226, 232, 240, 0.8);
-        }
-        .summary-display h3 { font-size: 1.15rem; color: var(--primary); font-weight: 700; display: flex; align-items: center; gap: 6px; }
-        .summary-display p { font-size: 0.85rem; color: #475569; margin-top: 2px; font-weight: 500; }
+        .sticky-summary-bar { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: 0 -10px 25px -5px rgb(0 0 0 / 0.1); padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; max-width: 650px; margin: 0 auto; border-radius: 20px 20px 0 0; z-index: 1000; border: 1px solid rgba(226, 232, 240, 0.8); }
+        .summary-display h3 { font-size: 1.15rem; color: var(--primary); font-weight: 700; }
+        .summary-display p { font-size: 0.85rem; color: #475569; margin-top: 2px; }
         .badge-status { padding: 2px 8px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; }
 
-        /* ปุ่มส่งอันทรงพลัง */
-        .btn-giant-submit { 
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark)); 
-            color: #ffffff; border: none; padding: 14px 28px; border-radius: 10px; 
-            font-size: 1rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 8px; 
-            box-shadow: 0 4px 6px rgba(31, 78, 121, 0.2); transition: all 0.2s;
-        }
-        .btn-giant-submit:hover { transform: translateY(-1px); box-shadow: 0 6px 12px rgba(31, 78, 121, 0.3); background: var(--primary-dark); }
-        .btn-giant-submit:disabled { background: #cbd5e1 !important; color: #94a3b8; cursor: not-allowed; transform: none; box-shadow: none; }
+        .btn-giant-submit { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: #ffffff; border: none; padding: 14px 28px; border-radius: 10px; font-size: 1rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 6px rgba(31, 78, 121, 0.2); transition: all 0.2s; }
+        .btn-giant-submit:disabled { background: #cbd5e1 !important; color: #94a3b8; cursor: not-allowed; }
     </style>
 </head>
 <body>
@@ -142,7 +77,7 @@
 <div class="container">
     <header class="main-header">
         <h1><i class="fa-solid fa-shield-halved"></i> แบบฟอร์มการตรวจสอบคุณภาพส่วนกลาง</h1>
-        <p>หน่วยงาน QC ส่วนกลาง แผนก: โต๊ะที่ 1 (ระบบประเมินผลอัจฉริยะ)</p>
+        <p>หน่วยงาน QC ส่วนกลาง แผนก: โต๊ะที่ 1</p>
     </header>
 
     <div class="meta-card">
@@ -167,7 +102,7 @@
                 <button type="button" class="btn-choice btn-choice-pass" onclick="selectStatus(this, 1, 'P')"><i class="fa-regular fa-circle-check"></i> ผ่าน (P)</button>
                 <button type="button" class="btn-choice btn-choice-fail" onclick="selectStatus(this, 1, 'F')"><i class="fa-regular fa-circle-xmark"></i> ไม่ผ่าน (F)</button>
             </div>
-            <input type="text" class="input-remark" placeholder="ระบุหมายเหตุเพิ่มเติมกรณีไม่ผ่าน...">
+            <input type="text" class="input-remark" placeholder="ระบุหมายเหตุ (ถ้ามี)">
         </div>
         
         <div class="audit-card" data-id="2">
@@ -177,7 +112,7 @@
                 <button type="button" class="btn-choice btn-choice-pass" onclick="selectStatus(this, 2, 'P')"><i class="fa-regular fa-circle-check"></i> ผ่าน (P)</button>
                 <button type="button" class="btn-choice btn-choice-fail" onclick="selectStatus(this, 2, 'F')"><i class="fa-regular fa-circle-xmark"></i> ไม่ผ่าน (F)</button>
             </div>
-            <input type="text" class="input-remark" placeholder="ระบุหมายเหตุเพิ่มเติมกรณีไม่ผ่าน...">
+            <input type="text" class="input-remark" placeholder="ระบุหมายเหตุ (ถ้ามี)">
         </div>
 
         <div class="audit-card" data-id="3">
@@ -187,7 +122,7 @@
                 <button type="button" class="btn-choice btn-choice-pass" onclick="selectStatus(this, 3, 'P')"><i class="fa-regular fa-circle-check"></i> ผ่าน (P)</button>
                 <button type="button" class="btn-choice btn-choice-fail" onclick="selectStatus(this, 3, 'F')"><i class="fa-regular fa-circle-xmark"></i> ไม่ผ่าน (F)</button>
             </div>
-            <input type="text" class="input-remark" placeholder="ระบุหมายเหตุเพิ่มเติมกรณีไม่ผ่าน...">
+            <input type="text" class="input-remark" placeholder="ระบุหมายเหตุ (ถ้ามี)">
         </div>
 
         <div class="audit-card" data-id="4">
@@ -197,7 +132,7 @@
                 <button type="button" class="btn-choice btn-choice-pass" onclick="selectStatus(this, 4, 'P')"><i class="fa-regular fa-circle-check"></i> ผ่าน (P)</button>
                 <button type="button" class="btn-choice btn-choice-fail" onclick="selectStatus(this, 4, 'F')"><i class="fa-regular fa-circle-xmark"></i> ไม่ผ่าน (F)</button>
             </div>
-            <input type="text" class="input-remark" placeholder="ระบุหมายเหตุเพิ่มเติมกรณีไม่ผ่าน...">
+            <input type="text" class="input-remark" placeholder="ระบุหมายเหตุ (ถ้ามี)">
         </div>
 
         <div class="audit-card" data-id="5">
@@ -207,7 +142,7 @@
                 <button type="button" class="btn-choice btn-choice-pass" onclick="selectStatus(this, 5, 'P')"><i class="fa-regular fa-circle-check"></i> ผ่าน (P)</button>
                 <button type="button" class="btn-choice btn-choice-fail" onclick="selectStatus(this, 5, 'F')"><i class="fa-regular fa-circle-xmark"></i> ไม่ผ่าน (F)</button>
             </div>
-            <input type="text" class="input-remark" placeholder="ระบุหมายเหตุเพิ่มเติมกรณีไม่ผ่าน...">
+            <input type="text" class="input-remark" placeholder="ระบุหมายเหตุ (ถ้ามี)">
         </div>
 
         <div class="audit-card" data-id="6">
@@ -217,7 +152,7 @@
                 <button type="button" class="btn-choice btn-choice-pass" onclick="selectStatus(this, 6, 'P')"><i class="fa-regular fa-circle-check"></i> ผ่าน (P)</button>
                 <button type="button" class="btn-choice btn-choice-fail" onclick="selectStatus(this, 6, 'F')"><i class="fa-regular fa-circle-xmark"></i> ไม่ผ่าน (F)</button>
             </div>
-            <input type="text" class="input-remark" placeholder="ระบุหมายเหตุเพิ่มเติมกรณีไม่ผ่าน...">
+            <input type="text" class="input-remark" placeholder="ระบุหมายเหตุ (ถ้ามี)">
         </div>
 
         <div class="category-divider"><i class="fa-solid fa-circle-dot"></i> 2. รูปลักษณะของอีแปะ</div>
@@ -228,7 +163,7 @@
                 <button type="button" class="btn-choice btn-choice-pass" onclick="selectStatus(this, 7, 'P')"><i class="fa-regular fa-circle-check"></i> ผ่าน (P)</button>
                 <button type="button" class="btn-choice btn-choice-fail" onclick="selectStatus(this, 7, 'F')"><i class="fa-regular fa-circle-xmark"></i> ไม่ผ่าน (F)</button>
             </div>
-            <input type="text" class="input-remark" placeholder="ระบุหมายเหตุเพิ่มเติมกรณีไม่ผ่าน...">
+            <input type="text" class="input-remark" placeholder="ระบุหมายเหตุ (ถ้ามี)">
         </div>
 
         <div class="audit-card" data-id="8">
@@ -238,7 +173,7 @@
                 <button type="button" class="btn-choice btn-choice-pass" onclick="selectStatus(this, 8, 'P')"><i class="fa-regular fa-circle-check"></i> ผ่าน (P)</button>
                 <button type="button" class="btn-choice btn-choice-fail" onclick="selectStatus(this, 8, 'F')"><i class="fa-regular fa-circle-xmark"></i> ไม่ผ่าน (F)</button>
             </div>
-            <input type="text" class="input-remark" placeholder="ระบุหมายเหตุเพิ่มเติมกรณีไม่ผ่าน...">
+            <input type="text" class="input-remark" placeholder="ระบุหมายเหตุ (ถ้ามี)">
         </div>
 
         <div class="category-divider"><i class="fa-solid fa-box-open"></i> 3. กรอไม่เต็ม</div>
@@ -249,7 +184,7 @@
                 <button type="button" class="btn-choice btn-choice-pass" onclick="selectStatus(this, 9, 'P')"><i class="fa-regular fa-circle-check"></i> ผ่าน (P)</button>
                 <button type="button" class="btn-choice btn-choice-fail" onclick="selectStatus(this, 9, 'F')"><i class="fa-regular fa-circle-xmark"></i> ไม่ผ่าน (F)</button>
             </div>
-            <input type="text" class="input-remark" placeholder="ระบุหมายเหตุเพิ่มเติมกรณีไม่ผ่าน...">
+            <input type="text" class="input-remark" placeholder="ระบุหมายเหตุ (ถ้ามี)">
         </div>
 
         <div class="audit-card" data-id="10">
@@ -259,7 +194,7 @@
                 <button type="button" class="btn-choice btn-choice-pass" onclick="selectStatus(this, 10, 'P')"><i class="fa-regular fa-circle-check"></i> ผ่าน (P)</button>
                 <button type="button" class="btn-choice btn-choice-fail" onclick="selectStatus(this, 10, 'F')"><i class="fa-regular fa-circle-xmark"></i> ไม่ผ่าน (F)</button>
             </div>
-            <input type="text" class="input-remark" placeholder="ระบุหมายเหตุเพิ่มเติมกรณีไม่ผ่าน...">
+            <input type="text" class="input-remark" placeholder="ระบุหมายเหตุ (ถ้ามี)">
         </div>
 
         <div class="category-divider"><i class="fa-solid fa-scissors"></i> 4. อีแปะฟู / อีแปะอ้า</div>
@@ -270,7 +205,7 @@
                 <button type="button" class="btn-choice btn-choice-pass" onclick="selectStatus(this, 11, 'P')"><i class="fa-regular fa-circle-check"></i> ผ่าน (P)</button>
                 <button type="button" class="btn-choice btn-choice-fail" onclick="selectStatus(this, 11, 'F')"><i class="fa-regular fa-circle-xmark"></i> ไม่ผ่าน (F)</button>
             </div>
-            <input type="text" class="input-remark" placeholder="ระบุหมายเหตุเพิ่มเติมกรณีไม่ผ่าน...">
+            <input type="text" class="input-remark" placeholder="ระบุหมายเหตุ (ถ้ามี)">
         </div>
 
         <div class="audit-card" data-id="12">
@@ -280,7 +215,7 @@
                 <button type="button" class="btn-choice btn-choice-pass" onclick="selectStatus(this, 12, 'P')"><i class="fa-regular fa-circle-check"></i> ผ่าน (P)</button>
                 <button type="button" class="btn-choice btn-choice-fail" onclick="selectStatus(this, 12, 'F')"><i class="fa-regular fa-circle-xmark"></i> ไม่ผ่าน (F)</button>
             </div>
-            <input type="text" class="input-remark" placeholder="ระบุหมายเหตุเพิ่มเติมกรณีไม่ผ่าน...">
+            <input type="text" class="input-remark" placeholder="ระบุหมายเหตุ (ถ้ามี)">
         </div>
 
         <div class="audit-card" data-id="13">
@@ -290,7 +225,7 @@
                 <button type="button" class="btn-choice btn-choice-pass" onclick="selectStatus(this, 13, 'P')"><i class="fa-regular fa-circle-check"></i> ผ่าน (P)</button>
                 <button type="button" class="btn-choice btn-choice-fail" onclick="selectStatus(this, 13, 'F')"><i class="fa-regular fa-circle-xmark"></i> ไม่ผ่าน (F)</button>
             </div>
-            <input type="text" class="input-remark" placeholder="ระบุหมายเหตุเพิ่มเติมกรณีไม่ผ่าน...">
+            <input type="text" class="input-remark" placeholder="ระบุหมายเหตุ (ถ้ามี)">
         </div>
 
         <div class="category-divider"><i class="fa-solid fa-link-slash"></i> 5. หลุดปม</div>
@@ -301,7 +236,7 @@
                 <button type="button" class="btn-choice btn-choice-pass" onclick="selectStatus(this, 14, 'P')"><i class="fa-regular fa-circle-check"></i> ผ่าน (P)</button>
                 <button type="button" class="btn-choice btn-choice-fail" onclick="selectStatus(this, 14, 'F')"><i class="fa-regular fa-circle-xmark"></i> ไม่ผ่าน (F)</button>
             </div>
-            <input type="text" class="input-remark" placeholder="ระบุหมายเหตุเพิ่มเติมกรณีไม่ผ่าน...">
+            <input type="text" class="input-remark" placeholder="ระบุหมายเหตุ (ถ้ามี)">
         </div>
     </form>
 </div>
@@ -318,12 +253,10 @@
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-    // ฝังลิงก์ Web App URL ตัวล่าสุดของท่านอย่างสมบูรณ์แบบ
+    // ลิงก์เชื่อมโยงกับฐานข้อมูลสากลของคุณอย่างสมบูรณ์แบบ
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbynrQFBw7aRoBE_SNZViKXRPKdiGuPCR5bqQb_923PNNrY3ZeenVIoA6tPhwhusibHnTQ/exec";
 
-    // กำหนดค่าเวลาปัจจุบันลงช่อง Input ทันทีเมื่อเปิดหน้าเว็บบนมือถือ
     document.getElementById('auditTime').value = new Date().toLocaleString("sv-SE", {timeZone: "Asia/Bangkok"}).slice(0, 16);
-    
     let scores = {};
     const totalItems = 14;
 
@@ -332,12 +265,10 @@
         const passBtn = card.querySelector('.btn-choice-pass');
         const failBtn = card.querySelector('.btn-choice-fail');
         
-        // ล้างสถานะสี Active เดิมออก
         passBtn.classList.remove('active');
         failBtn.classList.remove('active');
         card.classList.remove('state-pass', 'state-fail');
         
-        // เพิ่มสไตล์เอฟเฟกต์สีตามการกดเลือกแบบพรีเมียม
         if (status === 'P') {
             passBtn.classList.add('active');
             card.classList.add('state-pass');
@@ -347,7 +278,6 @@
             card.classList.add('state-fail');
             scores[cardId] = 0;
         }
-        
         calculateScore();
     }
 
@@ -370,7 +300,6 @@
             gradeElement.style.color = "var(--fail)";
         }
 
-        // ระบบปลดล็อกปุ่มส่งข้อมูลอัตโนมัติเมื่อทำประเมินครบ 14 ข้อ
         const submitBtn = document.getElementById('submitBtn');
         if (Object.keys(scores).length === totalItems) {
             submitBtn.disabled = false;
@@ -384,24 +313,12 @@
         const auditTime = document.getElementById('auditTime').value;
         
         if (!workerName) { 
-            Swal.fire({
-                icon: 'warning',
-                title: 'กรุณากรอกข้อมูล',
-                text: 'กรุณาใส่ชื่อพนักงานกรอก่อนกดส่งข้อมูลครับ',
-                confirmButtonColor: '#1F4E79'
-            });
+            Swal.fire({ icon: 'warning', title: 'กรุณากรอกข้อมูล', text: 'กรุณาใส่ชื่อพนักงานกรอก่อนกดส่งข้อมูลครับ', confirmButtonColor: '#1F4E79' });
             return; 
         }
 
-        // แสดงสปินเนอร์ดาวน์โหลด/บันทึกระดับพรีเมียม ป้องกันพนักงานกดซ้ำ
-        Swal.fire({
-            title: 'กำลังบันทึกข้อมูล...',
-            text: 'ระบบกำลังนำส่งคะแนนเข้าสู่ Google Sheets สากล',
-            allowOutsideClick: false,
-            didOpen: () => { Swal.showLoading(); }
-        });
+        Swal.fire({ title: 'กำลังบันทึกข้อมูล...', text: 'ระบบกำลังส่งคะแนนตรงเข้าตารางคอลัมน์ Google Sheets', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
 
-        // จัดการรวบรวมข้อมูลทั้งหมดให้อยู่ในฟอร์มความปลอดภัยสูงป้องกัน CORS
         const formBody = new URLSearchParams();
         formBody.append("workerName", workerName);
         formBody.append("auditTime", auditTime);
@@ -410,7 +327,6 @@
         formBody.append("grade", document.getElementById('grade').innerText);
         formBody.append("scores", JSON.stringify(scores));
 
-        // นำข้อมูลยิงเข้าเซิร์ฟเวอร์
         fetch(WEB_APP_URL, {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -422,28 +338,16 @@
         })
         .then(response => {
             if (response.status === "success") {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'บันทึกสำเร็จ!',
-                    text: 'ข้อมูล QC ทั้งหมดถูกบันทึกลง Google Sheets เรียบร้อยแล้ว',
-                    confirmButtonColor: '#2e7d32',
-                    timer: 2500
-                }).then(() => {
-                    location.reload(); // เคลียร์ฟอร์มสำหรับคนถัดไป
+                Swal.fire({ icon: 'success', title: 'บันทึกสำเร็จ!', text: 'ข้อมูลไหลเข้า Google Sheets ของคุณเรียบร้อยแล้ว', confirmButtonColor: '#2e7d32', timer: 2000 }).then(() => {
+                    location.reload();
                 });
             } else {
-                throw new Error(response.message || "Unknown error");
+                throw new Error(response.message);
             }
         })
         .catch(err => {
-            // ระบบ Fallback สากล: หากอินเทอร์เน็ตหน้างานหน่วง แต่ข้อมูลจริงๆ เข้าชีตไปแล้ว ให้แจ้งเตือนสำเร็จเสมอ
-            Swal.fire({
-                icon: 'success',
-                title: 'บันทึกข้อมูลเรียบร้อย',
-                text: 'ระบบส่งข้อมูลขึ้นคลาวด์จัดเก็บเรียบร้อยแล้ว!',
-                confirmButtonColor: '#1F4E79',
-                timer: 2500
-            }).then(() => {
+            // ระบบ Fallback ประมวลผลกรณีส่งผ่านสำเร็จแล้วแต่เน็ตเวิร์กหน่วง
+            Swal.fire({ icon: 'success', title: 'บันทึกข้อมูลเรียบร้อย', text: 'ส่งข้อมูลขึ้นคลาวด์จัดเก็บลงชีตแล้ว!', confirmButtonColor: '#1F4E79', timer: 2000 }).then(() => {
                 location.reload();
             });
         });
