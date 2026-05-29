@@ -1,244 +1,167 @@
-<!DOCTYPE html>
-<html lang="th">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QC Audit Enterprise - โต๊ะที่ 34</title>
-    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+function doPost(e) {
+  var corsHeaders = {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type"
+  };
+
+  try {
+    var workerName = e.parameter.workerName;
+    var auditTime = e.parameter.auditTime;
+    var totalScore = e.parameter.totalScore;
+    var percentage = e.parameter.percentage;
+    var grade = e.parameter.grade;
+    var scores = JSON.parse(e.parameter.scores);
+    var remarks = JSON.parse(e.parameter.remarks || "{}");
     
-    <style>
-        :root {
-            --primary: #1F4E79;
-            --primary-dark: #123352;
-            --primary-light: #EBF1F5;
-            --success: #2e7d32;
-            --success-light: #e8f5e9;
-            --fail: #c62828;
-            --fail-light: #ffebee;
-            --text-main: #2c3e50;
-            --bg-body: #f8fafc;
-            --card-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    // ดักจับข้อมูลรูปภาพ (รองรับทั้งแบบรายข้อ และแบบรูปเดี่ยวส่งท้ายฟอร์ม)
+    var images = {};
+    try {
+      images = JSON.parse(e.parameter.images || "{}");
+    } catch(pErr) {
+      images = {};
+    }
+    
+    var imageBase64 = e.parameter.imageBase64; 
+    var imageContentType = e.parameter.imageContentType;
+    
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+    
+    var scoreArray = [];
+    var allEvidence = []; 
+    var firstUploadedImageUrl = "-"; // ตัวแปรสำหรับเก็บลิงก์รูปแรกที่จะเอาไปวาดโชว์ในเซลล์
+    
+    // ตั้งชื่อหรือค้นหาโฟลเดอร์สำหรับเก็บรูปภาพ
+    var folder;
+    try {
+      var folders = DriveApp.getFoldersByName("QC_Audit_Images");
+      if (folders.hasNext()) {
+        folder = folders.next();
+      } else {
+        folder = DriveApp.createFolder("QC_Audit_Images");
+      }
+      folder.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+    } catch(fErr) {
+      // ป้องกันกรณีระบบไดรฟ์มีปัญหา
+    }
+
+    // 1. วนลูปจัดการข้อมูลข้อ 1-14 และอัปโหลดรูปภาพรายข้อ (ระบบเดิมของคุณ)
+    for (var i = 1; i <= 14; i++) {
+      var statusText = (scores[i] === 1) ? "ผ่าน" : (scores[i] === 0 ? "ไม่ผ่าน" : "-");
+      scoreArray.push(statusText);
+      
+      var remarkText = remarks[i] ? remarks[i].trim() : "";
+      var imageUrl = "-";
+      
+      // อัปโหลดรูปภาพข้อ 1-14 (ถ้าหน้าเว็บมีการส่งมา)
+      if (images[i] && images[i].contentType && images[i].base64) {
+        try {
+          var decoded = Utilities.base64Decode(images[i].base64.split(",")[1] || images[i].base64);
+          var blob = Utilities.newBlob(decoded, images[i].contentType, "ข้อ_" + i + "_" + workerName + "_" + Date.now() + ".jpg");
+          var file = folder.createFile(blob);
+          file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+          
+          // แปลงเป็นลิงก์แบบ Direct View เพื่อให้สูตร IMAGE ดึงไปแสดงผลได้
+          imageUrl = "https://docs.google.com/uc?export=view&id=" + file.getId();
+          
+          if (firstUploadedImageUrl === "-") {
+            firstUploadedImageUrl = imageUrl; // บันทึกรูปแรกที่เจอไว้ไปแสดงในช่องตาราง
+          }
+        } catch(imgErr) {
+          imageUrl = "Error: " + imgErr.toString();
         }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Sarabun', sans-serif; }
-        body { background-color: var(--bg-body); color: var(--text-main); padding: 20px 15px; padding-bottom: 140px; }
-        .container { max-width: 650px; margin: 0 auto; }
+      }
+      
+      if (remarkText !== "" || imageUrl !== "-") {
+        var evidenceStr = "[ข้อ " + i + "]";
+        if (remarkText !== "") evidenceStr += " หมายเหตุ: " + remarkText;
+        if (imageUrl !== "-") evidenceStr += " 📸 ลิงก์รูป: " + imageUrl;
+        allEvidence.push(evidenceStr);
+      }
+    }
+    
+    // 2. ตรวจสอบรูปภาพแบบส่งเดี่ยวท้ายฟอร์ม (ถ้าหน้าเว็บใช้โครงสร้างนี้ส่งมาแทน)
+    if (imageBase64 && imageContentType && folder) {
+      try {
+        var decodedSingle = Utilities.base64Decode(imageBase64.split(",")[1] || imageBase64);
+        var blobSingle = Utilities.newBlob(decodedSingle, imageContentType, "QC_Main_" + workerName + "_" + Date.now() + ".jpg");
+        var fileSingle = folder.createFile(blobSingle);
+        fileSingle.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
         
-        .main-header { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: #ffffff; padding: 25px 20px; border-radius: 16px; text-align: center; box-shadow: var(--card-shadow); margin-bottom: 25px; }
-        .main-header h1 { font-size: 1.4rem; font-weight: 700; }
-        .main-header p { font-size: 0.95rem; opacity: 0.85; margin-top: 6px; }
-
-        .meta-card { background: #ffffff; border-radius: 14px; padding: 20px; box-shadow: var(--card-shadow); margin-bottom: 25px; border: 1px solid #e2e8f0; }
-        .form-grid { display: grid; grid-template-columns: 1fr; gap: 15px; }
-        @media (min-width: 480px) { .form-grid { grid-template-columns: 1fr 1fr; } }
+        var singleImageUrl = "https://docs.google.com/uc?export=view&id=" + fileSingle.getId();
+        allEvidence.push("[รูปภาพหลักฐานหน้างาน] 📸 ลิงก์รูป: " + singleImageUrl);
         
-        .field-group { display: flex; flex-direction: column; }
-        .field-group label { font-size: 0.85rem; font-weight: 600; color: var(--primary); margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
-        .field-group input { padding: 12px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem; background-color: #f8fafc; }
-
-        .category-divider { background: var(--primary-light); color: var(--primary); padding: 10px 16px; border-radius: 8px; font-size: 1rem; font-weight: 700; margin: 25px 0 15px 0; border-left: 5px solid var(--primary); display: flex; align-items: center; gap: 8px; }
-
-        .audit-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 20px; margin-bottom: 18px; box-shadow: var(--card-shadow); }
-        .audit-card.state-pass { border-color: var(--success); background-color: rgba(46, 125, 50, 0.01); }
-        .audit-card.state-fail { border-color: var(--fail); background-color: rgba(198, 40, 40, 0.01); }
-
-        .card-title { font-size: 1rem; font-weight: 600; color: #1e293b; }
-        .card-method { font-size: 0.85rem; color: #64748b; margin: 6px 0 12px 0; background: #f1f5f9; padding: 8px 12px; border-radius: 6px; }
-
-        .button-group { display: flex; gap: 12px; }
-        .btn-choice { flex: 1; padding: 12px; border: 1.5px solid #cbd5e1; border-radius: 8px; background: #ffffff; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; color: #64748b; transition: all 0.2s; }
-        .btn-choice-pass.active { background-color: var(--success-light); border-color: var(--success); color: var(--success); }
-        .btn-choice-fail.active { background-color: var(--fail-light); border-color: var(--fail); color: var(--fail); }
-
-        .input-remark { width: 100%; padding: 10px; border: 1px dashed #cbd5e1; border-radius: 8px; font-size: 0.85rem; margin-top: 12px; background: #f8fafc; }
-        
-        /* สไตล์สำหรับกล่องอัปโหลดรูปภาพแนวพรีเมียม */
-        .photo-uploader { margin-top: 10px; display: flex; align-items: center; gap: 10px; }
-        .file-label { padding: 8px 14px; background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.85rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; color: #475569; transition: all 0.2s; }
-        .file-label:hover { background: #e2e8f0; }
-        .file-input { display: none; }
-        .img-preview { width: 45px; height: 45px; object-fit: cover; border-radius: 6px; display: none; border: 1px solid #cbd5e1; }
-
-        .sticky-summary-bar { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); box-shadow: 0 -10px 25px -5px rgb(0 0 0 / 0.1); padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; max-width: 650px; margin: 0 auto; border-radius: 20px 20px 0 0; z-index: 1000; border: 1px solid rgba(226, 232, 240, 0.8); }
-        .summary-display h3 { font-size: 1.15rem; color: var(--primary); font-weight: 700; }
-        .badge-status { padding: 2px 8px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; }
-
-        .btn-giant-submit { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: #ffffff; border: none; padding: 14px 28px; border-radius: 10px; font-size: 1rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 6px rgba(31, 78, 121, 0.2); }
-        .btn-giant-submit:disabled { background: #cbd5e1 !important; color: #94a3b8; cursor: not-allowed; }
-    </style>
-</head>
-<body>
-
-<div class="container">
-    <header class="main-header">
-        <h1><i class="fa-solid fa-camera-retro"></i> ระบบตรวจสอบคุณภาพและแนบภาพถ่าย</h1>
-        <p>หน่วยงาน QC ส่วนกลาง แผนก: โต๊ะที่ 34</p>
-    </header>
-
-    <div class="meta-card">
-        <div class="form-grid">
-            <div class="field-group">
-                <label><i class="fa-solid fa-user-tie"></i> ชื่อพนักงานกรอ</label>
-                <input type="text" id="workerName" placeholder="ระบุชื่อ-นามสกุลพนักงาน">
-            </div>
-            <div class="field-group">
-                <label><i class="fa-solid fa-clock"></i> วันที่และเวลาตรวจสอบ</label>
-                <input type="datetime-local" id="auditTime">
-            </div>
-        </div>
-    </div>
-
-    <form id="auditForm">
-        <div id="checklistContainer"></div>
-    </form>
-</div>
-
-<div class="sticky-summary-bar">
-    <div class="summary-display">
-        <h3>คะnelsรวม: <span id="totalScore">0</span>/14</h3>
-        <p>คิดเป็น: <span id="percentage">0%</span> | ผลตรวจ: <span id="grade" class="badge-status">-</span></p>
-    </div>
-    <button type="button" class="btn-giant-submit" id="submitBtn" onclick="submitForm()" disabled>
-        <i class="fa-solid fa-cloud-arrow-up"></i> <span>ส่งข้อมูลเข้า Sheets</span>
-    </button>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script>
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbynrQFBw7aRoBE_SNZViKXRPKdiGuPCR5bqQb_923PNNrY3ZeenVIoA6tPhwhusibHnTQ/exec";
-
-    // รายการหัวข้อคำถามทั้ง 14 ข้อ
-    const checkPoints = [
-        { id: 1, cat: "1. ใยปน", title: "ความถูกต้องของเบอร์ใย", method: "ดูหลอดใยขนาดกรอที่โต๊ะกรอ" },
-        { id: 2, cat: "1. ใยปน", title: "ความถูกต้องของสัญลักษณ์อีแปะ", method: "ดูแผ่นอีแปะขณะกรอที่โต๊ะกรอ" },
-        { id: 3, cat: "1. ใยปน", title: "ดูสลับสติ๊กเกอร์อีแปะตรงกับสติ๊กหลอดใยไหม", method: "ตรวจสอบความถูกต้องของการติดสติ๊กเกอร์เปรียบเทียบทั้งสองจุด" },
-        { id: 4, cat: "1. ใยปน", title: "ป้ายที่ติดเขียนรายละเอียดครบไหม", method: "ตรวจสอบข้อมูลบนป้ายชี้บ่งสถานะรอบโต๊ะกรอให้ครบถ้วนตาม WI" },
-        { id: 5, cat: "1. ใยปน", title: "มาตรฐานเปลี่ยนใยกรอ", method: "ใบบันทึก (WI การเปลี่ยนใยโต๊ะกรอ) ป้ายที่ติดระบุ" },
-        { id: 6, cat: "1. ใยปน", title: "พื้นที่จัดวางเป็นไปตามมาตรฐานโต๊ะกรอ", method: "อ้างอิงมาตรฐานพื้นที่โต๊ะกรอ" },
-        { id: 7, cat: "2. รูปลักษณะของอีแปะ", title: "อีแปะบิดเบี้ยว", method: "สุ่มตรวจโครงสร้างรูปร่างของแผ่นอีแปะระหว่างและหลังกรอ" },
-        { id: 8, cat: "2. รูปลักษณะของอีแปะ", title: "ปิ่นบุบ", method: "ตรวจสอบบริเวณขอบและผิวหน้าของอีแปะว่ามีรอยบิ่นหรือบุบชำรุดหรือไม่" },
-        { id: 9, cat: "3. กรองไม่เต็ม", title: "ตรวจการตั้งระยะเซ็นเซอร์ตัดเต็มตรงตามมาตรฐานหัวกรอ", method: "ตรวจระยะมาตรฐานเทียบกับการตั้งจริงทุกหัวกรอ" },
-        { id: 10, cat: "3. กรองไม่เต็ม", title: "ตรวจแผ่นอีแปะที่กรอเต็ม", method: "ดูแผ่นอีแปะที่กรอเสร็จแล้วเทียบแผ่นตัวอย่าง" },
-        { id: 11, cat: "4. อีแปะฟู / อีแปะอ้า", title: "ตรวจรอบหัวกรอเทียบมาตรฐาน", method: "ดูรอบ Inverter เทียบเป้าหมาย" },
-        { id: 12, cat: "4. อีแปะฟู / อีแปะอ้า", title: "ตรวจการร้อยด้ายผ่านจุดผ่านด้าย", method: "ดูการร้อยด้ายเทียบมาตรฐาน" },
-        { id: 13, cat: "4. อีแปะฟู / อีแปะอ้า", title: "ตรวจอีแปะตัดก่อนกรอ คัดอีแปะชำรุดอีแปะอ้า", method: "ตรวจเช็คอีแปะตัดบนโต๊ะกรอ" },
-        { id: 14, cat: "5. หลุดปม", title: "ตรวจวิธีการต่อด้าย", method: "ตรวจวิธีการต่อด้ายตามมาตรฐาน ขณะกรออีแปะ" }
+        if (firstUploadedImageUrl === "-") {
+          firstUploadedImageUrl = singleImageUrl;
+        }
+      } catch(singleImgErr) {
+        allEvidence.push("[รูปภาพหลักฐาน] Error: " + singleImgErr.toString());
+      }
+    }
+    
+    // สรุปหลักฐานข้อความทั้งหมดรวมกันเพื่อบันทึกสำรองไว้ในคอลัมน์ V
+    var finalEvidenceText = allEvidence.length > 0 ? allEvidence.join("\n") : "-";
+    
+    // 3. เรียงลำดับข้อมูลลงแถวตารางใน Google Sheets
+    var rowData = [
+      new Date(),      // คอลัมน์ A: Timestamp
+      auditTime,        // คอลัมน์ B: วันที่และเวลาตรวจสอบ
+      workerName        // คอลัมน์ C: ชื่อพนักงานกรอ
     ];
-
-    let scores = {}, remarks = {}, imagesData = {};
-
-    // เรนเดอร์ฟอร์มรูปแบบหรูหราอัตโนมัติ
-    const container = document.getElementById('checklistContainer');
-    let currentCat = "";
-    checkPoints.forEach(item => {
-        if(currentCat !== item.cat) {
-            currentCat = item.cat;
-            container.innerHTML += `<div class="category-divider"><i class="fa-solid fa-list-check"></i> ${currentCat}</div>`;
-        }
-        container.innerHTML += `
-            <div class="audit-card" data-id="${item.id}">
-                <div class="card-title">${item.id}. ${item.title}</div>
-                <div class="card-method"><i class="fa-solid fa-magnifying-glass"></i> วิธีการตรวจ: ${item.method}</div>
-                <div class="button-group">
-                    <button type="button" class="btn-choice btn-choice-pass" onclick="selectStatus(this, ${item.id}, 'P')"><i class="fa-regular fa-circle-check"></i> ผ่าน (P)</button>
-                    <button type="button" class="btn-choice btn-choice-fail" onclick="selectStatus(this, ${item.id}, 'F')"><i class="fa-regular fa-circle-xmark"></i> ไม่ผ่าน (F)</button>
-                </div>
-                <input type="text" class="input-remark" onchange="saveRemark(${item.id}, this.value)" placeholder="ระบุหมายเหตุเพิ่มเติม (ถ้ามี)">
-                <div class="photo-uploader">
-                    <label class="file-label" for="file_${item.id}"><i class="fa-solid fa-camera"></i> ถ่ายรูปหลักฐาน</label>
-                    <input type="file" id="file_${item.id}" class="file-input" accept="image/*" onchange="handleImage(this, ${item.id})">
-                    <img id="prev_${item.id}" class="img-preview" src="">
-                </div>
-            </div>`;
-    });
-
-    document.getElementById('auditTime').value = new Date().toLocaleString("sv-SE", {timeZone: "Asia/Bangkok"}).slice(0, 16);
-
-    function selectStatus(button, cardId, status) {
-        const card = button.closest('.audit-card');
-        card.querySelectorAll('.btn-choice').forEach(btn => btn.classList.remove('active'));
-        card.classList.remove('state-pass', 'state-fail');
-        
-        if (status === 'P') {
-            button.classList.add('active'); card.classList.add('state-pass'); scores[cardId] = 1;
-        } else {
-            button.classList.add('active'); card.classList.add('state-fail'); scores[cardId] = 0;
-        }
-        calculateScore();
+    rowData = rowData.concat(scoreArray);          // คอลัมน์ D ถึง Q: คำว่า "ผ่าน" หรือ "ไม่ผ่าน"
+    rowData.push(totalScore, percentage, grade);   // คอลัมน์ R, S, T: คะแนนรวม, เปอร์เซ็นต์, ผลตรวจ
+    rowData.push("");                              // คอลัมน์ U: ล็อกพื้นที่ไว้สำหรับ "ฝังรูปภาพวาดจริง"
+    rowData.push(finalEvidenceText);               // คอลัมน์ V: เก็บข้อความหมายเหตุและลิงก์สำรองกันเหนียว
+    
+    sheet.appendRow(rowData);
+    
+    // ---- ✨ ระบบจัดโครงสร้างตารางขยายช่อง และวาดรูปอัตโนมัติ ----
+    var lastRow = sheet.getLastRow();
+    
+    // ขยายความสูงของแถวเป็น 90 พิกเซล เพื่อให้รูปภาพแสดงผลได้ขนาดใหญ่ชัดเจน
+    sheet.setRowHeight(lastRow, 90);
+    
+    var dataRange = sheet.getRange(lastRow, 1, 1, 22); // คอลัมน์ A ถึง V
+    dataRange.setFontFamily("Sarabun")
+             .setFontSize(10)
+             .setVerticalAlignment("middle")
+             .setHorizontalAlignment("center")
+             .setWrap(true); 
+             
+    // 📌 บังคับสั่งรันสูตร IMAGE แสดงรูปภาพตัวเป็นๆ ทันทีในเซลล์คอลัมน์ U (ถ้ามีรูปภาพส่งมา)
+    if (firstUploadedImageUrl !== "-") {
+      var cellU = sheet.getRange(lastRow, 21);
+      cellU.setFormula('=IMAGE("' + firstUploadedImageUrl + '")');
+    } else {
+      sheet.getRange(lastRow, 21).setValue("-");
     }
-
-    function saveRemark(id, value) { remarks[id] = value; }
-
-    function handleImage(input, id) {
-        const file = input.files[0];
-        if (!file) return;
-        
-        const preview = document.getElementById('prev_' + id);
-        preview.src = URL.createObjectURL(file);
-        preview.style.display = "block";
-
-        const reader = new FileReader();
-        reader.onloadend = function() {
-            imagesData[id] = {
-                base64: reader.result.split(',')[1],
-                contentType: file.type
-            };
-        };
-        reader.readAsDataURL(file);
+    
+    // จัดตำแหน่งข้อความหมายเหตุสรุปในคอลัมน์ V ให้ชิดซ้ายเพื่อให้อ่านง่าย
+    sheet.getRange(lastRow, 22).setHorizontalAlignment("left");
+    
+    // ระบบไฮไลต์สีพาสเทลอัตโนมัติ (R-T)
+    var gradeRange = sheet.getRange(lastRow, 18, 1, 3);
+    if (parseInt(totalScore) >= 11) {
+      gradeRange.setBackground("#DCFCE7").setFontColor("#15803D").setFontWeight("bold");
+    } else {
+      gradeRange.setBackground("#FEE2E2").setFontColor("#B91C1C").setFontWeight("bold");
     }
+    
+    return ContentService.createTextOutput(JSON.stringify({ status: "success" }))
+                         .setMimeType(ContentService.MimeType.JSON)
+                         .setHeaders(corsHeaders);
+                         
+  } catch(error) {
+    return ContentService.createTextOutput(JSON.stringify({ status: "error", message: error.toString() }))
+                         .setMimeType(ContentService.MimeType.JSON)
+                         .setHeaders(corsHeaders);
+  }
+}
 
-    function calculateScore() {
-        let total = 0;
-        for (let key in scores) { total += scores[key]; }
-        document.getElementById('totalScore').innerText = total;
-        let percent = Math.round((total / 14) * 100);
-        document.getElementById('percentage').innerText = percent + "%";
-        
-        const gradeElement = document.getElementById('grade');
-        if (percent >= 80) {
-            gradeElement.innerText = "ผ่านเกณฑ์มาตรฐาน"; gradeElement.style.cssText = "background-color:var(--success-light); color:var(--success);";
-        } else {
-            gradeElement.innerText = "ไม่ผ่านเกณฑ์ (ต้องแก้ไข)"; gradeElement.style.cssText = "background-color:var(--fail-light); color:var(--fail);";
-        }
-        document.getElementById('submitBtn').disabled = Object.keys(scores).length !== 14;
-    }
-
-    function submitForm() {
-        const workerName = document.getElementById('workerName').value.trim();
-        if (!workerName) { 
-            Swal.fire({ icon: 'warning', title: 'กรุณากรอกข้อมูล', text: 'กรุณากรอกชื่อพนักงานกรอก่อนส่งข้อมูลครับ' });
-            return; 
-        }
-
-        Swal.fire({ title: 'กำลังประมวลผลระบบพรีเมียม...', text: 'ระบบกำลังอัปโหลดรูปภาพหลักฐานและบันทึกลง Google Sheets สวยงาม', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
-
-        const formBody = new URLSearchParams();
-        formBody.append("workerName", workerName);
-        formBody.append("auditTime", document.getElementById('auditTime').value);
-        formBody.append("totalScore", document.getElementById('totalScore').innerText);
-        formBody.append("percentage", document.getElementById('percentage').innerText);
-        formBody.append("grade", document.getElementById('grade').innerText);
-        formBody.append("scores", JSON.stringify(scores));
-        formBody.append("remarks", JSON.stringify(remarks));
-        formBody.append("images", JSON.stringify(imagesData)); // ส่งข้อมูลรูปภาพไปแปลงหลังบ้าน
-
-        fetch(WEB_APP_URL, {
-            method: "POST",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: formBody
-        })
-        .then(res => res.json())
-        .then(response => {
-            if (response.status === "success") {
-                Swal.fire({ icon: 'success', title: 'บันทึกสำเร็จ!', text: 'อัปโหลดรูปภาพและลงตารางสีสันสวยงามเรียบร้อย!', confirmButtonColor: '#2e7d32' }).then(() => location.reload());
-            } else { throw new Error(response.message); }
-        })
-        .catch(() => {
-            Swal.fire({ icon: 'success', title: 'จัดเก็บข้อมูลเรียบร้อย', text: 'ระบบอัปเดตข้อมูลขึ้นระบบคลาวด์เรียบร้อยแล้ว!', confirmButtonColor: '#1F4E79' }).then(() => location.reload());
-        });
-    }
-</script>
-</body>
-</html>
+function doOptions(e) {
+  return ContentService.createTextOutput("").setHeaders({
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type"
+  });
+}
