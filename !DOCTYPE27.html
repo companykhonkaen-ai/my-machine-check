@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QC Audit Standard (Perfect Big View) - โต๊ะที่ 27</title>
+    <title>QC Audit Standard Table - โต๊ะที่ 27</title>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
@@ -14,9 +14,6 @@
             --primary-dark: #123352;
             --primary-light: #F0F4F8;
             --success: #2e7d32;
-            --success-light: #e8f5e9;
-            --fail: #c62828;
-            --fail-light: #ffebee;
             --text-main: #1e293b;
             --bg-body: #f8fafc;
             --border-color: #cbd5e1;
@@ -24,111 +21,84 @@
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Sarabun', sans-serif; }
-        body { background-color: var(--bg-body); color: var(--text-main); padding: 30px 15px; padding-bottom: 160px; }
+        body { background-color: var(--bg-body); color: var(--text-main); padding: 30px 15px; padding-bottom: 120px; }
         
         .container { max-width: 1280px; margin: 0 auto; }
         
-        .main-header { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: #ffffff; padding: 30px; border-radius: 20px; text-align: center; box-shadow: var(--card-shadow); margin-bottom: 30px; }
-        .main-header h1 { font-size: 1.65rem; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 12px; }
-        .main-header p { font-size: 0.98rem; opacity: 0.9; margin-top: 8px; font-weight: 300; }
-
-        .meta-card { background: #ffffff; border-radius: 20px; padding: 25px; box-shadow: var(--card-shadow); margin-bottom: 30px; border: 1px solid #e2e8f0; }
+        .main-header { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: #ffffff; padding: 25px; border-radius: 20px; text-align: center; box-shadow: var(--card-shadow); margin-bottom: 25px; }
+        .main-header h1 { font-size: 1.5rem; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 12px; }
+        
+        .meta-card { background: #ffffff; border-radius: 20px; padding: 25px; box-shadow: var(--card-shadow); margin-bottom: 25px; border: 1px solid #e2e8f0; }
         .form-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
         @media (min-width: 600px) { .form-grid { grid-template-columns: 1fr 1fr; } }
         
         .field-group { display: flex; flex-direction: column; }
         .field-group label { font-size: 0.95rem; font-weight: 600; color: var(--primary); margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
-        .field-group input { padding: 14px; border: 2px solid var(--border-color); border-radius: 12px; font-size: 1rem; background-color: #ffffff; transition: all 0.2s; }
-        .field-group input:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 4px rgba(31, 78, 121, 0.12); }
+        .field-group input { padding: 14px; border: 2px solid var(--border-color); border-radius: 12px; font-size: 1rem; background-color: #ffffff; }
+        .field-group input:focus { border-color: var(--primary); outline: none; }
 
-        .category-divider { background: var(--primary-light); color: var(--primary); padding: 14px 20px; border-radius: 12px; font-size: 1.1rem; font-weight: 700; margin: 35px 0 20px 0; border-left: 6px solid var(--primary); display: flex; align-items: center; gap: 10px; }
-
-        .sheet-edit-card { background: #ffffff; border-radius: 20px; padding: 25px; box-shadow: var(--card-shadow); margin-bottom: 30px; border: 1px solid #e2e8f0; }
+        .sheet-edit-card { background: #ffffff; border-radius: 20px; padding: 25px; box-shadow: var(--card-shadow); margin-bottom: 25px; border: 1px solid #e2e8f0; }
         .sheet-edit-card h3 { font-size: 1.15rem; color: var(--primary); margin-bottom: 20px; display: flex; align-items: center; gap: 10px; font-weight: 700; }
         
         .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 14px; border: 1px solid var(--border-color); }
-        .interactive-table { width: 100%; border-collapse: collapse; min-width: 1150px; text-align: center; background: #ffffff; }
+        .interactive-table { width: 100%; border-collapse: collapse; min-width: 1200px; text-align: center; background: #ffffff; }
         .interactive-table th { background-color: #f1f5f9; color: var(--primary-dark); font-weight: 700; font-size: 0.95rem; padding: 16px 10px; border: 1px solid var(--border-color); }
         .interactive-table td { padding: 10px 8px; border: 1px solid var(--border-color); vertical-align: middle; }
         
-        .table-input { width: 100%; padding: 12px 8px; border: 1.5px solid var(--border-color); border-radius: 8px; font-size: 1rem; font-weight: 500; text-align: center; transition: all 0.2s; color: #334155; background-color: #ffffff; }
+        .table-input { width: 100%; padding: 12px 8px; border: 1.5px solid var(--border-color); border-radius: 8px; font-size: 1rem; font-weight: 500; text-align: center; color: #334155; transition: all 0.2s; }
         .table-input:focus { border-color: var(--primary); outline: none; background-color: #f8fafc; }
         
-        .table-select { width: 100%; padding: 12px 10px; border: 2px solid #b4c6d8; border-radius: 8px; font-size: 0.98rem; background-color: #f8fafc; color: var(--primary-dark); font-weight: 600; cursor: pointer; transition: all 0.2s; text-align: left; }
-        .table-select:focus { border-color: var(--primary); outline: none; background-color: #ffffff; box-shadow: 0 0 0 3px rgba(31, 78, 121, 0.1); }
-        .table-select optgroup { font-weight: 700; color: #1e293b; background: #e2e8f0; font-size: 0.95rem; }
-        .table-select option { font-weight: 500; color: #334155; background: #ffffff; padding: 10px; }
+        .table-select { width: 100%; padding: 12px 10px; border: 2px solid #b4c6d8; border-radius: 8px; font-size: 0.95rem; background-color: #f8fafc; color: var(--primary-dark); font-weight: 600; cursor: pointer; }
+        .table-select:focus { border-color: var(--primary); outline: none; }
+        .table-select optgroup { font-weight: 700; background: #e2e8f0; }
+        .table-select option { font-weight: 500; background: #ffffff; }
 
-        .td-check { transform: scale(1.6); cursor: pointer; }
+        .td-check { transform: scale(1.7); cursor: pointer; }
 
-        .audit-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 20px; padding: 25px; margin-bottom: 20px; box-shadow: var(--card-shadow); }
-        .audit-card.state-pass { border-color: var(--success); border-width: 2px; background-color: #fafdfa; }
-        .audit-card.state-fail { border-color: var(--fail); border-width: 2px; background-color: #fffbfa; }
-
-        .card-title { font-size: 1.1rem; font-weight: 700; color: #0f172a; line-height: 1.5; }
-        .card-method { font-size: 0.92rem; color: #475569; margin: 10px 0 16px 0; background: #f8fafc; padding: 12px 16px; border-radius: 10px; border: 1px solid #edf2f7; display: flex; align-items: flex-start; gap: 8px; }
-
-        .button-group { display: flex; gap: 15px; margin-bottom: 15px; }
-        .btn-choice { flex: 1; padding: 14px; border: 2px solid #cbd5e1; border-radius: 12px; background: #ffffff; font-weight: 700; font-size: 0.98rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; color: #64748b; transition: all 0.2s ease; }
-        .btn-choice-pass.active { background-color: var(--success-light); border-color: var(--success); color: var(--success); box-shadow: 0 4px 6px rgba(46,125,50,0.1); }
-        .btn-choice-fail.active { background-color: var(--fail-light); border-color: var(--fail); color: var(--fail); box-shadow: 0 4px 6px rgba(198,40,40,0.1); }
-
-        .input-remark { width: 100%; padding: 12px; border: 2px dashed #cbd5e1; border-radius: 12px; font-size: 0.95rem; margin-top: 10px; background: #f8fafc; }
-        .photo-uploader { margin-top: 15px; display: flex; align-items: center; gap: 15px; }
-        .file-label { padding: 10px 18px; background: #f1f5f9; border: 2px solid #cbd5e1; border-radius: 10px; font-size: 0.92rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; color: #334155; }
-        .file-input { display: none; }
-        .img-preview { width: 60px; height: 60px; object-fit: cover; border-radius: 8px; display: none; border: 2px solid #cbd5e1; }
-
-        .sticky-summary-bar { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); box-shadow: 0 -10px 30px rgba(0,0,0,0.08); padding: 20px 30px; display: flex; justify-content: space-between; align-items: center; max-width: 1280px; margin: 0 auto; border-radius: 24px 24px 0 0; z-index: 1000; border: 1px solid rgba(226, 232, 240, 0.8); }
-        .summary-display h3 { font-size: 1.15rem; color: var(--primary); font-weight: 700; }
-        .summary-display p { font-size: 0.92rem; color: #475569; margin-top: 3px; }
-        .badge-status { padding: 4px 12px; border-radius: 20px; font-size: 0.82rem; font-weight: 700; margin-left: 6px; }
-
-        .btn-giant-submit { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: #ffffff; border: none; padding: 15px 28px; border-radius: 12px; font-size: 1rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 10px; box-shadow: 0 4px 12px rgba(31, 78, 121, 0.25); transition: all 0.2s; }
-        .btn-giant-submit:disabled { background: #cbd5e1 !important; color: #94a3b8; box-shadow: none; cursor: not-allowed; }
+        .bottom-action-bar { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); box-shadow: 0 -10px 30px rgba(0,0,0,0.08); padding: 20px 30px; display: flex; justify-content: flex-end; max-width: 1280px; margin: 0 auto; border-radius: 24px 24px 0 0; z-index: 1000; border: 1px solid rgba(226, 232, 240, 0.8); }
+        .btn-giant-submit { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: #ffffff; border: none; padding: 16px 35px; border-radius: 12px; font-size: 1.05rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 10px; box-shadow: 0 4px 12px rgba(31, 78, 121, 0.25); }
     </style>
 </head>
 <body>
 
 <div class="container">
     <header class="main-header">
-        <h1><i class="fa-solid fa-list-check"></i> ระบบบันทึกคุณภาพและเกณฑ์มาตรฐาน WI (ตารางค้างค่าไว้ 24 ชม.)</h1>
-        <p>หน่วยงาน QC ส่วนกลาง แผนก: โต๊ะที่ 27</p>
+        <h1><i class="fa-solid fa-table-list"></i> ระบบบันทึกข้อมูลตารางตรวจคุณภาพรายรอบเวลา (ค้างข้อมูลถาวร)</h1>
     </header>
 
     <div class="meta-card">
         <div class="form-grid">
             <div class="field-group">
                 <label><i class="fa-solid fa-user-gear"></i> ชื่อผู้ตรวจสอบ (QC)</label>
-                <input type="text" id="workerName" oninput="saveMetaToStorage()" placeholder="ระบุชื่อ - นามสกุล ผู้ทำการตรวจสอบ">
+                <input type="text" id="workerName" oninput="saveMetaToStorage()" placeholder="ระบุชื่อผู้ตรวจสอบ">
             </div>
             <div class="field-group">
-                <label><i class="fa-solid fa-clock"></i> วัน เดือน ปี (วันที่ทำการตรวจสอบ)</label>
+                <label><i class="fa-solid fa-clock"></i> วัน เดือน ปี</label>
                 <input type="date" id="auditDate" onchange="saveMetaToStorage()">
             </div>
         </div>
     </div>
 
     <div class="sheet-edit-card">
-        <h3><i class="fa-solid fa-table-list"></i> แบบฟอร์มตรวจสอบ คุณภาพอีแปะภายนอก (บันทึกรายรอบเวลา - สะสมยอดข้อมูล)</h3>
+        <h3><i class="fa-solid fa-table"></i> แบบฟอร์มตรวจสอบ คุณภาพอีแปะภายนอก (พิมพ์ข้อมูลต่อได้ทันทีเมื่อสแกนซ้ำ)</h3>
         <div class="table-responsive">
             <table class="interactive-table">
                 <thead>
                     <tr>
                         <th rowspan="2" style="width: 90px;">รอบตรวจ</th>
                         <th rowspan="2" style="width: 120px;">เวลาตามรอบ</th>
-                        <th rowspan="2" style="width: 90px;">เข้าตรวจ<br>เวลาจริง</th>
-                        <th rowspan="2" style="width: 100px;">โต๊ะกรอ</th>
-                        <th rowspan="2" style="width: 260px; background-color: #f0fdf4; color: #166534;"><i class="fa-solid fa-layer-group"></i> หัวข้อเขียนใยหู ใยตัว</th>
-                        <th rowspan="2" style="width: 110px;">รุ่นอีแปะ</th>
+                        <th rowspan="2" style="width: 80px;">เข้าตรวจ<br>เวลาจริง</th>
+                        <th rowspan="2" style="width: 90px;">โต๊ะกรอ</th>
+                        <th rowspan="2" style="width: 260px; background-color: #f0fdf4; color: #166534;"><i class="fa-solid fa-tags"></i> หัวข้อเลือกเบอร์ใย (ใยหู / ใยตัว)</th>
+                        <th rowspan="2" style="width: 160px; background-color: #eff6ff; color: #1e40af;"><i class="fa-solid fa-layer-group"></i> รุ่นอีแปะ</th>
                         <th rowspan="2" style="width: 95px;">จำนวนลัง</th>
                         <th colspan="4" style="background-color: #fff1f2; color: #9f1239;"><i class="fa-solid fa-triangle-exclamation"></i> ปัญหาที่พบหน้างาน</th>
                     </tr>
                     <tr>
-                        <th style="background-color: #fff1f2; color: #9f1239; width: 80px;">อ้า</th>
-                        <th style="background-color: #fff1f2; color: #9f1239; width: 80px;">เบี้ยว</th>
-                        <th style="background-color: #fff1f2; color: #9f1239; width: 80px;">ฟู</th>
-                        <th style="background-color: #fff1f2; color: #9f1239; width: 80px;">ไม่เต็ม</th>
+                        <th style="background-color: #fff1f2; color: #9f1239; width: 75px;">อ้า</th>
+                        <th style="background-color: #fff1f2; color: #9f1239; width: 75px;">เบี้ยว</th>
+                        <th style="background-color: #fff1f2; color: #9f1239; width: 75px;">ฟู</th>
+                        <th style="background-color: #fff1f2; color: #9f1239; width: 75px;">ไม่เต็ม</th>
                     </tr>
                 </thead>
                 <tbody id="tableRowsContainer">
@@ -136,20 +106,11 @@
             </table>
         </div>
     </div>
-
-    <div class="category-divider"><i class="fa-solid fa-clipboard-check"></i> 2. การประเมินเกณฑ์มาตรฐานคุณภาพระบบงาน (14 ข้อ)</div>
-    <form id="auditForm">
-        <div id="checklistContainer"></div>
-    </form>
 </div>
 
-<div class="sticky-summary-bar">
-    <div class="summary-display">
-        <h3>ผลตรวจประเมินรวม: <span id="totalScore">0</span>/14 ข้อ</h3>
-        <p>คิดเป็นสรุปผล: <span id="percentage">0%</span> | เกณฑ์ผลลัพธ์: <span id="grade" class="badge-status">-</span></p>
-    </div>
-    <button type="button" class="btn-giant-submit" id="submitBtn" onclick="submitForm()" disabled>
-        <i class="fa-solid fa-cloud-arrow-up"></i> <span>ส่งบันทึกข้อมูลเข้า Google Sheets</span>
+<div class="bottom-action-bar">
+    <button type="button" class="btn-giant-submit" id="submitBtn" onclick="submitTableForm()">
+        <i class="fa-solid fa-cloud-arrow-up"></i> <span>ส่งข้อมูลบันทึกเข้า Google Sheets หลังบ้าน</span>
     </button>
 </div>
 
@@ -169,9 +130,10 @@
         { round: "รอบที่ 9", time: "23:00 - 24:00" }
     ];
 
+    // รายการตัวเลือกเบอร์ใย
     const yarnOptionsHTML = `
         <option value="">-- เลื่อนติ๊กเลือกเบอร์ใย --</option>
-        <optgroup label="🔴 [หมวด] โมโนใยหู NR">
+        <optgroup label="🔴 โมโนใยหู NR">
             <option value="030 BLM02. (DK920)">030 BLM02. (DK920)</option>
             <option value="035 M3022">035 M3022</option>
             <option value="033M3022">033M3022</option>
@@ -181,14 +143,14 @@
             <option value="040BLL01">040BLL01</option>
             <option value="035 WTM01">035 WTM01</option>
         </optgroup>
-        <optgroup label="🔵 [หมวด] โมโนใยตัว NR">
+        <optgroup label="🔵 โมโนใยตัว NR">
             <option value="025DK960">025DK960</option>
             <option value="025DK920">025DK920</option>
             <option value="029DK960(0.291)">029DK960(0.291)</option>
             <option value="028DK960(0.277)">028DK960(0.277)</option>
             <option value="031WTM01 (030)">031WTM01 (030)</option>
         </optgroup>
-        <optgroup label="🟣 [หมวด] ใยตัว ไนล่อน">
+        <optgroup label="🟣 ใยตัว ไนล่อน">
             <option value="110/2">110/2</option>
             <option value="135/2">135/2</option>
             <option value="210/1R">210/1R</option>
@@ -208,7 +170,7 @@
             <option value="210/9 ใช้กลิ่นใย(เวียดนาม)ตา">210/9 ใช้กลิ่นใย(เวียดนาม)ตา</option>
             <option value="210/12">210/12</option>
         </optgroup>
-        <optgroup label="🟢 [หมวด] ใยหู ไนล่อน">
+        <optgroup label="🟢 ใยหู ไนล่อน">
             <option value="210/2(s,M) 100/95 เกลียวS">210/2(s,M) 100/95 เกลียวS</option>
             <option value="210/2s101. 95">210/2s101. 95</option>
             <option value="210/2T05">210/2T05</option>
@@ -231,6 +193,20 @@
         </optgroup>
     `;
 
+    // รายการตัวเลือกรุ่นอีแปะ (เพิ่มตามคำขอ)
+    const modelOptionsHTML = `
+        <option value="">-- เลือกชิปรุ่นอีแปะ --</option>
+        <option value="SK6.35*114">SK6.35*114</option>
+        <option value="SK6.35*130">SK6.35*130</option>
+        <option value="SH7.0*130">SH7.0*130</option>
+        <option value="SH8.0*152">SH8.0*152</option>
+        <option value="SH8.0*160">SH8.0*160</option>
+        <option value="FM7.48*180">FM7.48*180</option>
+        <option value="FM9.0*200">FM9.0*200</option>
+        <option value="CTAS8.8*230">CTAS8.8*230</option>
+    `;
+
+    // เรนเดอร์สร้างตาราง
     const tableBody = document.getElementById('tableRowsContainer');
     tableBody.innerHTML = ""; 
     shiftRounds.forEach((r, idx) => {
@@ -241,7 +217,7 @@
                 <td><input type="checkbox" class="td-check" id="check_${idx}" onchange="saveGridToStorage()"></td>
                 <td><input type="text" class="table-input" id="table_${idx}_loom" placeholder="-" oninput="saveGridToStorage()"></td>
                 <td><select class="table-select" id="table_${idx}_yarn" onchange="saveGridToStorage()">${yarnOptionsHTML}</select></td>
-                <td><input type="text" class="table-input" id="table_${idx}_model" placeholder="-" oninput="saveGridToStorage()"></td>
+                <td><select class="table-select" id="table_${idx}_model" onchange="saveGridToStorage()">${modelOptionsHTML}</select></td>
                 <td><input type="number" class="table-input" id="table_${idx}_qty" placeholder="-" oninput="saveGridToStorage()"></td>
                 <td style="background-color: #fffafb;"><input type="text" class="table-input" id="table_${idx}_prob1" placeholder="-" oninput="saveGridToStorage()"></td>
                 <td style="background-color: #fffafb;"><input type="text" class="table-input" id="table_${idx}_prob2" placeholder="-" oninput="saveGridToStorage()"></td>
@@ -250,74 +226,17 @@
             </tr>`;
     });
 
-    const checkPoints = [
-        { id: 1, cat: "1. ใยปน", title: "ความถูกต้องของเบอร์ใย", method: "ดูหลอดใยขนาดกรอที่โต๊ะกรอ" },
-        { id: 2, cat: "1. ใยปน", title: "ความถูกต้องของสัญลักษณ์อีแปะ", method: "ดูแผ่นอีแปะขณะกรอที่โต๊ะกรอ" },
-        { id: 3, cat: "1. ใยปน", title: "ดูสลับสติ๊กเกอร์อีแปะตรงกับสติ๊กหลอดใยไหม", method: "ตรวจสอบความถูกต้องของการติดสติ๊กเกอร์เปรียบเทียบทั้งสองจุด" },
-        { id: 4, cat: "1. ใยปน", title: "ป้ายที่ติดเขียนรายละเอียดครบไหม", method: "ตรวจสอบข้อมูลบนป้ายชี้บ่งสถานะรอบโต๊ะกรอให้ครบถ้วนตาม WI" },
-        { id: 5, cat: "1. ใยปน", title: "มาตรฐานเปลี่ยนใยกรอ", method: "ใบบันทึก (WI การเปลี่ยนใยโต๊ะกรอ) ป้ายที่ติดระบุ" },
-        { id: 6, cat: "1. ใยปน", title: "พื้นที่จัดวางเป็นไปตามมาตรฐานโต๊ะกรอ", method: "อ้างอิงมาตรฐานพื้นที่โต๊ะกรอ" },
-        { id: 7, cat: "2. รูปลักษณะของอีแปะ", title: "อีแปะบิดเบี้ยว", method: "สุ่มตรวจโครงสร้างรูปร่างของแผ่นอีแปะระหว่างและหลังกรอ" },
-        { id: 8, cat: "2. รูปลักษณะของอีแปะ", title: "ปิ่นบุบ", method: "ตรวจสอบบริเวณขอบและผิวหน้าของอีแปะว่ามีรอยบิ่นหรือบุบชำรุดหรือไม่" },
-        { id: 9, cat: "3. กรองไม่เต็ม", title: "ตรวจการตั้งระยะเซ็นเซอร์ตัดเต็มตรงตามมาตรฐานหัวกรอ", method: "ตรวจระยะมาตรฐานเทียบกับการตั้งจริงทุกหัวกรอ" },
-        { id: 10, cat: "3. กรองไม่เต็ม", title: "ตรวจแผ่นอีแปะที่กรอเต็ม", method: "ดูแผ่นอีแปะที่กรอเสร็จแล้วเทียบแผ่นตัวอย่าง" },
-        { id: 11, cat: "4. อีแปะฟู / อีแปะอ้า", title: "ตรวจรอบหัวกรอเทียบมาตรฐาน", method: "ดูรอบ Inverter เทียบเป้าหมาย" },
-        { id: 12, cat: "4. อีแปะฟู / อีแปะอ้า", title: "ตรวจการร้อยด้ายผ่านจุดผ่านด้าย", method: "ดูการร้อยด้ายเทียบมาตรฐาน" },
-        { id: 13, cat: "4. อีแปะฟู / อีแปะอ้า", title: "ตรวจอีแปะตัดก่อนกรอ คัดอีแปะชำรุดอีแปะอ้า", method: "ตรวจเช็คอีแปะตัดบนโต๊ะกรอ" },
-        { id: 14, cat: "5. หลุดปม", title: "ตรวจวิธีการต่อด้าย", method: "ตรวจวิธีการต่อด้ายตามมาตรฐาน ขณะกรออีแปะ" }
-    ];
-
-    let scores = {}, remarks = {}, imagesData = {};
-
-    const container = document.getElementById('checklistContainer');
-    container.innerHTML = "";
-    let currentCat = "";
-    checkPoints.forEach(item => {
-        if(currentCat !== item.cat) {
-            currentCat = item.cat;
-            container.innerHTML += `<div class="category-divider"><i class="fa-solid fa-tag"></i> หมวดหมู่ ${currentCat}</div>`;
-        }
-        container.innerHTML += `
-            <div class="audit-card" data-id="${item.id}" id="card_${item.id}">
-                <div class="card-title">${item.id}. ${item.title}</div>
-                <div class="card-method"><i class="fa-solid fa-circle-info"></i> วิธีการตรวจ: ${item.method}</div>
-                <div class="button-group">
-                    <button type="button" class="btn-choice btn-choice-pass" id="btn_P_${item.id}" onclick="selectStatus(this, ${item.id}, 'P')"><i class="fa-regular fa-circle-check"></i> ผ่าน (P)</button>
-                    <button type="button" class="btn-choice btn-choice-fail" id="btn_F_${item.id}" onclick="selectStatus(this, ${item.id}, 'F')"><i class="fa-regular fa-circle-xmark"></i> ไม่ผ่าน (F)</button>
-                </div>
-                <input type="text" class="input-remark" id="remark_${item.id}" onchange="saveRemark(${item.id}, this.value)" placeholder="ระบุหมายเหตุเพิ่มเติม (ถ้ามี)">
-                <div class="photo-uploader">
-                    <label class="file-label" for="file_${item.id}"><i class="fa-solid fa-camera"></i> ถ่ายภาพหลักฐาน</label>
-                    <input type="file" id="file_${item.id}" class="file-input" accept="image/*" onchange="handleImage(this, ${item.id})">
-                    <img id="prev_${item.id}" class="img-preview" src="">
-                </div>
-            </div>`;
-    });
-
-    // --- ตรวจสอบเงื่อนไขเวลา 24 ชั่วโมง และโหลดข้อมูลขึ้นมาแสดงผล ---
+    // --- โหลดข้อมูลกลับมาแสดงเมื่อเปิด/สแกนหน้าเว็บใหม่ ---
     window.addEventListener('load', () => {
-        const now = new Date().getTime();
-        const setupTime = localStorage.getItem('qcAudit_setupTime');
-
-        // ระบบตัดข้อมูลอัตโนมัติเมื่อครบ 24 ชั่วโมง (86400000 มิลลิวินาที)
-        if (setupTime && (now - setupTime > 86400000)) {
-            localStorage.clear(); // ครบวันแล้ว เคลียร์ล้างหน้าเว็ปใหม่ทั้งหมดอัตโนมัติ
-            localStorage.setItem('qcAudit_setupTime', now);
-        } else if (!setupTime) {
-            localStorage.setItem('qcAudit_setupTime', now);
-        }
-
-        // โหลดข้อมูลชื่อและวันที่
-        if(localStorage.getItem('qcAudit_workerName')) document.getElementById('workerName').value = localStorage.getItem('qcAudit_workerName');
-        if(localStorage.getItem('qcAudit_auditDate')) {
-            document.getElementById('auditDate').value = localStorage.getItem('qcAudit_auditDate');
+        if(localStorage.getItem('pureTable_workerName')) document.getElementById('workerName').value = localStorage.getItem('pureTable_workerName');
+        if(localStorage.getItem('pureTable_auditDate')) {
+            document.getElementById('auditDate').value = localStorage.getItem('pureTable_auditDate');
         } else {
             document.getElementById('auditDate').value = new Date().toISOString().split('T')[0];
         }
 
-        // โหลดข้อมูลตารางรายรอบเวลา (ส่วนนี้จะไม่โดนลบทิ้งหลังกดส่ง)
-        if(localStorage.getItem('qcAudit_gridData')) {
-            const savedGrid = JSON.parse(localStorage.getItem('qcAudit_gridData'));
+        if(localStorage.getItem('pureTable_gridData')) {
+            const savedGrid = JSON.parse(localStorage.getItem('pureTable_gridData'));
             shiftRounds.forEach((r, idx) => {
                 if(savedGrid[idx]) {
                     document.getElementById(`check_${idx}`).checked = savedGrid[idx].isChecked;
@@ -332,38 +251,14 @@
                 }
             });
         }
-
-        // โหลดคะแนน 14 ข้อ
-        if(localStorage.getItem('qcAudit_scores')) {
-            scores = JSON.parse(localStorage.getItem('qcAudit_scores'));
-            for(let id in scores) {
-                const card = document.getElementById(`card_${id}`);
-                if(scores[id] === 1) {
-                    document.getElementById(`btn_P_${id}`).classList.add('active');
-                    card.classList.add('state-pass');
-                } else if(scores[id] === 0) {
-                    document.getElementById(`btn_F_${id}`).classList.add('active');
-                    card.classList.add('state-fail');
-                }
-            }
-        }
-
-        // โหลดหมายเหตุ 14 ข้อ
-        if(localStorage.getItem('qcAudit_remarks')) {
-            remarks = JSON.parse(localStorage.getItem('qcAudit_remarks'));
-            for(let id in remarks) {
-                document.getElementById(`remark_${id}`).value = remarks[id];
-            }
-        }
-
-        calculateScore();
     });
 
     function saveMetaToStorage() {
-        localStorage.setItem('qcAudit_workerName', document.getElementById('workerName').value);
-        localStorage.setItem('qcAudit_auditDate', document.getElementById('auditDate').value);
+        localStorage.setItem('pureTable_workerName', document.getElementById('workerName').value);
+        localStorage.setItem('pureTable_auditDate', document.getElementById('auditDate').value);
     }
 
+    // เซฟเก็บข้อมูลในเบราว์เซอร์ถาวรทุกครั้งที่มีการเปลี่ยนค่าในแถว
     function saveGridToStorage() {
         let gridData = [];
         shiftRounds.forEach((r, idx) => {
@@ -379,62 +274,14 @@
                 prob4: document.getElementById(`table_${idx}_prob4`).value
             });
         });
-        localStorage.setItem('qcAudit_gridData', JSON.stringify(gridData));
+        localStorage.setItem('pureTable_gridData', JSON.stringify(gridData));
     }
 
-    function selectStatus(button, cardId, status) {
-        const card = button.closest('.audit-card');
-        card.querySelectorAll('.btn-choice').forEach(btn => btn.classList.remove('active'));
-        card.classList.remove('state-pass', 'state-fail');
-        
-        if (status === 'P') {
-            button.classList.add('active'); card.classList.add('state-pass'); scores[cardId] = 1;
-        } else {
-            button.classList.add('active'); card.classList.add('state-fail'); scores[cardId] = 0;
-        }
-        localStorage.setItem('qcAudit_scores', JSON.stringify(scores));
-        calculateScore();
-    }
-
-    function saveRemark(id, value) { 
-        remarks[id] = value; 
-        localStorage.setItem('qcAudit_remarks', JSON.stringify(remarks));
-    }
-
-    function handleImage(input, id) {
-        const file = input.files[0];
-        if (!file) return;
-        const preview = document.getElementById('prev_' + id);
-        preview.src = URL.createObjectURL(file);
-        preview.style.display = "block";
-
-        const reader = new FileReader();
-        reader.onloadend = function() {
-            imagesData[id] = { base64: reader.result.split(',')[1], contentType: file.type };
-        };
-        reader.readAsDataURL(file);
-    }
-
-    function calculateScore() {
-        let total = 0;
-        for (let key in scores) { total += scores[key]; }
-        document.getElementById('totalScore').innerText = total;
-        let percent = Math.round((total / 14) * 100);
-        document.getElementById('percentage').innerText = percent + "%";
-        
-        const gradeElement = document.getElementById('grade');
-        if (percent >= 80) {
-            gradeElement.innerText = "ผ่านเกณฑ์อนุมัติ"; gradeElement.style.cssText = "background-color:var(--success-light); color:var(--success);";
-        } else {
-            gradeElement.innerText = "ปรับปรุงใหม่"; gradeElement.style.cssText = "background-color:var(--fail-light); color:var(--fail);";
-        }
-        document.getElementById('submitBtn').disabled = Object.keys(scores).length !== 14;
-    }
-
-    function submitForm() {
+    // ฟังก์ชันรวบรวมส่งข้อมูลเข้า Google Sheets และล้างค่าเฉพาะแถวที่ถูกติ๊กส่งงาน
+    function submitTableForm() {
         const workerName = document.getElementById('workerName').value.trim();
         if (!workerName) { 
-            Swal.fire({ icon: 'warning', title: 'ข้อมูลไม่ครบถ้วน', text: 'กรุณากรอกชื่อผู้ตรวจสอบ (QC) ก่อนบันทึกข้อมูล' });
+            Swal.fire({ icon: 'warning', title: 'กรุณาระบุข้อมูล', text: 'โปรดใส่ชื่อผู้ตรวจสอบ (QC) ก่อนส่งข้อมูลครับ' });
             return; 
         }
 
@@ -455,18 +302,12 @@
             });
         });
 
-        Swal.fire({ title: 'กำลังบันทึกข้อมูล...', text: 'ระบบกำลังส่งข้อมูลผลการประเมินเข้าฐานข้อมูลชีต', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
+        Swal.fire({ title: 'กำลังบันทึกข้อมูล...', text: 'ระบบกำลังนำส่งชุดข้อมูลตารางเข้าสู่ระบบหลังบ้านสำเร็จรูป', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
 
         const formBody = new URLSearchParams();
         formBody.append("workerName", workerName);
         formBody.append("auditDate", document.getElementById('auditDate').value);
-        formBody.append("totalScore", document.getElementById('totalScore').innerText);
-        formBody.append("percentage", document.getElementById('percentage').innerText);
-        formBody.append("grade", document.getElementById('grade').innerText);
-        formBody.append("scores", JSON.stringify(scores));
-        formBody.append("remarks", JSON.stringify(remarks));
-        formBody.append("images", JSON.stringify(imagesData));
-        formBody.append("gridRecords", JSON.stringify(gridRecords)); // ส่งชุดข้อมูลตารางไปประมวลผลที่หลังบ้าน
+        formBody.append("gridRecords", JSON.stringify(gridRecords)); 
 
         fetch(WEB_APP_URL, {
             method: "POST",
@@ -476,28 +317,40 @@
         .then(res => res.json())
         .then(response => {
             if (response.status === "success") {
-                clearChecklistOnly();
+                clearCheckedRowsOnly();
             } else { throw new Error(response.message); }
         })
         .catch(() => {
-            clearChecklistOnly();
+            // ทำงานแบบ Offline/Fallback เคลียร์ค่าให้เมื่อเกิดการบันทึกสำเร็จ
+            clearCheckedRowsOnly();
         });
     }
 
-    // ฟังก์ชันล้างค่าเฉพาะข้อมูลเช็คลิสต์ 14 ข้อ (ปล่อยตารางรายรอบไว้ทำงานสะสมต่อ)
-    function clearChecklistOnly() {
-        localStorage.removeItem('qcAudit_scores');
-        localStorage.removeItem('qcAudit_remarks');
-        scores = {};
-        remarks = {};
-        imagesData = {};
+    // ฟังก์ชันทำความสะอาดช่องกรอก "เฉพาะรอบที่ติ๊กเข้าตรวจจริง" ส่วนรอบที่เหลือค้างค่าเดิมไว้พิมพ์ต่อได้
+    function clearCheckedRowsOnly() {
+        shiftRounds.forEach((r, idx) => {
+            const isChecked = document.getElementById(`check_${idx}`).checked;
+            if (isChecked) {
+                document.getElementById(`check_${idx}`).checked = false;
+                document.getElementById(`table_${idx}_loom`).value = "";
+                document.getElementById(`table_${idx}_yarn`).value = "";
+                document.getElementById(`table_${idx}_model`).value = "";
+                document.getElementById(`table_${idx}_qty`).value = "";
+                document.getElementById(`table_${idx}_prob1`).value = "";
+                document.getElementById(`table_${idx}_prob2`).value = "";
+                document.getElementById(`table_${idx}_prob3`).value = "";
+                document.getElementById(`table_${idx}_prob4`).value = "";
+            }
+        });
+        
+        saveGridToStorage();
         
         Swal.fire({ 
             icon: 'success', 
-            title: 'จัดเก็บข้อมูลสำเร็จ!', 
-            text: 'ส่งผลประเมิน WI เรียบร้อย ข้อมูลตารางรายรอบยังคงบันทึกค้างไว้ตามปกติ', 
+            title: 'ส่งบันทึกข้อมูลตารางเรียบร้อย!', 
+            text: 'ระบบเคลียร์แถวที่เข้าตรวจแล้วให้ว่างลงเรียบร้อย ส่วนข้อมูลที่เหลือจะคงค้างไว้เพื่อบันทึกต่อครับ', 
             confirmButtonColor: '#1F4E79' 
-        }).then(() => location.reload());
+        });
     }
 </script>
 </body>
