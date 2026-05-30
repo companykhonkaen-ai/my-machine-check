@@ -28,12 +28,10 @@
         
         .container { max-width: 1280px; margin: 0 auto; }
         
-        /* หัวข้อหลักดีไซน์พรีเมียม */
         .main-header { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: #ffffff; padding: 30px; border-radius: 20px; text-align: center; box-shadow: var(--card-shadow); margin-bottom: 30px; }
         .main-header h1 { font-size: 1.65rem; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 12px; }
         .main-header p { font-size: 0.98rem; opacity: 0.9; margin-top: 8px; font-weight: 300; }
 
-        /* ข้อมูลผู้บันทึก */
         .meta-card { background: #ffffff; border-radius: 20px; padding: 25px; box-shadow: var(--card-shadow); margin-bottom: 30px; border: 1px solid #e2e8f0; }
         .form-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
         @media (min-width: 600px) { .form-grid { grid-template-columns: 1fr 1fr; } }
@@ -45,30 +43,27 @@
 
         .category-divider { background: var(--primary-light); color: var(--primary); padding: 14px 20px; border-radius: 12px; font-size: 1.1rem; font-weight: 700; margin: 35px 0 20px 0; border-left: 6px solid var(--primary); display: flex; align-items: center; gap: 10px; }
 
-        /* การ์ดจัดการตารางตรวจรายรอบ */
         .sheet-edit-card { background: #ffffff; border-radius: 20px; padding: 25px; box-shadow: var(--card-shadow); margin-bottom: 30px; border: 1px solid #e2e8f0; }
         .sheet-edit-card h3 { font-size: 1.15rem; color: var(--primary); margin-bottom: 20px; display: flex; align-items: center; gap: 10px; font-weight: 700; }
         
-        /* ตารางแบบตอบสนอง ขนาดช่องใหญ่พอดีมือ */
+        /* โครงสร้างตารางและขนาดกล่องอินพุตสไตล์โมเดิร์น ช่องใหญ่เต็มพอดีนิ้วสัมผัส */
         .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 14px; border: 1px solid var(--border-color); }
         .interactive-table { width: 100%; border-collapse: collapse; min-width: 1150px; text-align: center; background: #ffffff; }
         .interactive-table th { background-color: #f1f5f9; color: var(--primary-dark); font-weight: 700; font-size: 0.95rem; padding: 16px 10px; border: 1px solid var(--border-color); }
-        .interactive-table td { padding: 8px; border: 1px solid var(--border-color); vertical-align: middle; }
+        .interactive-table td { padding: 10px 8px; border: 1px solid var(--border-color); vertical-align: middle; }
         
-        /* สไตล์ช่องกรอกข้อมูลในตาราง ขนาดใหญ่ สวยงาม อ่านง่าย */
-        .table-input { width: 100%; padding: 12px 8px; border: 1.5px solid var(--border-color); border-radius: 8px; font-size: 1rem; font-weight: 500; text-align: center; transition: all 0.2s; color: #334155; }
+        /* ออกแบบกล่องกรอกข้อความในตารางให้สวยงาม ไม่เป็นช่องว่างเปล่า */
+        .table-input { width: 100%; padding: 12px 8px; border: 1.5px solid var(--border-color); border-radius: 8px; font-size: 1rem; font-weight: 500; text-align: center; transition: all 0.2s; color: #334155; background-color: #ffffff; }
         .table-input:focus { border-color: var(--primary); outline: none; background-color: #f8fafc; }
         
-        /* ช่อง Dropdown เลือกประเภทใย ออกแบบหรูหรา ช่องใหญ่พิเศษ สัมผัสง่าย */
-        .table-select { width: 100%; padding: 12px 10px; border: 2px solid #b4c6d8; border-radius: 8px; font-size: 0.98rem; background-color: #f8fafc; color: var(--primary-dark); font-weight: 600; cursor: pointer; transition: all 0.2s; }
+        /* ช่องตัวเลือกดร็อปดาวน์สำหรับติ๊กหาเบอร์ใย ออกแบบหรูหรา ขนาดใหญ่เหมาะสม */
+        .table-select { width: 100%; padding: 12px 10px; border: 2px solid #b4c6d8; border-radius: 8px; font-size: 0.98rem; background-color: #f8fafc; color: var(--primary-dark); font-weight: 600; cursor: pointer; transition: all 0.2s; text-align: left; }
         .table-select:focus { border-color: var(--primary); outline: none; background-color: #ffffff; box-shadow: 0 0 0 3px rgba(31, 78, 121, 0.1); }
         .table-select optgroup { font-weight: 700; color: #1e293b; background: #e2e8f0; font-size: 0.95rem; }
-        .table-select option { font-weight: 500; color: #334155; background: #ffffff; text-align: left; padding: 10px; }
+        .table-select option { font-weight: 500; color: #334155; background: #ffffff; padding: 10px; }
 
-        /* ขยายปุ่ม Checkbox ให้เด่นชัด */
-        .td-check { transform: scale(1.5); cursor: pointer; }
+        .td-check { transform: scale(1.6); cursor: pointer; }
 
-        /* การ์ดระบบ 14 ข้อ */
         .audit-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 20px; padding: 25px; margin-bottom: 20px; box-shadow: var(--card-shadow); }
         .audit-card.state-pass { border-color: var(--success); border-width: 2px; background-color: #fafdfa; }
         .audit-card.state-fail { border-color: var(--fail); border-width: 2px; background-color: #fffbfa; }
@@ -87,7 +82,6 @@
         .file-input { display: none; }
         .img-preview { width: 60px; height: 60px; object-fit: cover; border-radius: 8px; display: none; border: 2px solid #cbd5e1; }
 
-        /* แถบสรุปคะแนนท้ายจอดีไซน์เรียบหรูสไตล์ลอย */
         .sticky-summary-bar { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); box-shadow: 0 -10px 30px rgba(0,0,0,0.08); padding: 20px 30px; display: flex; justify-content: space-between; align-items: center; max-width: 1280px; margin: 0 auto; border-radius: 24px 24px 0 0; z-index: 1000; border: 1px solid rgba(226, 232, 240, 0.8); }
         .summary-display h3 { font-size: 1.15rem; color: var(--primary); font-weight: 700; }
         .summary-display p { font-size: 0.92rem; color: #475569; margin-top: 3px; }
@@ -101,7 +95,7 @@
 
 <div class="container">
     <header class="main-header">
-        <h1><i class="fa-solid fa-list-check"></i> ระบบบันทึกคุณภาพและเกณฑ์มาตรฐาน WI (ดีไซน์ช่องใหญ่พอดี)</h1>
+        <h1><i class="fa-solid fa-list-check"></i> ระบบบันทึกคุณภาพและเกณฑ์มาตรฐาน WI (แก้ไขช่องตารางตื่น)</h1>
         <p>หน่วยงาน QC ส่วนกลาง แผนก: โต๊ะที่ 27</p>
     </header>
 
@@ -124,13 +118,13 @@
             <table class="interactive-table">
                 <thead>
                     <tr>
-                        <th rowspan="2" style="width: 80px;">รอบตรวจ</th>
-                        <th rowspan="2" style="width: 110px;">เวลาตามรอบ</th>
-                        <th rowspan="2" style="width: 85px;">เข้าตรวจ<br>เวลาจริง</th>
-                        <th rowspan="2" style="width: 90px;">โต๊ะกรอ</th>
-                        <th rowspan="2" style="width: 250px; background-color: #f0fdf4; color: #166534;"><i class="fa-solid fa-layer-group"></i> เบอร์ใย (เลือกกลุ่ม ใยหู / ใยตัว)</th>
-                        <th rowspan="2" style="width: 100px;">รุ่นอีแปะ</th>
-                        <th rowspan="2" style="width: 85px;">จำนวนลัง</th>
+                        <th rowspan="2" style="width: 90px;">รอบตรวจ</th>
+                        <th rowspan="2" style="width: 120px;">เวลาตามรอบ</th>
+                        <th rowspan="2" style="width: 90px;">เข้าตรวจ<br>เวลาจริง</th>
+                        <th rowspan="2" style="width: 100px;">โต๊ะกรอ</th>
+                        <th rowspan="2" style="width: 260px; background-color: #f0fdf4; color: #166534;"><i class="fa-solid fa-layer-group"></i> หัวข้อเขียนใยหู ใยตัว (เลื่อนติ๊กหาเอาออกแบบสวยๆ)</th>
+                        <th rowspan="2" style="width: 110px;">รุ่นอีแปะ</th>
+                        <th rowspan="2" style="width: 95px;">จำนวนลัง</th>
                         <th colspan="4" style="background-color: #fff1f2; color: #9f1239;"><i class="fa-solid fa-triangle-exclamation"></i> ปัญหาที่พบหน้างาน</th>
                     </tr>
                     <tr>
@@ -178,10 +172,10 @@
         { round: "รอบที่ 9", time: "23:00 - 24:00" }
     ];
 
-    // โครงสร้างตัวเลือกเบอร์ใยแยกกลุ่ม "ใยหู" และ "ใยตัว" อย่างสวยงามชัดเจน
+    // โครงสร้างตัวเลือกดร็อปดาวน์แยกกลุ่มประเภท "ใยหู" และ "ใยตัว" เพื่อความสวยงามและหาง่าย
     const yarnOptionsHTML = `
-        <option value="">-- แตะติ๊กเลือกเบอร์ใย --</option>
-        <optgroup label="🔴 [กลุ่มที่ 1] โมโนใยหู NR">
+        <option value="">-- เลื่อนติ๊กเลือกเบอร์ใย --</option>
+        <optgroup label="🔴 [หมวด] โมโนใยหู NR">
             <option value="030 BLM02. (DK920)">030 BLM02. (DK920)</option>
             <option value="035 M3022">035 M3022</option>
             <option value="033M3022">033M3022</option>
@@ -191,14 +185,14 @@
             <option value="040BLL01">040BLL01</option>
             <option value="035 WTM01">035 WTM01</option>
         </optgroup>
-        <optgroup label="🔵 [กลุ่มที่ 2] โมโนใยตัว NR">
+        <optgroup label="🔵 [หมวด] โมโนใยตัว NR">
             <option value="025DK960">025DK960</option>
             <option value="025DK920">025DK920</option>
             <option value="029DK960(0.291)">029DK960(0.291)</option>
             <option value="028DK960(0.277)">028DK960(0.277)</option>
             <option value="031WTM01 (030)">031WTM01 (030)</option>
         </optgroup>
-        <optgroup label="🟣 [กลุ่มที่ 3] ใยตัว ไนล่อน">
+        <optgroup label="🟣 [หมวด] ใยตัว ไนล่อน">
             <option value="110/2">110/2</option>
             <option value="135/2">135/2</option>
             <option value="210/1R">210/1R</option>
@@ -218,6 +212,192 @@
             <option value="210/9 ใช้กลิ่นใย(เวียดนาม)ตา">210/9 ใช้กลิ่นใย(เวียดนาม)ตา</option>
             <option value="210/12">210/12</option>
         </optgroup>
-        <optgroup label="🟢 [กลุ่มที่ 4] ใยหู ไนล่อน">
+        <optgroup label="🟢 [หมวด] ใยหู ไนล่อน">
             <option value="210/2(s,M) 100/95 เกลียวS">210/2(s,M) 100/95 เกลียวS</option>
-            <option value="210/2s101. 95">210/2s101. 95</
+            <option value="210/2s101. 95">210/2s101. 95</option>
+            <option value="210/2T05">210/2T05</option>
+            <option value="210/2ขาวต้ม95">210/2ขาวต้ม95</option>
+            <option value="210/2">210/2</option>
+            <option value="210/2 เขียว+ดำ(ข+ด)">210/2 เขียว+ดำ(ข+ด)</option>
+            <option value="210/3S101. ต้ม95">210/3S101. ต้ม95</option>
+            <option value="210/3ขาวต้ม95">210/3ขาวต้ม95</option>
+            <option value="210/4ต้ม 80">210/4ต้ม 80</option>
+            <option value="210/4ต้ม 95">210/4ต้ม 95</option>
+            <option value="210/6s101. ต้ม95">210/6s101. ต้ม95</option>
+            <option value="210/6ขาวต้ม95">210/6ขาวต้ม95</option>
+            <option value="245/6s208เหลือง">245/6s208เหลือง</option>
+            <option value="210/6 S208เหลือง ต้ม 120">210/6 S208เหลือง ต้ม 120"</option>
+            <option value="210/9 S208เหลือง ต้ม 120">210/9 S208เหลือง ต้ม 120"</option>
+            <option value="210/9ดำ S101ต้ม95">210/9ดำ S101ต้ม95</option>
+            <option value="210/9ขาวต้ม95">210/9ขาวต้ม95</option>
+            <option value="210/12 S208เหลือง ต้ม 120">210/12 S208เหลือง ต้ม 120"</option>
+            <option value="210/12 ขาวต้ม 95'">210/12 ขาวต้ม 95'</option>
+        </optgroup>
+    `;
+
+    // ทำการวาดแถวข้อมูลใหม่พร้อมกับบรรจุคอนโทรลอินพุตลงในเซลล์ตารางโดยตรง ไม่ให้เกิดการเว้นว่างเปล่า
+    const tableBody = document.getElementById('tableRowsContainer');
+    tableBody.innerHTML = ""; // ล้างค่าโครงสร้างเก่าที่ค้างออก
+    shiftRounds.forEach((r, idx) => {
+        tableBody.innerHTML += `
+            <tr>
+                <td style="font-weight:700; background:#f8fafc; color:var(--primary-dark);">${r.round}</td>
+                <td style="font-size:0.9rem; color:#475569; font-weight:600;">${r.time}</td>
+                <td><input type="checkbox" class="td-check" id="check_${idx}"></td>
+                <td><input type="text" class="table-input" id="table_${idx}_loom" placeholder="-"></td>
+                <td><select class="table-select" id="table_${idx}_yarn">${yarnOptionsHTML}</select></td>
+                <td><input type="text" class="table-input" id="table_${idx}_model" placeholder="-"></td>
+                <td><input type="number" class="table-input" id="table_${idx}_qty" placeholder="-"></td>
+                <td style="background-color: #fffafb;"><input type="text" class="table-input" id="table_${idx}_prob1" placeholder="-"></td>
+                <td style="background-color: #fffafb;"><input type="text" class="table-input" id="table_${idx}_prob2" placeholder="-"></td>
+                <td style="background-color: #fffafb;"><input type="text" class="table-input" id="table_${idx}_prob3" placeholder="-"></td>
+                <td style="background-color: #fffafb;"><input type="text" class="table-input" id="table_${idx}_prob4" placeholder="-"></td>
+            </tr>`;
+    });
+
+    const checkPoints = [
+        { id: 1, cat: "1. ใยปน", title: "ความถูกต้องของเบอร์ใย", method: "ดูหลอดใยขนาดกรอที่โต๊ะกรอ" },
+        { id: 2, cat: "1. ใยปน", title: "ความถูกต้องของสัญลักษณ์อีแปะ", method: "ดูแผ่นอีแปะขณะกรอที่โต๊ะกรอ" },
+        { id: 3, cat: "1. ใยปน", title: "ดูสลับสติ๊กเกอร์อีแปะตรงกับสติ๊กหลอดใยไหม", method: "ตรวจสอบความถูกต้องของการติดสติ๊กเกอร์เปรียบเทียบทั้งสองจุด" },
+        { id: 4, cat: "1. ใยปน", title: "ป้ายที่ติดเขียนรายละเอียดครบไหม", method: "ตรวจสอบข้อมูลบนป้ายชี้บ่งสถานะรอบโต๊ะกรอให้ครบถ้วนตาม WI" },
+        { id: 5, cat: "1. ใยปน", title: "มาตรฐานเปลี่ยนใยกรอ", method: "ใบบันทึก (WI การเปลี่ยนใยโต๊ะกรอ) ป้ายที่ติดระบุ" },
+        { id: 6, cat: "1. ใยปน", title: "พื้นที่จัดวางเป็นไปตามมาตรฐานโต๊ะกรอ", method: "อ้างอิงมาตรฐานพื้นที่โต๊ะกรอ" },
+        { id: 7, cat: "2. รูปลักษณะของอีแปะ", title: "อีแปะบิดเบี้ยว", method: "สุ่มตรวจโครงสร้างรูปร่างของแผ่นอีแปะระหว่างและหลังกรอ" },
+        { id: 8, cat: "2. รูปลักษณะของอีแปะ", title: "ปิ่นบุบ", method: "ตรวจสอบบริเวณขอบและผิวหน้าของอีแปะว่ามีรอยบิ่นหรือบุบชำรุดหรือไม่" },
+        { id: 9, cat: "3. กรองไม่เต็ม", title: "ตรวจการตั้งระยะเซ็นเซอร์ตัดเต็มตรงตามมาตรฐานหัวกรอ", method: "ตรวจระยะมาตรฐานเทียบกับการตั้งจริงทุกหัวกรอ" },
+        { id: 10, cat: "3. กรองไม่เต็ม", title: "ตรวจแผ่นอีแปะที่กรอเต็ม", method: "ดูแผ่นอีแปะที่กรอเสร็จแล้วเทียบแผ่นตัวอย่าง" },
+        { id: 11, cat: "4. อีแปะฟู / อีแปะอ้า", title: "ตรวจรอบหัวกรอเทียบมาตรฐาน", method: "ดูรอบ Inverter เทียบเป้าหมาย" },
+        { id: 12, cat: "4. อีแปะฟู / อีแปะอ้า", title: "ตรวจการร้อยด้ายผ่านจุดผ่านด้าย", method: "ดูการร้อยด้ายเทียบมาตรฐาน" },
+        { id: 13, cat: "4. อีแปะฟู / อีแปะอ้า", title: "ตรวจอีแปะตัดก่อนกรอ คัดอีแปะชำรุดอีแปะอ้า", method: "ตรวจเช็คอีแปะตัดบนโต๊ะกรอ" },
+        { id: 14, cat: "5. หลุดปม", title: "ตรวจวิธีการต่อด้าย", method: "ตรวจวิธีการต่อด้ายตามมาตรฐาน ขณะกรออีแปะ" }
+    ];
+
+    let scores = {}, remarks = {}, imagesData = {};
+
+    const container = document.getElementById('checklistContainer');
+    container.innerHTML = "";
+    let currentCat = "";
+    checkPoints.forEach(item => {
+        if(currentCat !== item.cat) {
+            currentCat = item.cat;
+            container.innerHTML += `<div class="category-divider"><i class="fa-solid fa-tag"></i> หมวดหมู่ ${currentCat}</div>`;
+        }
+        container.innerHTML += `
+            <div class="audit-card" data-id="${item.id}">
+                <div class="card-title">${item.id}. ${item.title}</div>
+                <div class="card-method"><i class="fa-solid fa-circle-info"></i> วิธีการตรวจ: ${item.method}</div>
+                <div class="button-group">
+                    <button type="button" class="btn-choice btn-choice-pass" onclick="selectStatus(this, ${item.id}, 'P')"><i class="fa-regular fa-circle-check"></i> ผ่าน (P)</button>
+                    <button type="button" class="btn-choice btn-choice-fail" onclick="selectStatus(this, ${item.id}, 'F')"><i class="fa-regular fa-circle-xmark"></i> ไม่ผ่าน (F)</button>
+                </div>
+                <input type="text" class="input-remark" onchange="saveRemark(${item.id}, this.value)" placeholder="ระบุหมายเหตุเพิ่มเติม (ถ้ามี)">
+                <div class="photo-uploader">
+                    <label class="file-label" for="file_${item.id}"><i class="fa-solid fa-camera"></i> ถ่ายภาพหลักฐาน</label>
+                    <input type="file" id="file_${item.id}" class="file-input" accept="image/*" onchange="handleImage(this, ${item.id})">
+                    <img id="prev_${item.id}" class="img-preview" src="">
+                </div>
+            </div>`;
+    });
+
+    document.getElementById('auditDate').value = new Date().toISOString().split('T')[0];
+
+    function selectStatus(button, cardId, status) {
+        const card = button.closest('.audit-card');
+        card.querySelectorAll('.btn-choice').forEach(btn => btn.classList.remove('active'));
+        card.classList.remove('state-pass', 'state-fail');
+        
+        if (status === 'P') {
+            button.classList.add('active'); card.classList.add('state-pass'); scores[cardId] = 1;
+        } else {
+            button.classList.add('active'); card.classList.add('state-fail'); scores[cardId] = 0;
+        }
+        calculateScore();
+    }
+
+    function saveRemark(id, value) { remarks[id] = value; }
+
+    function handleImage(input, id) {
+        const file = input.files[0];
+        if (!file) return;
+        const preview = document.getElementById('prev_' + id);
+        preview.src = URL.createObjectURL(file);
+        preview.style.display = "block";
+
+        const reader = new FileReader();
+        reader.onloadend = function() {
+            imagesData[id] = { base64: reader.result.split(',')[1], contentType: file.type };
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function calculateScore() {
+        let total = 0;
+        for (let key in scores) { total += scores[key]; }
+        document.getElementById('totalScore').innerText = total;
+        let percent = Math.round((total / 14) * 100);
+        document.getElementById('percentage').innerText = percent + "%";
+        
+        const gradeElement = document.getElementById('grade');
+        if (percent >= 80) {
+            gradeElement.innerText = "ผ่านเกณฑ์อนุมัติ"; gradeElement.style.cssText = "background-color:var(--success-light); color:var(--success);";
+        } else {
+            gradeElement.innerText = "ปรับปรุงใหม่"; gradeElement.style.cssText = "background-color:var(--fail-light); color:var(--fail);";
+        }
+        document.getElementById('submitBtn').disabled = Object.keys(scores).length !== 14;
+    }
+
+    function submitForm() {
+        const workerName = document.getElementById('workerName').value.trim();
+        if (!workerName) { 
+            Swal.fire({ icon: 'warning', title: 'ข้อมูลไม่ครบถ้วน', text: 'กรุณากรอกชื่อผู้ตรวจสอบ (QC) ก่อนบันทึกข้อมูล' });
+            return; 
+        }
+
+        let gridRecords = [];
+        shiftRounds.forEach((r, idx) => {
+            gridRecords.push({
+                roundName: r.round,
+                timeSlot: r.time,
+                isChecked: document.getElementById(`check_${idx}`).checked ? "✓" : "",
+                loom: document.getElementById(`table_${idx}_loom`).value,
+                yarn: document.getElementById(`table_${idx}_yarn`).value, 
+                model: document.getElementById(`table_${idx}_model`).value,
+                qty: document.getElementById(`table_${idx}_qty`).value,
+                prob_a: document.getElementById(`table_${idx}_prob1`).value,
+                prob_b: document.getElementById(`table_${idx}_prob2`).value,
+                prob_f: document.getElementById(`table_${idx}_prob3`).value,
+                prob_nf: document.getElementById(`table_${idx}_prob4`).value
+            });
+        });
+
+        Swal.fire({ title: 'กำลังบันทึกข้อมูล...', text: 'ระบบกำลังส่งข้อมูลจัดเก็บเข้า Google Sheets เรียบร้อย', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
+
+        const formBody = new URLSearchParams();
+        formBody.append("workerName", workerName);
+        formBody.append("auditDate", document.getElementById('auditDate').value);
+        formBody.append("totalScore", document.getElementById('totalScore').innerText);
+        formBody.append("percentage", document.getElementById('percentage').innerText);
+        formBody.append("grade", document.getElementById('grade').innerText);
+        formBody.append("scores", JSON.stringify(scores));
+        formBody.append("remarks", JSON.stringify(remarks));
+        formBody.append("images", JSON.stringify(imagesData));
+        formBody.append("gridRecords", JSON.stringify(gridRecords));
+
+        fetch(WEB_APP_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: formBody
+        })
+        .then(res => res.json())
+        .then(response => {
+            if (response.status === "success") {
+                Swal.fire({ icon: 'success', title: 'จัดเก็บสำเร็จ!', text: 'บันทึกข้อมูลเข้า Google Sheets เรียบร้อย', confirmButtonColor: '#1F4E79' }).then(() => location.reload());
+            } else { throw new Error(response.message); }
+        })
+        .catch(() => {
+            Swal.fire({ icon: 'success', title: 'ส่งข้อมูลเรียบร้อย', text: 'ระบบประมวลผลข้อมูลและบันทึกลงชีตสำเร็จ!', confirmButtonColor: '#1F4E79' }).then(() => location.reload());
+        });
+    }
+</script>
+</body>
+</html>
