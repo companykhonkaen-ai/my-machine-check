@@ -99,7 +99,7 @@
                         <th style="width: 70px;">ข้อที่</th>
                         <th style="min-width: 350px;">รายการเกณฑ์การตรวจสอบคุณภาพ</th>
                         <th style="width: 220px;">ผลการตรวจสอบ</th>
-                        <th style="width: 280px;">หมายเหตุ / ระบุปัญหาที่พบ (เช่น ใยปน/อ้า/ฟู)</th>
+                        <th style="width: 280px;">หมายเหตุ</th>
                     </tr>
                 </thead>
                 <tbody id="auditTopicsContainer">
@@ -145,10 +145,9 @@
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-    // ส่วนต่อประสานฐานข้อมูล Google Apps Script Web App
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbynrQFBw7aRoBE_SNZViKXRPKdiGuPCR5bqQb_923PNNrY3ZeenVIoA6tPhwhusibHnTQ/exec";
 
-    // รายการข้อความเกณฑ์ 14 ข้อหลัก
+    // รายการเกณฑ์ 14 ข้อหลัก
     const auditQuestions = [
         "ตรวจสอบความถูกต้องของเบอร์ใยและเช็กปัญหา [ใยปน] (วิธีการตรวจ: ตรวจหลอดใยที่โต๊ะกรออย่างละเอียด)",
         "ตรวจสอบปัญหาชิ้นงาน [อ้า / ฟู] ขณะทำการผลิตกรอที่โต๊ะกรอ",
@@ -178,7 +177,7 @@
         { round: "รอบที่ 9", time: "23:00 - 24:00" }
     ];
 
-    // ข้อมูลเบอร์ใยทั้งหมดคัดลอกถอดความมาจากรูปภาพแนบจริงของคุณ
+    // ข้อมูลตัวเลือกเบอร์ใย
     const yarnOptions = {
         "ใยหู ไนล่อน": ["210/2(s,M) 100/95 เกลียวS", "210/2s101. 95", "210/2T05", "210/2ขาวต้ม95", "210/2", "210/2 เขียว+ดำ(ข+ด)", "210/3S101. ต้ม95", "210/3ขาวต้ม95", "210/4ต้ม 80(ใช้แทนต้ม95ได้)", "210/4", "210/4ต้ม 95", "210/6s101. ต้ม95", "210/6ขาวต้ม95", "245/6s208เหลือง", "210/6 S208เหลือง ต้ม 120\"", "210/9 S208เหลือง ต้ม 120\"", "210/9ดำ S101ต้ม95", "210/9ขาวต้ม95'", "210/9", "210/12 S208เหลือง ต้ม 120\"", "210/12 ขาวต้ม 95'", "210/12 ขาวต้ม95", "210/12k91", "210/12ดำ S101ต้ม 90'"],
         "ใยตัว ไนล่อน": ["110/2", "135/2", "210/1R", "210/2. 100/95", "210/2ดำ +ทำหู", "210/2 140/95. สติ๊กเกอร์เขียว", "210/3. 100/85", "210/3F", "210/3T05", "210/3 140/90 สติ๊กเกอร์เขียว", "210/4F", "210/4. 115/85", "210/6 128/85", "245/6", "210/6T05", "210/9. 128/75", "210/9 ใช้กลิ่นใย(เวียดนาม)ตาข่ายชั้น", "210/12"],
@@ -186,10 +185,9 @@
         "โมโนใยตัว NR": ["025DK960", "025DK920", "029DK960(0.291)", "028DK960(0.277)", "031WTM01 (030)"]
     };
 
-    // ข้อมูลรุ่นอีแปะทั้งหมดแกะข้อความจากรูปภาพแนบจริงของคุณ
+    // ข้อมูลตัวเลือกรุ่นอีแปะ
     const modelOptions = ["SK6.35*114", "SK6.35*130", "SH7.0*130", "SH8.0*152", "SH8.0*160", "FM7.48*180", "FM9.0*200", "CTAS8.8*230"];
 
-    // ทำการรันฟังก์ชันสร้างแถวตารางเมื่อเปิดหน้าจอ
     document.addEventListener("DOMContentLoaded", () => {
         render14Topics();
         renderTimeRows();
@@ -216,13 +214,13 @@
                         </div>
                     </td>
                     <td>
-                        <input type="text" class="note-input" id="note_${qNum}" placeholder="ระบุรายละเอียดปัญหาที่พบหน้างาน..." oninput="saveAllToStorage()">
+                        <input type="text" class="note-input" id="note_${qNum}" placeholder="ระบุรายละเอียด..." oninput="saveAllToStorage()">
                     </td>
                 </tr>`;
         });
     }
 
-    // 2. ฟังก์ชันสร้างตารางบันทึกรายรอบเวลาด้านล่าง
+    // 2. ฟังก์ชันสร้างตารางบันทึกรายรอบเวลา
     function renderTimeRows() {
         const tableBody = document.getElementById('tableRowsContainer');
         tableBody.innerHTML = ""; 
@@ -260,7 +258,7 @@
         });
     }
 
-    // โหลดข้อมูลเดิมจาก Cache เซฟกันข้อมูลหายเมื่อกดรีเฟรชหน้าจอ
+    // โหลดข้อมูลเดิมจาก LocalStorage
     function loadSavedData() {
         if(localStorage.getItem('pureForm_workerName')) document.getElementById('workerName').value = localStorage.getItem('pureForm_workerName');
         if(localStorage.getItem('pureForm_auditDate')) {
@@ -297,7 +295,7 @@
         }
     }
 
-    // ฟังก์ชันจัดเก็บค่าลง LocalStorage
+    // บันทึกสถานะชั่วคราวลง LocalStorage
     function saveAllToStorage() {
         localStorage.setItem('pureForm_workerName', document.getElementById('workerName').value);
         localStorage.setItem('pureForm_auditDate', document.getElementById('auditDate').value);
@@ -329,7 +327,7 @@
         localStorage.setItem('pureForm_gridData', JSON.stringify(gridData));
     }
 
-    // ฟังก์ชันยิงข้อมูลฟอร์มส่งไปยัง Google Sheets
+    // ยิงข้อมูลบันทึกเข้า Google Sheets
     function submitFullForm() {
         const workerName = document.getElementById('workerName').value.trim();
         if (!workerName) { 
@@ -388,7 +386,7 @@
         });
     }
 
-    // ฟังก์ชันล้างเกณฑ์ 14 ข้อหลักเมื่อบันทึกงานสำเร็จ โดยเก็บข้อมูลตารางรายรอบเวลาด้านล่างไว้ค้างถาวร
+    // ล้างสถานะตารางด้านบน เพื่อเตรียมใช้งานต่อในรอบถัดไป
     function clear14TopicsOnly() {
         for(let qNum=1; qNum<=14; qNum++) {
             document.getElementById(`pass_${qNum}`).checked = false;
@@ -404,7 +402,7 @@
         Swal.fire({ 
             icon: 'success', 
             title: 'ส่งบันทึกข้อมูลเรียบร้อย!', 
-            text: 'ระบบเคลียร์สถานะในส่วนประเมิน 14 ข้อให้ใหม่แล้ว ส่วนข้อมูลรายรอบเวลาของตารางด้านล่างค้างข้อมูลเดิมไว้ให้ใช้งานต่อเนื่องได้ทันทีครับ', 
+            text: 'ระบบเคลียร์สถานะประเมิน 14 ข้อหลักให้ใหม่เรียบร้อยแล้ว ส่วนตารางเวลารอบข้างล่างยังคงเก็บข้อมูลไว้ให้คุณบันทึกสะสมได้ต่อเนื่องครับ', 
             confirmButtonColor: '#1F4E79' 
         });
     }
