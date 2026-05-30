@@ -47,14 +47,14 @@
         .audit-table td { padding: 12px; border: 1px solid var(--border-color); vertical-align: middle; }
         .text-center { text-align: center; }
         
-        /* ปุ่มวิทยุแบบสลับสถานะ (Pass/Fail) */
+        /* ปุ่มวิทยุสลับสถานะ ผ่าน/ไม่ผ่าน */
         .status-btn-group { display: inline-flex; gap: 8px; justify-content: center; }
         .status-label { padding: 8px 16px; border-radius: 8px; font-weight: 700; font-size: 0.9rem; cursor: pointer; border: 2px solid var(--border-color); color: #64748b; background: #ffffff; transition: all 0.2s; }
         .radio-pass:checked + .label-pass { background-color: #dcfce7; color: var(--success); border-color: #2e7d32; }
         .radio-fail:checked + .label-fail { background-color: #fee2e2; color: var(--danger); border-color: #c62828; }
         .status-btn-group input[type="radio"] { display: none; }
 
-        /* สไตล์ตารางรายรอบเวลา */
+        /* สไตล์ตารางบันทึกผลเดิม */
         .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 14px; border: 1px solid var(--border-color); }
         .interactive-table { width: 100%; border-collapse: collapse; min-width: 1200px; text-align: center; background: #ffffff; }
         .interactive-table th { background-color: #f1f5f9; color: var(--primary-dark); font-weight: 700; font-size: 0.95rem; padding: 16px 10px; border: 1px solid var(--border-color); }
@@ -62,11 +62,6 @@
         
         .table-input { width: 100%; padding: 12px 8px; border: 1.5px solid var(--border-color); border-radius: 8px; font-size: 1rem; font-weight: 500; text-align: center; color: #334155; transition: all 0.2s; }
         .table-input:focus { border-color: var(--primary); outline: none; background-color: #f8fafc; }
-        
-        .table-select { width: 100%; padding: 12px 10px; border: 2px solid #b4c6d8; border-radius: 8px; font-size: 0.95rem; background-color: #f8fafc; color: var(--primary-dark); font-weight: 600; cursor: pointer; }
-        .table-select:focus { border-color: var(--primary); outline: none; }
-        .table-select optgroup { font-weight: 700; background: #e2e8f0; }
-        .table-select option { font-weight: 500; background: #ffffff; }
 
         .td-check { transform: scale(1.7); cursor: pointer; }
 
@@ -78,10 +73,9 @@
 
 <div class="container">
     <header class="main-header">
-        <h1><i class="fa-solid fa-table-list"></i> ระบบบันทึกข้อมูลและตรวจสอบคุณภาพการผลิต (ค้างข้อมูลตารางถาวร)</h1>
+        <h1><i class="fa-solid fa-table-list"></i> ระบบบันทึกข้อมูลและตรวจสอบคุณภาพการผลิต - โต๊ะที่ 27</h1>
     </header>
 
-    <!-- ข้อมูลผู้ตรวจ -->
     <div class="meta-card">
         <div class="form-grid">
             <div class="field-group">
@@ -95,7 +89,6 @@
         </div>
     </div>
 
-    <!-- ส่วนที่ 1: ตารางเกณฑ์ตรวจสอบ 14 หัวข้อหลัก -->
     <div class="audit-card">
         <h3><i class="fa-solid fa-list-check"></i> หัวข้อการตรวจสอบคุณภาพทั่วไป (14 หัวข้อหลัก)</h3>
         <div style="overflow-x: auto;">
@@ -108,15 +101,13 @@
                     </tr>
                 </thead>
                 <tbody id="auditTopicsContainer">
-                    <!-- รายการข้อ 1-14 จะถูกสร้างโดย JavaScript -->
-                </tbody>
+                    </tbody>
             </table>
         </div>
     </div>
 
-    <!-- ส่วนที่ 2: ตารางบันทึกรายรอบเวลา -->
     <div class="sheet-edit-card">
-        <h3><i class="fa-solid fa-table"></i> แบบฟอร์มตรวจสอบ คุณภาพอีแปะภายนอก (ข้อมูลค้างไว้ต่อรอบ ไม่สูญหาย)</h3>
+        <h3><i class="fa-solid fa-table"></i> แบบฟอร์มตรวจสอบ คุณภาพอีแปะภายนอก (ข้อมูลในตารางค้างถาวร)</h3>
         <div class="table-responsive">
             <table class="interactive-table">
                 <thead>
@@ -125,8 +116,8 @@
                         <th rowspan="2" style="width: 120px;">เวลาตามรอบ</th>
                         <th rowspan="2" style="width: 80px;">เข้าตรวจ<br>เวลาจริง</th>
                         <th rowspan="2" style="width: 90px;">โต๊ะกรอ</th>
-                        <th rowspan="2" style="width: 260px; background-color: #f0fdf4; color: #166534;"><i class="fa-solid fa-tags"></i> หัวข้อเลือกเบอร์ใย (ใยหู / ใยตัว)</th>
-                        <th rowspan="2" style="width: 160px; background-color: #eff6ff; color: #1e40af;"><i class="fa-solid fa-layer-group"></i> รุ่นอีแปะ</th>
+                        <th rowspan="2" style="width: 200px; background-color: #f0fdf4; color: #166534;"><i class="fa-solid fa-tags"></i> ข้อมูลใย</th>
+                        <th rowspan="2" style="width: 200px; background-color: #eff6ff; color: #1e40af;"><i class="fa-solid fa-layer-group"></i> ข้อมูลรุ่นอีแปะ</th>
                         <th rowspan="2" style="width: 95px;">จำนวนลัง</th>
                         <th colspan="4" style="background-color: #fff1f2; color: #9f1239;"><i class="fa-solid fa-triangle-exclamation"></i> ปัญหาที่พบหน้างาน</th>
                     </tr>
@@ -138,14 +129,12 @@
                     </tr>
                 </thead>
                 <tbody id="tableRowsContainer">
-                    <!-- แถวข้อมูลรอบเวลาสร้างโดย JavaScript -->
-                </tbody>
+                    </tbody>
             </table>
         </div>
     </div>
 </div>
 
-<!-- แถบปุ่มส่งงานด้านล่าง -->
 <div class="bottom-action-bar">
     <button type="button" class="btn-giant-submit" id="submitBtn" onclick="submitFullForm()">
         <i class="fa-solid fa-cloud-arrow-up"></i> <span>ส่งข้อมูลบันทึกเข้า Google Sheets ทั้งหมด</span>
@@ -156,22 +145,22 @@
 <script>
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbynrQFBw7aRoBE_SNZViKXRPKdiGuPCR5bqQb_923PNNrY3ZeenVIoA6tPhwhusibHnTQ/exec";
 
-    // รายการหัวข้อตรวจสอบ 14 ข้อหลัก
+    // รายการเกณฑ์ตรวจสอบ 14 หัวข้อหลักตามหน้างานจริง
     const auditQuestions = [
-        "ความตึงเบอร์ใย และการคุมขนาดสเปค",
-        "ความถูกต้องของการเลือกเบอร์ใยตัวและใยหู",
-        "เช็คอุณหภูมิความร้อนและรอบความเร็วเครื่อง",
-        "ผิวหน้าและความหนาแน่นของชิ้นงานอีแปะ",
-        "การประกบติดแน่นของหน้าสัมผัส",
-        "ความสม่ำเสมอของขอบและรูปทรง",
-        "เช็คความสะอาด ไม่มีคราบน้ำมันปนเปื้อน",
-        "การคัดแยกชิ้นงานเสีย/ไม่ได้มาตรฐานออกจากล็อต",
-        "ตรวจสอบความถูกต้องของรุ่นและ Tag ป้ายสินค้า",
-        "การจัดเรียงซ้อนในลังบรรจุอย่างเป็นระเบียบ",
-        "ความสมบูรณ์ของกล่องบรรจุภัณฑ์และฝาปิด",
-        "บันทึกยอดจำนวนชิ้นและน้ำหนักรวมถูกต้อง",
-        "ความพร้อมของเครื่องจักรและระบบความปลอดภัยหน้างาน",
-        "ความสะอาดของพื้นที่ทำงาน (5ส) หลังจบกะ"
+        "ความถูกต้องของเบอร์ใย (วิธีการตรวจ: ดูหลอดใยขนาดกรอที่โต๊ะกรอ)",
+        "ความถูกต้องของสัญลักษณ์อีแปะ (วิธีการตรวจ: ดูแผ่นอีแปะขณะกรอที่โต๊ะกรอ)",
+        "ดูสลับสติกเกอร์อีแปะตรงกับสติกเกอร์หลอดใยไหม (วิธีการตรวจ: ตรวจสอบความถูกต้องของการติดสติกเกอร์เปรียบเทียบทั้งสองจุด)",
+        "ตรวจสอบขนาดของวงและรูในของชิ้นงานอีแปะ",
+        "ตรวจสอบความคมชัดและความลึกของการปั๊มสัญลักษณ์",
+        "ตรวจสอบความเรียบร้อยของขอบชิ้นงาน (ไม่มีครีบหรือส่วนเกิน)",
+        "ตรวจสอบความสะอาดรอบชิ้นงาน (ไม่มีคราบน้ำมันปนเปื้อนหลุดรอด)",
+        "ตรวจสอบเนื้อวัสดุอีแปะ (ไม่มีฟองอากาศหรือรอยแตกร้าว)",
+        "ตรวจสอบปริมาณความหนาแน่นและน้ำหนักเฉลี่ยตามเกณฑ์ควบคุม",
+        "ตรวจสอบจำนวนการบรรจุลงกล่อง/ลังแพ็กเกจให้ตรงตามล็อต",
+        "ตรวจสอบความถูกต้องของป้าย Tag ประจำกล่องและล็อตการผลิต",
+        "ตรวจสอบความสมบูรณ์ของกล่องบรรจุภัณฑ์และสายรัด",
+        "การคัดแยกชิ้นงานเสีย (NG) แยกถังชัดเจนและไม่ปะปนกับงานดี",
+        "ความสะอาดปลอดภัยรอบบริเวณเครื่องจักรและพื้นที่โต๊ะปฏิบัติงาน (5ส)"
     ];
 
     const shiftRounds = [
@@ -186,80 +175,6 @@
         { round: "รอบที่ 9", time: "23:00 - 24:00" }
     ];
 
-    const yarnOptionsHTML = `
-        <option value="">-- เลื่อนติ๊กเลือกเบอร์ใย --</option>
-        <optgroup label="🔴 โมโนใยหู NR">
-            <option value="030 BLM02. (DK920)">030 BLM02. (DK920)</option>
-            <option value="035 M3022">035 M3022</option>
-            <option value="033M3022">033M3022</option>
-            <option value="030M3022">030M3022</option>
-            <option value="031M3022หูปะทัง">031M3022หูปะทัง</option>
-            <option value="036M3022หูปะทัง">036M3022หูปะทัง</option>
-            <option value="040BLL01">040BLL01</option>
-            <option value="035 WTM01">035 WTM01</option>
-        </optgroup>
-        <optgroup label="🔵 โมโนใยตัว NR">
-            <option value="025DK960">025DK960</option>
-            <option value="025DK920">025DK920</option>
-            <option value="029DK960(0.291)">029DK960(0.291)</option>
-            <option value="028DK960(0.277)">028DK960(0.277)</option>
-            <option value="031WTM01 (030)">031WTM01 (030)</option>
-        </optgroup>
-        <optgroup label="🟣 ใยตัว ไนล่อน">
-            <option value="110/2">110/2</option>
-            <option value="135/2">135/2</option>
-            <option value="210/1R">210/1R</option>
-            <option value="210/2. 100/95">210/2. 100/95</option>
-            <option value="210/2ดำ +ทำหู">210/2ดำ +ทำหู</option>
-            <option value="210/2 140/95. สติ๊กเกอร์เขียว">210/2 140/95. สติ๊กเกอร์เขียว</option>
-            <option value="210/3. 100/85">210/3. 100/85</option>
-            <option value="210/3F">210/3F</option>
-            <option value="210/3T05">210/3T05</option>
-            <option value="210/3 140/90 สติ๊กเกอร์เขียว">210/3 140/90 สติ๊กเกอร์เขียว</option>
-            <option value="210/4F">210/4F</option>
-            <option value="210/4. 115/85">210/4. 115/85</option>
-            <option value="210/6 128/85">210/6 128/85</option>
-            <option value="245/6">245/6</option>
-            <option value="210/6T05">210/6T05</option>
-            <option value="210/9. 128/75">210/9. 128/75</option>
-            <option value="210/9 ใช้กลิ่นใย(เวียดนาม)ตา">210/9 ใช้กลิ่นใย(เวียดนาม)ตา</option>
-            <option value="210/12">210/12</option>
-        </optgroup>
-        <optgroup label="🟢 ใยหู ไนล่อน">
-            <option value="210/2(s,M) 100/95 เกลียวS">210/2(s,M) 100/95 เกลียวS</option>
-            <option value="210/2s101. 95">210/2s101. 95</option>
-            <option value="210/2T05">210/2T05</option>
-            <option value="210/2ขาวต้ม95">210/2ขาวต้ม95</option>
-            <option value="210/2">210/2</option>
-            <option value="210/2 เขียว+ดำ(ข+ด)">210/2 เขียว+ดำ(ข+ด)</option>
-            <option value="210/3S101. ต้ม95">210/3S101. ต้ม95</option>
-            <option value="210/3ขาวต้ม95">210/3ขาวต้ม95</option>
-            <option value="210/4ต้ม 80">210/4ต้ม 80</option>
-            <option value="210/4ต้ม 95">210/4ต้ม 95</option>
-            <option value="210/6s101. ต้ม95">210/6s101. ต้ม95</option>
-            <option value="210/6ขาวต้ม95">210/6ขาวต้ม95</option>
-            <option value="245/6s208เหลือง">245/6s208เหลือง</option>
-            <option value="210/6 S208เหลือง ต้ม 120">210/6 S208เหลือง ต้ม 120</option>
-            <option value="210/9 S208เหลือง ต้ม 120">210/9 S208เหลือง ต้ม 120</option>
-            <option value="210/9ดำ S101ต้ม95">210/9ดำ S101ต้ม95</option>
-            <option value="210/9ขาวต้ม95">210/9ขาวต้ม95</option>
-            <option value="210/12 S208เหลือง ต้ม 120">210/12 S208เหลือง ต้ม 120</option>
-            <option value="210/12 ขาวต้ม 95">210/12 ขาวต้ม 95</option>
-        </optgroup>
-    `;
-
-    const modelOptionsHTML = `
-        <option value="">-- เลื่อนเลือกชิปรุ่น --</option>
-        <option value="SK6.35*114">SK6.35*114</option>
-        <option value="SK6.35*130">SK6.35*130</option>
-        <option value="SH7.0*130">SH7.0*130</option>
-        <option value="SH8.0*152">SH8.0*152</option>
-        <option value="SH8.0*160">SH8.0*160</option>
-        <option value="FM7.48*180">FM7.48*180</option>
-        <option value="FM9.0*200">FM9.0*200</option>
-        <option value="CTAS8.8*230">CTAS8.8*230</option>
-    `;
-
     // 1. เรนเดอร์สร้างตารางเกณฑ์ 14 ข้อหลัก
     const auditContainer = document.getElementById('auditTopicsContainer');
     auditContainer.innerHTML = "";
@@ -268,20 +183,20 @@
         auditContainer.innerHTML += `
             <tr>
                 <td class="text-center" style="font-weight:700;">${qNum}</td>
-                <td style="font-weight:500; color:#334155;">${q}</td>
+                <td style="font-weight:500; color:#334155; font-size:0.95rem;">${q}</td>
                 <td class="text-center">
                     <div class="status-btn-group">
-                        <input type="radio" name="topic_${qNum}" id="pass_${qNum}" value="ผ่าน" onchange="saveAllToStorage()">
+                        <input type="radio" name="topic_${qNum}" id="pass_${qNum}" value="ผ่าน" class="radio-pass" onchange="saveAllToStorage()">
                         <label for="pass_${qNum}" class="status-label label-pass"><i class="fa-regular fa-circle-check"></i> ผ่าน</label>
                         
-                        <input type="radio" name="topic_${qNum}" id="fail_${qNum}" value="ไม่ผ่าน" onchange="saveAllToStorage()">
+                        <input type="radio" name="topic_${qNum}" id="fail_${qNum}" value="ไม่ผ่าน" class="radio-fail" onchange="saveAllToStorage()">
                         <label for="fail_${qNum}" class="status-label label-fail"><i class="fa-regular fa-circle-xmark"></i> ไม่ผ่าน</label>
                     </div>
                 </td>
             </tr>`;
     });
 
-    // 2. เรนเดอร์สร้างตารางรอบเวลาค้างข้อมูลถาวร
+    // 2. เรนเดอร์สร้างตารางรอบเวลากรอกข้อความอิสระ (ตารางเดิม)
     const tableBody = document.getElementById('tableRowsContainer');
     tableBody.innerHTML = ""; 
     shiftRounds.forEach((r, idx) => {
@@ -291,8 +206,8 @@
                 <td style="font-size:0.9rem; color:#475569; font-weight:600;">${r.time}</td>
                 <td><input type="checkbox" class="td-check" id="check_${idx}" onchange="saveAllToStorage()"></td>
                 <td><input type="text" class="table-input" id="table_${idx}_loom" placeholder="-" oninput="saveAllToStorage()"></td>
-                <td><select class="table-select" id="table_${idx}_yarn" onchange="saveAllToStorage()">${yarnOptionsHTML}</select></td>
-                <td><select class="table-select" id="table_${idx}_model" onchange="saveAllToStorage()">${modelOptionsHTML}</select></td>
+                <td><input type="text" class="table-input" id="table_${idx}_yarn" placeholder="ระบุข้อมูลใย" oninput="saveAllToStorage()" style="text-align:left; padding-left:10px;"></td>
+                <td><input type="text" class="table-input" id="table_${idx}_model" placeholder="ระบุรุ่นอีแปะ" oninput="saveAllToStorage()" style="text-align:left; padding-left:10px;"></td>
                 <td><input type="number" class="table-input" id="table_${idx}_qty" placeholder="-" oninput="saveAllToStorage()"></td>
                 <td style="background-color: #fffafb;"><input type="text" class="table-input" id="table_${idx}_prob1" placeholder="-" oninput="saveAllToStorage()"></td>
                 <td style="background-color: #fffafb;"><input type="text" class="table-input" id="table_${idx}_prob2" placeholder="-" oninput="saveAllToStorage()"></td>
@@ -301,7 +216,7 @@
             </tr>`;
     });
 
-    // --- โหลดข้อมูลกลับมาแสดงเมื่อมีการสแกนคิวอาร์โค้ดเปิดหน้าเว็บใหม่ ---
+    // --- โหลดข้อมูลกลับมาแสดงเมื่อมีการสแกนเปิดหน้าเว็บใหม่ (ค้างถาวร) ---
     window.addEventListener('load', () => {
         if(localStorage.getItem('pureForm_workerName')) document.getElementById('workerName').value = localStorage.getItem('pureForm_workerName');
         if(localStorage.getItem('pureForm_auditDate')) {
@@ -310,14 +225,14 @@
             document.getElementById('auditDate').value = new Date().toISOString().split('T')[0];
         }
 
-        // ดึงสถานะวิทยุของ 14 หัวข้อ
+        // โหลดข้อมูลวิทยุ 14 ข้อหลัก
         for(let qNum=1; qNum<=14; qNum++) {
             const savedVal = localStorage.getItem(`pureForm_topic_${qNum}`);
             if(savedVal === "ผ่าน") document.getElementById(`pass_${qNum}`).checked = true;
             if(savedVal === "ไม่ผ่าน") document.getElementById(`fail_${qNum}`).checked = true;
         }
 
-        // ดึงข้อมูลในตารางค้างค่าถาวรกลับมาแสดงผล
+        // โหลดข้อมูลแถวในตารางรอบเวลา
         if(localStorage.getItem('pureForm_gridData')) {
             const savedGrid = JSON.parse(localStorage.getItem('pureForm_gridData'));
             shiftRounds.forEach((r, idx) => {
@@ -336,25 +251,24 @@
         }
     });
 
-    // เซฟบันทึกเก็บข้อมูลทั้งหมดลงเบราว์เซอร์อัตโนมัติ (สแกนกี่ครั้งก็อยู่ครบ)
+    // จัดเก็บข้อมูลลงเบราว์เซอร์อัตโนมัติ
     function saveAllToStorage() {
         localStorage.setItem('pureForm_workerName', document.getElementById('workerName').value);
         localStorage.setItem('pureForm_auditDate', document.getElementById('auditDate').value);
 
-        // เซฟวิทยุ 14 ข้อ
         for(let qNum=1; qNum<=14; qNum++) {
             const passRadio = document.getElementById(`pass_${qNum}`);
             const failRadio = document.getElementById(`fail_${qNum}`);
             if(passRadio.checked) localStorage.setItem(`pureForm_topic_${qNum}`, "ผ่าน");
             else if(failRadio.checked) localStorage.setItem(`pureForm_topic_${qNum}`, "ไม่ผ่าน");
+            else localStorage.removeItem(`pureForm_topic_${qNum}`);
         }
 
-        // เซฟตารางรายรอบ
         let gridData = [];
         shiftRounds.forEach((r, idx) => {
             gridData.push({
                 isChecked: document.getElementById(`check_${idx}`).checked,
-                loom: document.getElementById(`table_${idx}_loom`).value,
+                loom: document.getElementById(`table_${idx}_loom').value,
                 yarn: document.getElementById(`table_${idx}_yarn`).value,
                 model: document.getElementById(`table_${idx}_model`).value,
                 qty: document.getElementById(`table_${idx}_qty`).value,
@@ -367,15 +281,14 @@
         localStorage.setItem('pureForm_gridData', JSON.stringify(gridData));
     }
 
-    // ฟังก์ชันรวบรวมส่งข้อมูลฟอร์ม
+    // ส่งข้อมูลบันทึกเข้า Google Sheets
     function submitFullForm() {
         const workerName = document.getElementById('workerName').value.trim();
         if (!workerName) { 
-            Swal.fire({ icon: 'warning', title: 'กรุณาระบุข้อมูล', text: 'โปรดใส่ชื่อผู้ตรวจสอบ (QC) ก่อนส่งข้อมูลครับ' });
+            Swal.fire({ icon: 'warning', title: 'กรุณาระบุข้อมูล', text: 'โปรดกรอกชื่อผู้ตรวจสอบ (QC) ก่อนส่งข้อมูลครับ' });
             return; 
         }
 
-        // รวมคำตอบ 14 ข้อหลัก
         let auditResults = {};
         for(let qNum=1; qNum<=14; qNum++) {
             const passChecked = document.getElementById(`pass_${qNum}`).checked;
@@ -383,7 +296,6 @@
             auditResults[`ข้อที่_${qNum}`] = passChecked ? "ผ่าน" : (failChecked ? "ไม่ผ่าน" : "ยังไม่ได้ตรวจ");
         }
 
-        // รวมตารางรอบเวลา
         let gridRecords = [];
         shiftRounds.forEach((r, idx) => {
             gridRecords.push({
@@ -401,7 +313,7 @@
             });
         });
 
-        Swal.fire({ title: 'กำลังส่งบันทึก...', text: 'ระบบกำลังนำข้อมูลส่งเข้าสู่ Google Sheets หลังบ้านปลายทาง', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
+        Swal.fire({ title: 'กำลังส่งข้อมูล...', text: 'ระบบกำลังนำส่งบันทึกเข้าสู่ Google Sheets ปลายทาง', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
 
         const formBody = new URLSearchParams();
         formBody.append("workerName", workerName);
@@ -417,37 +329,32 @@
         .then(res => res.json())
         .then(response => {
             if (response.status === "success") {
-                clearCheckedRowsOnly();
+                clearAuditDataOnly();
             } else { throw new Error(response.message); }
         })
         .catch(() => {
-            clearCheckedRowsOnly();
+            clearAuditDataOnly();
         });
     }
 
-    // ล้างเฉพาะแถวตารางด้านล่างที่มีการ "เข้าตรวจเวลาจริง" สำเร็จแล้วหลังกดส่งข้อมูล
-    function clearCheckedRowsOnly() {
-        shiftRounds.forEach((r, idx) => {
-            const isChecked = document.getElementById(`check_${idx}`).checked;
-            if (isChecked) {
-                document.getElementById(`check_${idx}`).checked = false;
-                document.getElementById(`table_${idx}_loom`).value = "";
-                document.getElementById(`table_${idx}_yarn`).value = "";
-                document.getElementById(`table_${idx}_model`).value = "";
-                document.getElementById(`table_${idx}_qty`).value = "";
-                document.getElementById(`table_${idx}_prob1`).value = "";
-                document.getElementById(`table_${idx}_prob2`).value = "";
-                document.getElementById(`table_${idx}_prob3`).value = "";
-                document.getElementById(`table_${idx}_prob4`).value = "";
-            }
-        });
+    // ฟังก์ชันเคลียร์ค่าเฉพาะ 14 ข้อหลัก ส่วนข้อมูลตารางรายรอบด้านล่างค้างไว้ตามคำสั่งเหมือนเดิม 100%
+    function clearAuditDataOnly() {
+        // 1. เคลียร์ค่าวิทยุ 14 ข้อหลักทั้งบนหน้าจอและใน LocalStorage
+        for(let qNum=1; qNum<=14; qNum++) {
+            document.getElementById(`pass_${qNum}`).checked = false;
+            document.getElementById(`fail_${qNum}`).checked = false;
+            localStorage.removeItem(`pureForm_topic_${qNum}`);
+        }
         
+        // 2. ข้อมูลตารางด้านล่าง ไม่ต้องทำอะไรเลย ปล่อยค้างไว้ตามค่าเดิมของมัน
+        
+        // บันทึกสถานะล่าสุดลง Storage
         saveAllToStorage();
         
         Swal.fire({ 
             icon: 'success', 
-            title: 'ส่งบันทึกข้อมูลสำเร็จเรียบร้อย!', 
-            text: 'ระบบดึงและเคลียร์เฉพาะรอบเวลาที่เข้าตรวจจริงเสร็จสิ้น ส่วนรอบเวลาอื่น ๆ หรือเกณฑ์ด้านบนจะค้างข้อมูลไว้ให้ทำต่อตามปกติครับ', 
+            title: 'ส่งบันทึกข้อมูลสำเร็จ!', 
+            text: 'ระบบเคลียร์สถานะเกณฑ์ตรวจสอบ 14 ข้อหลักด้านบนเรียบร้อยแล้ว ส่วนข้อมูลและแถวในตารางรอบเวลาทั้งหมดจะยังค้างไว้ให้ทำงานต่อเนื่องตามเดิมครับ', 
             confirmButtonColor: '#1F4E79' 
         });
     }
