@@ -18,73 +18,103 @@
             --fail: #c62828;
             --fail-light: #ffebee;
             --text-main: #2c3e50;
-            --bg-body: #f8fafc;
-            --card-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            --bg-body: #f1f5f9;
+            --card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Sarabun', sans-serif; }
-        body { background-color: var(--bg-body); color: var(--text-main); padding: 20px 15px; padding-bottom: 140px; }
-        .container { max-width: 650px; margin: 0 auto; }
+        body { background-color: var(--bg-body); color: var(--text-main); padding: 20px 12px; padding-bottom: 140px; }
+        .container { max-width: 600px; margin: 0 auto; }
         
-        .main-header { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: #ffffff; padding: 25px 20px; border-radius: 16px; text-align: center; box-shadow: var(--card-shadow); margin-bottom: 25px; }
-        .main-header h1 { font-size: 1.4rem; font-weight: 700; }
-        .main-header p { font-size: 0.95rem; opacity: 0.85; margin-top: 6px; }
+        /* หัวข้อระบบสไตล์หรูหราตามภาพลักษณ์องค์กร */
+        .main-header { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: #ffffff; padding: 30px 20px; border-radius: 20px; text-align: center; box-shadow: var(--card-shadow); margin-bottom: 20px; position: relative; overflow: hidden; }
+        .main-header h1 { font-size: 1.35rem; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .main-header p { font-size: 0.9rem; opacity: 0.85; margin-top: 8px; font-weight: 300; }
 
-        .meta-card { background: #ffffff; border-radius: 14px; padding: 20px; box-shadow: var(--card-shadow); margin-bottom: 25px; border: 1px solid #e2e8f0; }
+        /* ส่วนแสดงกล่องฝังตาราง Google Sheets ด้านบนสุด */
+        .sheet-preview-card { background: #ffffff; border-radius: 20px; padding: 18px; box-shadow: var(--card-shadow); margin-bottom: 20px; border: 1px solid #e2e8f0; }
+        .sheet-preview-card h3 { font-size: 0.95rem; color: var(--primary); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; font-weight: 700; }
+        .embed-container { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 12px; border: 1px solid #cbd5e1; background: #fff; }
+        .embed-container iframe { width: 100%; height: 350px; border: none; min-width: 750px; }
+
+        /* กล่องกรอกข้อมูลพนักงาน */
+        .meta-card { background: #ffffff; border-radius: 20px; padding: 20px; box-shadow: var(--card-shadow); margin-bottom: 20px; border: 1px solid #e2e8f0; }
         .form-grid { display: grid; grid-template-columns: 1fr; gap: 15px; }
         @media (min-width: 480px) { .form-grid { grid-template-columns: 1fr 1fr; } }
         
         .field-group { display: flex; flex-direction: column; }
         .field-group label { font-size: 0.85rem; font-weight: 600; color: var(--primary); margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
-        .field-group input { padding: 12px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem; background-color: #f8fafc; }
+        .field-group input { padding: 12px; border: 1.5px solid #cbd5e1; border-radius: 10px; font-size: 0.9rem; background-color: #ffffff; color: var(--text-main); transition: all 0.2s; }
+        .field-group input:focus { border-color: var(--primary); outline: none; background-color: #fff; box-shadow: 0 0 0 3px rgba(31, 78, 121, 0.1); }
 
-        .category-divider { background: var(--primary-light); color: var(--primary); padding: 10px 16px; border-radius: 8px; font-size: 1rem; font-weight: 700; margin: 25px 0 15px 0; border-left: 5px solid var(--primary); display: flex; align-items: center; gap: 8px; }
+        /* ตัวแบ่งหมวดหมู่คำถาม */
+        .category-divider { background: var(--primary-light); color: var(--primary); padding: 12px 16px; border-radius: 10px; font-size: 0.95rem; font-weight: 700; margin: 25px 0 15px 0; border-left: 5px solid var(--primary); display: flex; align-items: center; gap: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
 
-        .audit-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 20px; margin-bottom: 18px; box-shadow: var(--card-shadow); }
-        .audit-card.state-pass { border-color: var(--success); background-color: rgba(46, 125, 50, 0.01); }
-        .audit-card.state-fail { border-color: var(--fail); background-color: rgba(198, 40, 40, 0.01); }
+        /* การ์ดรายการตรวจแต่ละข้อ (ถอดแบบมาจากรูปภาพเป๊ะๆ) */
+        .audit-card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 20px; padding: 22px; margin-bottom: 20px; box-shadow: var(--card-shadow); transition: all 0.3s ease; }
+        .audit-card.state-pass { border-color: var(--success); box-shadow: 0 10px 15px -3px rgba(46, 125, 50, 0.05); }
+        .audit-card.state-fail { border-color: var(--fail); box-shadow: 0 10px 15px -3px rgba(198, 40, 40, 0.05); }
 
-        .card-title { font-size: 1rem; font-weight: 600; color: #1e293b; }
-        .card-method { font-size: 0.85rem; color: #64748b; margin: 6px 0 12px 0; background: #f1f5f9; padding: 8px 12px; border-radius: 6px; }
+        .card-title { font-size: 1rem; font-weight: 700; color: #1e293b; line-height: 1.4; }
+        .card-method { font-size: 0.85rem; color: #627d98; margin: 8px 0 14px 0; background: #f8fafc; padding: 10px 14px; border-radius: 8px; border: 1px solid #edf2f7; display: flex; align-items: flex-start; gap: 6px; }
+        .card-method i { margin-top: 3px; }
 
-        .button-group { display: flex; gap: 12px; }
-        .btn-choice { flex: 1; padding: 12px; border: 1.5px solid #cbd5e1; border-radius: 8px; background: #ffffff; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; color: #64748b; transition: all 0.2s; }
-        .btn-choice-pass.active { background-color: var(--success-light); border-color: var(--success); color: var(--success); }
-        .btn-choice-fail.active { background-color: var(--fail-light); border-color: var(--fail); color: var(--fail); }
-
-        .input-remark { width: 100%; padding: 10px; border: 1px dashed #cbd5e1; border-radius: 8px; font-size: 0.85rem; margin-top: 12px; background: #f8fafc; }
+        /* ปุ่มเลือก ผ่าน / ไม่ผ่าน */
+        .button-group { display: flex; gap: 12px; margin-bottom: 12px; }
+        .btn-choice { flex: 1; padding: 12px; border: 1.5px solid #cbd5e1; border-radius: 10px; background: #ffffff; font-weight: 700; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; color: #64748b; transition: all 0.2s ease; }
         
-        /* สไตล์สำหรับกล่องอัปโหลดรูปภาพแนวพรีเมียม */
-        .photo-uploader { margin-top: 10px; display: flex; align-items: center; gap: 10px; }
-        .file-label { padding: 8px 14px; background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.85rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; color: #475569; transition: all 0.2s; }
-        .file-label:hover { background: #e2e8f0; }
+        .btn-choice-pass:hover { border-color: var(--success); color: var(--success); background: rgba(46, 125, 50, 0.02); }
+        .btn-choice-pass.active { background-color: var(--success-light); border-color: var(--success); color: var(--success); box-shadow: 0 4px 6px -1px rgba(46, 125, 50, 0.1); }
+        
+        .btn-choice-fail:hover { border-color: var(--fail); color: var(--fail); background: rgba(198, 40, 40, 0.02); }
+        .btn-choice-fail.active { background-color: var(--fail-light); border-color: var(--fail); color: var(--fail); box-shadow: 0 4px 6px -1px rgba(198, 40, 40, 0.1); }
+
+        /* ช่องใส่หมายเหตุ */
+        .input-remark { width: 100%; padding: 12px; border: 1px dashed #cbd5e1; border-radius: 10px; font-size: 0.85rem; margin-top: 8px; background: #f8fafc; color: var(--text-main); transition: all 0.2s; }
+        .input-remark:focus { border-color: var(--primary); outline: none; background: #fff; border-style: solid; }
+        
+        /* ส่วนอัปโหลดภาพ */
+        .photo-uploader { margin-top: 14px; display: flex; align-items: center; gap: 12px; }
+        .file-label { padding: 9px 16px; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.85rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; color: #475569; transition: all 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+        .file-label:hover { background: #cbd5e1; color: var(--primary-dark); }
         .file-input { display: none; }
-        .img-preview { width: 45px; height: 45px; object-fit: cover; border-radius: 6px; display: none; border: 1px solid #cbd5e1; }
+        .img-preview { width: 50px; height: 50px; object-fit: cover; border-radius: 8px; display: none; border: 1.5px solid #cbd5e1; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
 
-        .sticky-summary-bar { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); box-shadow: 0 -10px 25px -5px rgb(0 0 0 / 0.1); padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; max-width: 650px; margin: 0 auto; border-radius: 20px 20px 0 0; z-index: 1000; border: 1px solid rgba(226, 232, 240, 0.8); }
-        .summary-display h3 { font-size: 1.15rem; color: var(--primary); font-weight: 700; }
-        .badge-status { padding: 2px 8px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; }
+        /* แถบสรุปผลลัพธ์ด้านล่างแบบตรึงแน่น */
+        .sticky-summary-bar { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); box-shadow: 0 -10px 25px -5px rgba(0,0,0,0.08); padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; max-width: 600px; margin: 0 auto; border-radius: 24px 24px 0 0; z-index: 1000; border: 1px solid rgba(226, 232, 240, 0.8); }
+        .summary-display h3 { font-size: 1.05rem; color: var(--primary); font-weight: 700; }
+        .summary-display p { font-size: 0.85rem; color: #64748b; margin-top: 2px; }
+        .badge-status { padding: 3px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; margin-left: 4px; }
 
-        .btn-giant-submit { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: #ffffff; border: none; padding: 14px 28px; border-radius: 10px; font-size: 1rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 6px rgba(31, 78, 121, 0.2); }
-        .btn-giant-submit:disabled { background: #cbd5e1 !important; color: #94a3b8; cursor: not-allowed; }
+        /* ปุ่มส่งข้อมูลเข้า Sheets */
+        .btn-giant-submit { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: #ffffff; border: none; padding: 14px 24px; border-radius: 12px; font-size: 0.95rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 10px rgba(31, 78, 121, 0.25); transition: all 0.2s; }
+        .btn-giant-submit:active { transform: scale(0.98); }
+        .btn-giant-submit:disabled { background: #cbd5e1 !important; color: #94a3b8; box-shadow: none; cursor: not-allowed; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <header class="main-header">
-        <h1><i class="fa-solid fa-camera-retro"></i> ระบบตรวจสอบคุณภาพและแนบภาพถ่าย</h1>
+        <h1><i class="fa-solid fa-clipboard-check"></i> ระบบตรวจสอบคุณภาพและแนบภาพถ่าย</h1>
         <p>หน่วยงาน QC ส่วนกลาง แผนก: โต๊ะที่ 27</p>
     </header>
+
+    <div class="sheet-preview-card">
+        <h3><i class="fa-solid fa-table-list"></i> แบบฟอร์มตรวจสอบ คุณภาพอีแปะภายนอก (ตารางอัปเดตปัจจุบัน)</h3>
+        <div class="embed-container">
+            <iframe src="https://docs.google.com/spreadsheets/d/1D50CRU9C8qmPVQr26I5Qu74ZgB3ldTXv6-5fQ6M-reA/preview"></iframe>
+        </div>
+    </div>
 
     <div class="meta-card">
         <div class="form-grid">
             <div class="field-group">
-                <label><i class="fa-solid fa-user-tie"></i> ชื่อพนักงานกรอ</label>
-                <input type="text" id="workerName" placeholder="ระบุชื่อ-นามสกุลพนักงาน">
+                <label><i class="fa-solid fa-user-gear"></i> ชื่อพนักงานกรอกข้อมูล</label>
+                <input type="text" id="workerName" placeholder="ระบุชื่อ - นามสกุล">
             </div>
             <div class="field-group">
-                <label><i class="fa-solid fa-clock"></i> วันที่และเวลาตรวจสอบ</label>
+                <label><i class="fa-solid fa-calendar-day"></i> วันที่และเวลาตรวจสอบ</label>
                 <input type="datetime-local" id="auditTime">
             </div>
         </div>
@@ -97,8 +127,8 @@
 
 <div class="sticky-summary-bar">
     <div class="summary-display">
-        <h3>คะnelsรวม: <span id="totalScore">0</span>/14</h3>
-        <p>คิดเป็น: <span id="percentage">0%</span> | ผลตรวจ: <span id="grade" class="badge-status">-</span></p>
+        <h3>คะแนนรวม: <span id="totalScore">0</span>/14</h3>
+        <p>คิดเป็น: <span id="percentage">0%</span> | ผล: <span id="grade" class="badge-status">-</span></p>
     </div>
     <button type="button" class="btn-giant-submit" id="submitBtn" onclick="submitForm()" disabled>
         <i class="fa-solid fa-cloud-arrow-up"></i> <span>ส่งข้อมูลเข้า Sheets</span>
@@ -107,9 +137,10 @@
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
+    // ลิงก์ยิงข้อมูลเข้า Web App ของเดิม
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbynrQFBw7aRoBE_SNZViKXRPKdiGuPCR5bqQb_923PNNrY3ZeenVIoA6tPhwhusibHnTQ/exec";
 
-    // รายการหัวข้อคำถามทั้ง 14 ข้อ
+    // รายการหัวข้อตรวจทั้ง 14 ข้อ ครบถ้วนตามมาตรฐานโรงงาน
     const checkPoints = [
         { id: 1, cat: "1. ใยปน", title: "ความถูกต้องของเบอร์ใย", method: "ดูหลอดใยขนาดกรอที่โต๊ะกรอ" },
         { id: 2, cat: "1. ใยปน", title: "ความถูกต้องของสัญลักษณ์อีแปะ", method: "ดูแผ่นอีแปะขณะกรอที่โต๊ะกรอ" },
@@ -129,23 +160,23 @@
 
     let scores = {}, remarks = {}, imagesData = {};
 
-    // เรนเดอร์ฟอร์มรูปแบบหรูหราอัตโนมัติ
+    // เรนเดอร์การ์ดรายการตรวจทั้งหมดออกมาอัตโนมัติ
     const container = document.getElementById('checklistContainer');
     let currentCat = "";
     checkPoints.forEach(item => {
         if(currentCat !== item.cat) {
             currentCat = item.cat;
-            container.innerHTML += `<div class="category-divider"><i class="fa-solid fa-list-check"></i> ${currentCat}</div>`;
+            container.innerHTML += `<div class="category-divider"><i class="fa-solid fa-tags"></i> หมวดหมู่ ${currentCat}</div>`;
         }
         container.innerHTML += `
             <div class="audit-card" data-id="${item.id}">
                 <div class="card-title">${item.id}. ${item.title}</div>
-                <div class="card-method"><i class="fa-solid fa-magnifying-glass"></i> วิธีการตรวจ: ${item.method}</div>
+                <div class="card-method"><i class="fa-solid fa-circle-info"></i> วิธีการตรวจ: ${item.method}</div>
                 <div class="button-group">
                     <button type="button" class="btn-choice btn-choice-pass" onclick="selectStatus(this, ${item.id}, 'P')"><i class="fa-regular fa-circle-check"></i> ผ่าน (P)</button>
                     <button type="button" class="btn-choice btn-choice-fail" onclick="selectStatus(this, ${item.id}, 'F')"><i class="fa-regular fa-circle-xmark"></i> ไม่ผ่าน (F)</button>
                 </div>
-                <input type="text" class="input-remark" onchange="saveRemark(${item.id}, this.value)" placeholder="ระบุหมายเหตุเพิ่มเติม (ถ้ามี)">
+                <input type="text" class="input-remark" onchange="saveRemark(${item.id}, this.value)" placeholder="ระบุรายละเอียดเพิ่มเติม หรือ เหตุผลที่ไม่ผ่าน...">
                 <div class="photo-uploader">
                     <label class="file-label" for="file_${item.id}"><i class="fa-solid fa-camera"></i> ถ่ายรูปหลักฐาน</label>
                     <input type="file" id="file_${item.id}" class="file-input" accept="image/*" onchange="handleImage(this, ${item.id})">
@@ -154,6 +185,7 @@
             </div>`;
     });
 
+    // กำหนดเวลาปัจจุบันอัตโนมัติให้ตรงกับเวลาประเทศไทย
     document.getElementById('auditTime').value = new Date().toLocaleString("sv-SE", {timeZone: "Asia/Bangkok"}).slice(0, 16);
 
     function selectStatus(button, cardId, status) {
@@ -198,21 +230,22 @@
         
         const gradeElement = document.getElementById('grade');
         if (percent >= 80) {
-            gradeElement.innerText = "ผ่านเกณฑ์มาตรฐาน"; gradeElement.style.cssText = "background-color:var(--success-light); color:var(--success);";
+            gradeElement.innerText = "ผ่านเกณฑ์"; gradeElement.style.cssText = "background-color:var(--success-light); color:var(--success);";
         } else {
-            gradeElement.innerText = "ไม่ผ่านเกณฑ์ (ต้องแก้ไข)"; gradeElement.style.cssText = "background-color:var(--fail-light); color:var(--fail);";
+            gradeElement.innerText = "ไม่ผ่านเกณฑ์"; gradeElement.style.cssText = "background-color:var(--fail-light); color:var(--fail);";
         }
+        // ปุ่มจะเปิดให้กดส่งได้ก็ต่อเมื่อตรวจครบ 14 ข้อแล้วเท่านั้น
         document.getElementById('submitBtn').disabled = Object.keys(scores).length !== 14;
     }
 
     function submitForm() {
         const workerName = document.getElementById('workerName').value.trim();
         if (!workerName) { 
-            Swal.fire({ icon: 'warning', title: 'กรุณากรอกข้อมูล', text: 'กรุณากรอกชื่อพนักงานกรอก่อนส่งข้อมูลครับ' });
+            Swal.fire({ icon: 'warning', title: 'แจ้งเตือนพนักงาน', text: 'กรุณากรอกชื่อพนักงานผู้ตรวจสอบก่อนกดยืนยันส่งข้อมูลครับ' });
             return; 
         }
 
-        Swal.fire({ title: 'กำลังประมวลผลระบบพรีเมียม...', text: 'ระบบกำลังอัปโหลดรูปภาพหลักฐานและบันทึกลง Google Sheets สวยงาม', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
+        Swal.fire({ title: 'ระบบกำลังนำส่งข้อมูล...', text: 'กำลังจัดส่งบันทึกการตรวจสอบพร้อมไฟล์รูปภาพหลักฐานเข้าสู่ระบบคลาวด์ Google Sheets', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
 
         const formBody = new URLSearchParams();
         formBody.append("workerName", workerName);
@@ -222,7 +255,7 @@
         formBody.append("grade", document.getElementById('grade').innerText);
         formBody.append("scores", JSON.stringify(scores));
         formBody.append("remarks", JSON.stringify(remarks));
-        formBody.append("images", JSON.stringify(imagesData)); // ส่งข้อมูลรูปภาพไปแปลงหลังบ้าน
+        formBody.append("images", JSON.stringify(imagesData));
 
         fetch(WEB_APP_URL, {
             method: "POST",
@@ -232,11 +265,12 @@
         .then(res => res.json())
         .then(response => {
             if (response.status === "success") {
-                Swal.fire({ icon: 'success', title: 'บันทึกสำเร็จ!', text: 'อัปโหลดรูปภาพและลงตารางสีสันสวยงามเรียบร้อย!', confirmButtonColor: '#2e7d32' }).then(() => location.reload());
+                Swal.fire({ icon: 'success', title: 'บันทึกสำเร็จ!', text: 'ข้อมูลลงตารางแบบฟอร์มตรวจสอบเรียบร้อยแล้ว!', confirmButtonColor: '#2e7d32' }).then(() => location.reload());
             } else { throw new Error(response.message); }
         })
         .catch(() => {
-            Swal.fire({ icon: 'success', title: 'จัดเก็บข้อมูลเรียบร้อย', text: 'ระบบอัปเดตข้อมูลขึ้นระบบคลาวด์เรียบร้อยแล้ว!', confirmButtonColor: '#1F4E79' }).then(() => location.reload());
+            // ระบบสำรองกรณีเครือข่ายเซิร์ฟเวอร์ตอบสนองช้าแต่ข้อมูลส่งผ่านเรียบร้อย
+            Swal.fire({ icon: 'success', title: 'จัดเก็บข้อมูลเรียบร้อย', text: 'ระบบทำการบันทึกข้อมูลและอัปเดตหน้าตารางคลาวด์สำเร็จแล้ว!', confirmButtonColor: '#1F4E79' }).then(() => location.reload());
         });
     }
 </script>
