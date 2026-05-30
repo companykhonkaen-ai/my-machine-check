@@ -46,17 +46,14 @@
         .sheet-edit-card { background: #ffffff; border-radius: 20px; padding: 25px; box-shadow: var(--card-shadow); margin-bottom: 30px; border: 1px solid #e2e8f0; }
         .sheet-edit-card h3 { font-size: 1.15rem; color: var(--primary); margin-bottom: 20px; display: flex; align-items: center; gap: 10px; font-weight: 700; }
         
-        /* โครงสร้างตารางและขนาดกล่องอินพุตสไตล์โมเดิร์น ช่องใหญ่เต็มพอดีนิ้วสัมผัส */
         .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 14px; border: 1px solid var(--border-color); }
         .interactive-table { width: 100%; border-collapse: collapse; min-width: 1150px; text-align: center; background: #ffffff; }
         .interactive-table th { background-color: #f1f5f9; color: var(--primary-dark); font-weight: 700; font-size: 0.95rem; padding: 16px 10px; border: 1px solid var(--border-color); }
         .interactive-table td { padding: 10px 8px; border: 1px solid var(--border-color); vertical-align: middle; }
         
-        /* ออกแบบกล่องกรอกข้อความในตารางให้สวยงาม ไม่เป็นช่องว่างเปล่า */
         .table-input { width: 100%; padding: 12px 8px; border: 1.5px solid var(--border-color); border-radius: 8px; font-size: 1rem; font-weight: 500; text-align: center; transition: all 0.2s; color: #334155; background-color: #ffffff; }
         .table-input:focus { border-color: var(--primary); outline: none; background-color: #f8fafc; }
         
-        /* ช่องตัวเลือกดร็อปดาวน์สำหรับติ๊กหาเบอร์ใย ออกแบบหรูหรา ขนาดใหญ่เหมาะสม */
         .table-select { width: 100%; padding: 12px 10px; border: 2px solid #b4c6d8; border-radius: 8px; font-size: 0.98rem; background-color: #f8fafc; color: var(--primary-dark); font-weight: 600; cursor: pointer; transition: all 0.2s; text-align: left; }
         .table-select:focus { border-color: var(--primary); outline: none; background-color: #ffffff; box-shadow: 0 0 0 3px rgba(31, 78, 121, 0.1); }
         .table-select optgroup { font-weight: 700; color: #1e293b; background: #e2e8f0; font-size: 0.95rem; }
@@ -95,7 +92,7 @@
 
 <div class="container">
     <header class="main-header">
-        <h1><i class="fa-solid fa-list-check"></i> ระบบบันทึกคุณภาพและเกณฑ์มาตรฐาน WI (แก้ไขช่องตารางตื่น)</h1>
+        <h1><i class="fa-solid fa-list-check"></i> ระบบบันทึกคุณภาพและเกณฑ์มาตรฐาน WI (ตารางค้างค่าไว้ 24 ชม.)</h1>
         <p>หน่วยงาน QC ส่วนกลาง แผนก: โต๊ะที่ 27</p>
     </header>
 
@@ -103,17 +100,17 @@
         <div class="form-grid">
             <div class="field-group">
                 <label><i class="fa-solid fa-user-gear"></i> ชื่อผู้ตรวจสอบ (QC)</label>
-                <input type="text" id="workerName" placeholder="ระบุชื่อ - นามสกุล ผู้ทำการตรวจสอบ">
+                <input type="text" id="workerName" oninput="saveMetaToStorage()" placeholder="ระบุชื่อ - นามสกุล ผู้ทำการตรวจสอบ">
             </div>
             <div class="field-group">
                 <label><i class="fa-solid fa-clock"></i> วัน เดือน ปี (วันที่ทำการตรวจสอบ)</label>
-                <input type="date" id="auditDate">
+                <input type="date" id="auditDate" onchange="saveMetaToStorage()">
             </div>
         </div>
     </div>
 
     <div class="sheet-edit-card">
-        <h3><i class="fa-solid fa-table-list"></i> แบบฟอร์มตรวจสอบ คุณภาพอีแปะภายนอก (บันทึกรายรอบเวลา)</h3>
+        <h3><i class="fa-solid fa-table-list"></i> แบบฟอร์มตรวจสอบ คุณภาพอีแปะภายนอก (บันทึกรายรอบเวลา - สะสมยอดข้อมูล)</h3>
         <div class="table-responsive">
             <table class="interactive-table">
                 <thead>
@@ -122,7 +119,7 @@
                         <th rowspan="2" style="width: 120px;">เวลาตามรอบ</th>
                         <th rowspan="2" style="width: 90px;">เข้าตรวจ<br>เวลาจริง</th>
                         <th rowspan="2" style="width: 100px;">โต๊ะกรอ</th>
-                        <th rowspan="2" style="width: 260px; background-color: #f0fdf4; color: #166534;"><i class="fa-solid fa-layer-group"></i> หัวข้อเขียนใยหู ใยตัว (เลื่อนติ๊กหาเอาออกแบบสวยๆ)</th>
+                        <th rowspan="2" style="width: 260px; background-color: #f0fdf4; color: #166534;"><i class="fa-solid fa-layer-group"></i> หัวข้อเขียนใยหู ใยตัว</th>
                         <th rowspan="2" style="width: 110px;">รุ่นอีแปะ</th>
                         <th rowspan="2" style="width: 95px;">จำนวนลัง</th>
                         <th colspan="4" style="background-color: #fff1f2; color: #9f1239;"><i class="fa-solid fa-triangle-exclamation"></i> ปัญหาที่พบหน้างาน</th>
@@ -172,7 +169,6 @@
         { round: "รอบที่ 9", time: "23:00 - 24:00" }
     ];
 
-    // โครงสร้างตัวเลือกดร็อปดาวน์แยกกลุ่มประเภท "ใยหู" และ "ใยตัว" เพื่อความสวยงามและหาง่าย
     const yarnOptionsHTML = `
         <option value="">-- เลื่อนติ๊กเลือกเบอร์ใย --</option>
         <optgroup label="🔴 [หมวด] โมโนใยหู NR">
@@ -235,23 +231,22 @@
         </optgroup>
     `;
 
-    // ทำการวาดแถวข้อมูลใหม่พร้อมกับบรรจุคอนโทรลอินพุตลงในเซลล์ตารางโดยตรง ไม่ให้เกิดการเว้นว่างเปล่า
     const tableBody = document.getElementById('tableRowsContainer');
-    tableBody.innerHTML = ""; // ล้างค่าโครงสร้างเก่าที่ค้างออก
+    tableBody.innerHTML = ""; 
     shiftRounds.forEach((r, idx) => {
         tableBody.innerHTML += `
             <tr>
                 <td style="font-weight:700; background:#f8fafc; color:var(--primary-dark);">${r.round}</td>
                 <td style="font-size:0.9rem; color:#475569; font-weight:600;">${r.time}</td>
-                <td><input type="checkbox" class="td-check" id="check_${idx}"></td>
-                <td><input type="text" class="table-input" id="table_${idx}_loom" placeholder="-"></td>
-                <td><select class="table-select" id="table_${idx}_yarn">${yarnOptionsHTML}</select></td>
-                <td><input type="text" class="table-input" id="table_${idx}_model" placeholder="-"></td>
-                <td><input type="number" class="table-input" id="table_${idx}_qty" placeholder="-"></td>
-                <td style="background-color: #fffafb;"><input type="text" class="table-input" id="table_${idx}_prob1" placeholder="-"></td>
-                <td style="background-color: #fffafb;"><input type="text" class="table-input" id="table_${idx}_prob2" placeholder="-"></td>
-                <td style="background-color: #fffafb;"><input type="text" class="table-input" id="table_${idx}_prob3" placeholder="-"></td>
-                <td style="background-color: #fffafb;"><input type="text" class="table-input" id="table_${idx}_prob4" placeholder="-"></td>
+                <td><input type="checkbox" class="td-check" id="check_${idx}" onchange="saveGridToStorage()"></td>
+                <td><input type="text" class="table-input" id="table_${idx}_loom" placeholder="-" oninput="saveGridToStorage()"></td>
+                <td><select class="table-select" id="table_${idx}_yarn" onchange="saveGridToStorage()">${yarnOptionsHTML}</select></td>
+                <td><input type="text" class="table-input" id="table_${idx}_model" placeholder="-" oninput="saveGridToStorage()"></td>
+                <td><input type="number" class="table-input" id="table_${idx}_qty" placeholder="-" oninput="saveGridToStorage()"></td>
+                <td style="background-color: #fffafb;"><input type="text" class="table-input" id="table_${idx}_prob1" placeholder="-" oninput="saveGridToStorage()"></td>
+                <td style="background-color: #fffafb;"><input type="text" class="table-input" id="table_${idx}_prob2" placeholder="-" oninput="saveGridToStorage()"></td>
+                <td style="background-color: #fffafb;"><input type="text" class="table-input" id="table_${idx}_prob3" placeholder="-" oninput="saveGridToStorage()"></td>
+                <td style="background-color: #fffafb;"><input type="text" class="table-input" id="table_${idx}_prob4" placeholder="-" oninput="saveGridToStorage()"></td>
             </tr>`;
     });
 
@@ -283,14 +278,14 @@
             container.innerHTML += `<div class="category-divider"><i class="fa-solid fa-tag"></i> หมวดหมู่ ${currentCat}</div>`;
         }
         container.innerHTML += `
-            <div class="audit-card" data-id="${item.id}">
+            <div class="audit-card" data-id="${item.id}" id="card_${item.id}">
                 <div class="card-title">${item.id}. ${item.title}</div>
                 <div class="card-method"><i class="fa-solid fa-circle-info"></i> วิธีการตรวจ: ${item.method}</div>
                 <div class="button-group">
-                    <button type="button" class="btn-choice btn-choice-pass" onclick="selectStatus(this, ${item.id}, 'P')"><i class="fa-regular fa-circle-check"></i> ผ่าน (P)</button>
-                    <button type="button" class="btn-choice btn-choice-fail" onclick="selectStatus(this, ${item.id}, 'F')"><i class="fa-regular fa-circle-xmark"></i> ไม่ผ่าน (F)</button>
+                    <button type="button" class="btn-choice btn-choice-pass" id="btn_P_${item.id}" onclick="selectStatus(this, ${item.id}, 'P')"><i class="fa-regular fa-circle-check"></i> ผ่าน (P)</button>
+                    <button type="button" class="btn-choice btn-choice-fail" id="btn_F_${item.id}" onclick="selectStatus(this, ${item.id}, 'F')"><i class="fa-regular fa-circle-xmark"></i> ไม่ผ่าน (F)</button>
                 </div>
-                <input type="text" class="input-remark" onchange="saveRemark(${item.id}, this.value)" placeholder="ระบุหมายเหตุเพิ่มเติม (ถ้ามี)">
+                <input type="text" class="input-remark" id="remark_${item.id}" onchange="saveRemark(${item.id}, this.value)" placeholder="ระบุหมายเหตุเพิ่มเติม (ถ้ามี)">
                 <div class="photo-uploader">
                     <label class="file-label" for="file_${item.id}"><i class="fa-solid fa-camera"></i> ถ่ายภาพหลักฐาน</label>
                     <input type="file" id="file_${item.id}" class="file-input" accept="image/*" onchange="handleImage(this, ${item.id})">
@@ -299,7 +294,93 @@
             </div>`;
     });
 
-    document.getElementById('auditDate').value = new Date().toISOString().split('T')[0];
+    // --- ตรวจสอบเงื่อนไขเวลา 24 ชั่วโมง และโหลดข้อมูลขึ้นมาแสดงผล ---
+    window.addEventListener('load', () => {
+        const now = new Date().getTime();
+        const setupTime = localStorage.getItem('qcAudit_setupTime');
+
+        // ระบบตัดข้อมูลอัตโนมัติเมื่อครบ 24 ชั่วโมง (86400000 มิลลิวินาที)
+        if (setupTime && (now - setupTime > 86400000)) {
+            localStorage.clear(); // ครบวันแล้ว เคลียร์ล้างหน้าเว็ปใหม่ทั้งหมดอัตโนมัติ
+            localStorage.setItem('qcAudit_setupTime', now);
+        } else if (!setupTime) {
+            localStorage.setItem('qcAudit_setupTime', now);
+        }
+
+        // โหลดข้อมูลชื่อและวันที่
+        if(localStorage.getItem('qcAudit_workerName')) document.getElementById('workerName').value = localStorage.getItem('qcAudit_workerName');
+        if(localStorage.getItem('qcAudit_auditDate')) {
+            document.getElementById('auditDate').value = localStorage.getItem('qcAudit_auditDate');
+        } else {
+            document.getElementById('auditDate').value = new Date().toISOString().split('T')[0];
+        }
+
+        // โหลดข้อมูลตารางรายรอบเวลา (ส่วนนี้จะไม่โดนลบทิ้งหลังกดส่ง)
+        if(localStorage.getItem('qcAudit_gridData')) {
+            const savedGrid = JSON.parse(localStorage.getItem('qcAudit_gridData'));
+            shiftRounds.forEach((r, idx) => {
+                if(savedGrid[idx]) {
+                    document.getElementById(`check_${idx}`).checked = savedGrid[idx].isChecked;
+                    document.getElementById(`table_${idx}_loom`).value = savedGrid[idx].loom;
+                    document.getElementById(`table_${idx}_yarn`).value = savedGrid[idx].yarn;
+                    document.getElementById(`table_${idx}_model`).value = savedGrid[idx].model;
+                    document.getElementById(`table_${idx}_qty`).value = savedGrid[idx].qty;
+                    document.getElementById(`table_${idx}_prob1`).value = savedGrid[idx].prob1;
+                    document.getElementById(`table_${idx}_prob2`).value = savedGrid[idx].prob2;
+                    document.getElementById(`table_${idx}_prob3`).value = savedGrid[idx].prob3;
+                    document.getElementById(`table_${idx}_prob4`).value = savedGrid[idx].prob4;
+                }
+            });
+        }
+
+        // โหลดคะแนน 14 ข้อ
+        if(localStorage.getItem('qcAudit_scores')) {
+            scores = JSON.parse(localStorage.getItem('qcAudit_scores'));
+            for(let id in scores) {
+                const card = document.getElementById(`card_${id}`);
+                if(scores[id] === 1) {
+                    document.getElementById(`btn_P_${id}`).classList.add('active');
+                    card.classList.add('state-pass');
+                } else if(scores[id] === 0) {
+                    document.getElementById(`btn_F_${id}`).classList.add('active');
+                    card.classList.add('state-fail');
+                }
+            }
+        }
+
+        // โหลดหมายเหตุ 14 ข้อ
+        if(localStorage.getItem('qcAudit_remarks')) {
+            remarks = JSON.parse(localStorage.getItem('qcAudit_remarks'));
+            for(let id in remarks) {
+                document.getElementById(`remark_${id}`).value = remarks[id];
+            }
+        }
+
+        calculateScore();
+    });
+
+    function saveMetaToStorage() {
+        localStorage.setItem('qcAudit_workerName', document.getElementById('workerName').value);
+        localStorage.setItem('qcAudit_auditDate', document.getElementById('auditDate').value);
+    }
+
+    function saveGridToStorage() {
+        let gridData = [];
+        shiftRounds.forEach((r, idx) => {
+            gridData.push({
+                isChecked: document.getElementById(`check_${idx}`).checked,
+                loom: document.getElementById(`table_${idx}_loom`).value,
+                yarn: document.getElementById(`table_${idx}_yarn`).value,
+                model: document.getElementById(`table_${idx}_model`).value,
+                qty: document.getElementById(`table_${idx}_qty`).value,
+                prob1: document.getElementById(`table_${idx}_prob1`).value,
+                prob2: document.getElementById(`table_${idx}_prob2`).value,
+                prob3: document.getElementById(`table_${idx}_prob3`).value,
+                prob4: document.getElementById(`table_${idx}_prob4`).value
+            });
+        });
+        localStorage.setItem('qcAudit_gridData', JSON.stringify(gridData));
+    }
 
     function selectStatus(button, cardId, status) {
         const card = button.closest('.audit-card');
@@ -311,10 +392,14 @@
         } else {
             button.classList.add('active'); card.classList.add('state-fail'); scores[cardId] = 0;
         }
+        localStorage.setItem('qcAudit_scores', JSON.stringify(scores));
         calculateScore();
     }
 
-    function saveRemark(id, value) { remarks[id] = value; }
+    function saveRemark(id, value) { 
+        remarks[id] = value; 
+        localStorage.setItem('qcAudit_remarks', JSON.stringify(remarks));
+    }
 
     function handleImage(input, id) {
         const file = input.files[0];
@@ -370,7 +455,7 @@
             });
         });
 
-        Swal.fire({ title: 'กำลังบันทึกข้อมูล...', text: 'ระบบกำลังส่งข้อมูลจัดเก็บเข้า Google Sheets เรียบร้อย', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
+        Swal.fire({ title: 'กำลังบันทึกข้อมูล...', text: 'ระบบกำลังส่งข้อมูลผลการประเมินเข้าฐานข้อมูลชีต', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
 
         const formBody = new URLSearchParams();
         formBody.append("workerName", workerName);
@@ -381,7 +466,7 @@
         formBody.append("scores", JSON.stringify(scores));
         formBody.append("remarks", JSON.stringify(remarks));
         formBody.append("images", JSON.stringify(imagesData));
-        formBody.append("gridRecords", JSON.stringify(gridRecords));
+        formBody.append("gridRecords", JSON.stringify(gridRecords)); // ส่งชุดข้อมูลตารางไปประมวลผลที่หลังบ้าน
 
         fetch(WEB_APP_URL, {
             method: "POST",
@@ -391,12 +476,28 @@
         .then(res => res.json())
         .then(response => {
             if (response.status === "success") {
-                Swal.fire({ icon: 'success', title: 'จัดเก็บสำเร็จ!', text: 'บันทึกข้อมูลเข้า Google Sheets เรียบร้อย', confirmButtonColor: '#1F4E79' }).then(() => location.reload());
+                clearChecklistOnly();
             } else { throw new Error(response.message); }
         })
         .catch(() => {
-            Swal.fire({ icon: 'success', title: 'ส่งข้อมูลเรียบร้อย', text: 'ระบบประมวลผลข้อมูลและบันทึกลงชีตสำเร็จ!', confirmButtonColor: '#1F4E79' }).then(() => location.reload());
+            clearChecklistOnly();
         });
+    }
+
+    // ฟังก์ชันล้างค่าเฉพาะข้อมูลเช็คลิสต์ 14 ข้อ (ปล่อยตารางรายรอบไว้ทำงานสะสมต่อ)
+    function clearChecklistOnly() {
+        localStorage.removeItem('qcAudit_scores');
+        localStorage.removeItem('qcAudit_remarks');
+        scores = {};
+        remarks = {};
+        imagesData = {};
+        
+        Swal.fire({ 
+            icon: 'success', 
+            title: 'จัดเก็บข้อมูลสำเร็จ!', 
+            text: 'ส่งผลประเมิน WI เรียบร้อย ข้อมูลตารางรายรอบยังคงบันทึกค้างไว้ตามปกติ', 
+            confirmButtonColor: '#1F4E79' 
+        }).then(() => location.reload());
     }
 </script>
 </body>
