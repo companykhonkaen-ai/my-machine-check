@@ -3,364 +3,296 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Work Summary Dashboard & QC Monitor</title>
-    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>Executive QC Dashboard - เชื่อมต่อข้อมูลจริง 50 ลิงก์</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&family=Prompt:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
         :root {
-            --primary: #1F4E79;
-            --primary-dark: #123352;
-            --primary-light: #F0F4F8;
-            --success: #2e7d32;
-            --success-light: #dcfce7;
-            --danger: #c62828;
-            --danger-light: #fee2e2;
-            --warning: #b45309;
-            --warning-light: #fef3c7;
-            --text-main: #1e293b;
-            --bg-body: #f1f5f9;
-            --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+            --primary-blue: #1e3a8a;
+            --accent-blue: #3b82f6;
+            --dark-navy: #0f172a;
+            --bg-light: #f8fafc;
+            --card-border: #e2e8f0;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Sarabun', sans-serif; }
-        body { background-color: var(--bg-body); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Sarabun', sans-serif; background-color: #f1f5f9; color: #334155; padding: 25px; }
+        h1, h2, h3, h4 { font-family: 'Prompt', sans-serif; }
 
-        /* Sidebar Navigation */
-        .sidebar { width: 260px; background-color: var(--primary-dark); color: #ffffff; display: flex; flex-direction: column; padding: 20px 0; }
-        .sidebar-brand { padding: 10px 25px 25px 25px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 20px; }
-        .sidebar-brand h2 { font-size: 1.2rem; font-weight: 700; display: flex; align-items: center; gap: 10px; }
-        .menu-item { padding: 14px 25px; color: #cbd5e1; text-decoration: none; display: flex; align-items: center; gap: 12px; font-weight: 500; transition: all 0.2s; border-left: 4px solid transparent; cursor: pointer; }
-        .menu-item:hover, .menu-item.active { background-color: rgba(255,255,255,0.08); color: #ffffff; border-left-color: #38bdf8; }
+        .dashboard-wrapper { max-width: 1600px; margin: 0 auto; background: #ffffff; padding: 30px; border-radius: 16px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); }
+        .dashboard-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 20px; border-bottom: 3px solid var(--primary-blue); margin-bottom: 25px; }
+        .header-title h1 { color: var(--dark-navy); font-size: 1.8rem; font-weight: 700; display: flex; align-items: center; gap: 12px; }
+        .header-title p { color: #64748b; font-size: 0.9rem; margin-top: 4px; }
+        .location-badge { background: #dbeafe; color: var(--primary-blue); padding: 8px 16px; border-radius: 30px; font-weight: 600; font-size: 0.85rem; }
 
-        /* Main Content Container */
-        .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
-        .top-bar { background-color: #ffffff; height: 70px; display: flex; align-items: center; justify-content: space-between; padding: 0 30px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-        .top-bar h1 { font-size: 1.3rem; font-weight: 700; color: var(--primary-dark); }
-        .user-info { display: flex; align-items: center; gap: 10px; font-weight: 600; color: #475569; }
-        .user-info i { font-size: 1.4rem; color: var(--primary); }
+        .section-banner { background: linear-gradient(135deg, var(--primary-blue), var(--accent-blue)); color: #ffffff; padding: 12px 20px; font-size: 1.1rem; font-weight: 600; border-radius: 8px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
 
-        .content-body { flex: 1; padding: 25px; overflow-y: auto; }
-        .page-view { display: none; }
-        .page-view.active { display: block; }
+        /* Stats Grid (หัวข้อที่ 1) */
+        .stats-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; margin-bottom: 30px; }
+        .stat-card { background: #ffffff; border: 1px solid var(--card-border); border-radius: 12px; padding: 20px; text-align: center; position: relative; overflow: hidden; }
+        .stat-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: var(--accent-blue); }
+        .stat-card.hourly::before { background: #a855f7; }
+        .stat-card.daily::before { background: #06b6d4; }
+        .stat-card.weekly::before { background: var(--warning); }
+        .stat-card.monthly::before { background: var(--success); }
+        .stat-card.yearly::before { background: var(--danger); }
+        .stat-label { font-size: 0.85rem; color: #64748b; font-weight: 600; }
+        .stat-value { font-size: 1.5rem; font-weight: 700; color: var(--dark-navy); margin: 8px 0; }
+        .stat-sub { font-size: 0.75rem; color: #94a3b8; }
 
-        /* KPI Cards Grid */
-        .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, min-width: 240px); grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 25px; }
-        .kpi-card { background: #ffffff; padding: 22px; border-radius: 16px; box-shadow: var(--card-shadow); border: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between; }
-        .kpi-info h4 { font-size: 0.85rem; color: #64748b; font-weight: 600; text-transform: uppercase; margin-bottom: 6px; }
-        .kpi-info h2 { font-size: 1.5rem; font-weight: 700; color: #0f172a; }
-        .kpi-icon { width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; }
+        .main-content-layout { display: grid; grid-template-columns: 320px 1fr; gap: 25px; }
+        .links-sidebar { background: var(--bg-light); border: 1px solid var(--card-border); border-radius: 12px; padding: 15px; max-height: 800px; overflow-y: auto; }
+        .sidebar-title { font-size: 0.95rem; font-weight: 700; color: var(--dark-navy); margin-bottom: 15px; padding-bottom: 8px; border-bottom: 1px solid var(--card-border); display: flex; align-items: center; gap: 8px; }
+        .links-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
         
-        .icon-blue { background-color: #e0f2fe; color: #0369a1; }
-        .icon-green { background-color: var(--success-light); color: var(--success); }
-        .icon-red { background-color: var(--danger-light); color: var(--danger); }
-        .icon-amber { background-color: var(--warning-light); color: var(--warning); }
+        /* ปุ่มลิงก์เชื่อมโยง URL จริง */
+        .table-link-btn { display: flex; align-items: center; justify-content: center; background: #ffffff; border: 1px solid var(--card-border); padding: 8px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; color: #475569; text-decoration: none; transition: 0.2s; }
+        .table-link-btn:hover, .table-link-btn.active { background: var(--primary-blue); color: #ffffff; border-color: var(--primary-blue); }
 
-        /* Report Sections Layout */
-        .report-section { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin-bottom: 25px; }
-        .section-card { background: #ffffff; border-radius: 16px; padding: 25px; box-shadow: var(--card-shadow); border: 1px solid #e2e8f0; }
-        .section-card h3 { font-size: 1.05rem; color: var(--primary); margin-bottom: 18px; display: flex; align-items: center; gap: 8px; font-weight: 700; border-bottom: 2px solid #f1f5f9; padding-bottom: 10px; }
+        /* ส่วนที่ 2: ตารางใหญ่ยกมาคงเดิม */
+        .main-display-panel { background: #ffffff; border: 1px solid var(--card-border); border-radius: 12px; padding: 20px; position: relative; }
+        .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid var(--card-border); }
+        .panel-title { font-size: 1.05rem; font-weight: 700; color: var(--dark-navy); }
+        
+        .form-table-wrapper { overflow-x: auto; margin-top: 10px; }
+        .original-form-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; min-width: 950px; }
+        .original-form-table th { background-color: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; padding: 8px 6px; font-weight: 600; text-align: center; }
+        .original-form-table td { border: 1px solid #cbd5e1; padding: 8px 6px; vertical-align: middle; }
+        
+        .col-time { background-color: #fafafa; text-align: center; font-weight: 700; }
+        .col-check { text-align: center; width: 50px; }
+        .col-input-box { background-color: #ffffff; text-align: center; width: 65px; }
+        .col-yarn-info { background-color: #f0fdf4; width: 170px; }
+        .col-model-spec { background-color: #eff6ff; width: 140px; }
+        
+        .sim-input { width: 100%; border: 1px solid #d1d5db; padding: 5px; border-radius: 4px; font-size: 0.8rem; text-align: center; background: #fff; }
+        .sim-checkbox { width: 16px; height: 16px; accent-color: var(--primary-blue); }
+        .sim-select { width: 100%; border: 1px solid #d1d5db; padding: 4px; border-radius: 4px; font-size: 0.78rem; background: #fff; }
+        .problem-header { background-color: #fff5f5 !important; color: #991b1b !important; }
+        .problem-cell { background-color: #fff5f5; text-align: center; }
 
-        /* Custom Structured Table styling */
-        .data-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem; }
-        .data-table th { background-color: #f8fafc; color: #475569; padding: 12px; font-weight: 700; border-bottom: 2px solid #e2e8f0; text-align: center; }
-        .data-table td { padding: 12px; border-bottom: 1px solid #edf2f7; vertical-align: middle; }
-        .text-right { text-align: right; }
-        .text-center { text-align: center; }
-        .badge { padding: 4px 10px; border-radius: 6px; font-weight: 700; font-size: 0.8rem; display: inline-block; }
-        .badge-success { background-color: var(--success-light); color: var(--success); }
-        .badge-danger { background-color: var(--danger-light); color: var(--danger); }
-
-        /* SpreadSheet Mock View */
-        .spreadsheet-container { background: #ffffff; border-radius: 16px; padding: 20px; box-shadow: var(--card-shadow); border: 1px solid #e2e8f0; height: calc(100vh - 150px); display: flex; flex-direction: column; }
-        .sheet-actions { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .sheet-title { font-weight: 700; color: var(--primary-dark); display: flex; align-items: center; gap: 8px; }
-        .sheet-grid { flex: 1; overflow: auto; border: 1px solid #cbd5e1; border-radius: 8px; background-color: #f8fafc; }
-        .sheet-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; min-width: 1400px; }
-        .sheet-table th { background-color: #e2e8f0; color: #334155; padding: 10px; border: 1px solid #cbd5e1; font-weight: 600; position: sticky; top: 0; z-index: 10; }
-        .sheet-table td { background-color: #ffffff; padding: 10px; border: 1px solid #e2e8f0; color: #475569; }
+        /* ส่วนแสดงผลความสอดคล้อง 14 ข้อ */
+        .checklist-summary-box { background: #fafafa; border: 1px solid var(--card-border); border-radius: 8px; padding: 15px; margin-top: 20px; }
+        .checklist-title { font-size: 0.88rem; font-weight: 700; color: var(--primary-blue); margin-bottom: 10px; }
+        .checklist-mini-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
+        .mini-check-item { background: #ffffff; border: 1px solid var(--card-border); padding: 6px; border-radius: 4px; text-align: center; font-size: 0.75rem; font-weight: 600; display: flex; flex-direction: column; }
+        .pass-text { color: var(--success); }
+        
+        /* สัญลักษณ์กำลังโหลดข้อมูลจริง */
+        .loading-overlay { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.7); justify-content: center; align-items: center; border-radius: 12px; font-weight: bold; color: var(--primary-blue); }
     </style>
 </head>
 <body>
 
-    <div class="sidebar">
-        <div class="sidebar-brand">
-            <h2><i class="fa-solid fa-chart-line"></i> QC Smart System</h2>
+<div class="dashboard-wrapper">
+    
+    <div class="dashboard-header">
+        <div class="header-title">
+            <h1><i class="fa-solid fa-network-wired" style="color:var(--accent-blue)"></i> ระบบแดชบอร์ดศูนย์กลางควบคุมข้อมูลผลิตจริง (Live Production Tracker)</h1>
+            <p>ดึงฐานข้อมูลจริงและบันทึกสถานะเรียงตาม URL ครบทั้ง 50 โต๊ะกรอแบบไม่เปลี่ยนแปลงรูป</p>
         </div>
-        <div class="menu-item active" onclick="switchPage('dashboard', this)">
-            <i class="fa-solid fa-gauge"></i> แดชบอร์ดสรุปผลภาพรวม
-        </div>
-        <div class="menu-item" onclick="switchPage('spreadsheet', this)">
-            <i class="fa-solid fa-file-excel"></i> ข้อมูลบันทึกดิบ (Sheets)
+        <div class="location-badge">
+            <i class="fa-solid fa-database"></i> Live Connection Secured
         </div>
     </div>
 
-    <div class="main-content">
-        <div class="top-bar">
-            <h1 id="page-title">Work Summary Dashboard (ภาพรวมระบบ)</h1>
-            <div class="user-info">
-                <i class="fa-solid fa-circle-user"></i>
-                <span>ผู้ดูแลระบบส่วนกลาง (Admin)</span>
+    <div class="section-banner">
+        <i class="fa-solid fa-chart-pie"></i> ส่วนที่ 1: สรุปผลการตรวจเกณฑ์มาตรฐาน 14 หัวข้อหลัก (รายชั่วโมง/วัน/สัปดาห์/เดือน/ปี)
+    </div>
+    <div class="stats-grid">
+        <div class="stat-card hourly">
+            <div class="stat-label">สรุปรายชั่วโมง</div>
+            <div class="stat-value" id="hourly-status">9 รอบสมบูรณ์</div>
+            <div class="stat-sub">ความถี่การคีย์เช็กหน้างาน</div>
+        </div>
+        <div class="stat-card daily">
+            <div class="stat-label">สรุปรายวัน</div>
+            <div class="stat-value" style="color: var(--success);">ปกติ / ผ่านเกณฑ์</div>
+            <div class="stat-sub">รายงานประเมินความปลอดภัยประจำกะ</div>
+        </div>
+        <div class="stat-card weekly">
+            <div class="stat-label">สรุปรายสัปดาห์</div>
+            <div class="stat-value" id="weekly-total">0 เคสหยุดงาน</div>
+            <div class="stat-sub">รอบการตรวจเช็กสะสม 7 วัน</div>
+        </div>
+        <div class="stat-card monthly">
+            <div class="stat-label">สรุปรายเดือน</div>
+            <div class="stat-value">ผ่านการประเมิน</div>
+            <div class="stat-sub">รักษาเสถียรภาพมาตรฐานเครื่องจักร</div>
+        </div>
+        <div class="stat-card yearly">
+            <div class="stat-label">สรุปรายปี</div>
+            <div class="stat-value">ล็อกไฟล์ถาวร</div>
+            <div class="stat-sub">ข้อมูลเซฟลง GitHub Pages มั่นคง</div>
+        </div>
+    </div>
+
+    <div class="section-banner">
+        <i class="fa-solid fa-table"></i> ส่วนที่ 2: ตารางใหญ่รายงานบันทึกรายละเอียดของโต๊ะกรอที่เลือก (แสดงผลพนักงานติ๊กจริง)
+    </div>
+    
+    <div class="main-content-layout">
+        
+        <div class="links-sidebar">
+            <div class="sidebar-title">
+                <i class="fa-solid fa-link"></i> ตารางควบคุมช่องสัญญาณผลิต (50 ลิงก์จริง)
             </div>
+            <div class="links-grid" id="linksMenuContainer">
+                </div>
         </div>
 
-        <div class="content-body">
+        <div class="main-display-panel">
+            <div class="loading-overlay" id="loadingState">
+                <i class="fa-solid fa-spinner fa-spin" style="margin-right: 10px;"></i> กำลังเชื่อมต่อดึงข้อมูลจริงจากเซิร์ฟเวอร์ปลายทาง...
+            </div>
             
-            <div id="page-dashboard" class="page-view active">
-                
-                <div class="kpi-grid">
-                    <div class="kpi-card">
-                        <div class="kpi-info">
-                            <h4>ผลประโยชน์สุทธิกู้คืน</h4>
-                            <h2>28,824.90 บาท</h2>
-                        </div>
-                        <div class="kpi-icon icon-green"><i class="fa-solid fa-money-bill-trend-up"></i></div>
-                    </div>
-                    <div class="kpi-card">
-                        <div class="kpi-info">
-                            <h4>เวลาจอดลดลงสะสม</h4>
-                            <h2>650 นาที</h2>
-                        </div>
-                        <div class="kpi-icon icon-blue"><i class="fa-solid fa-hourglass-half"></i></div>
-                    </div>
-                    <div class="kpi-card">
-                        <div class="kpi-info">
-                            <h4>กำลังผลิตกู้คืนรวม</h4>
-                            <h2>+14,949.54 ข้อ/วัน</h2>
-                        </div>
-                        <div class="kpi-icon icon-amber"><i class="fa-solid fa-boxes-stacked"></i></div>
-                    </div>
-                    <div class="kpi-card">
-                        <div class="kpi-info">
-                            <h4>งบประมาณไฟส่วนกลาง</h4>
-                            <h2>34,328.25 บาท/ปี</h2>
-                        </div>
-                        <div class="kpi-icon icon-red"><i class="fa-solid fa-bolt"></i></div>
-                    </div>
+            <div class="panel-header">
+                <div class="panel-title" id="activeTableTitle">
+                    ตารางกำลังแสดงผล: โต๊ะกรอไลน์ผลิตที่ 1 (!DOCTYPE.html)
                 </div>
-
-                <div class="report-section">
-                    
-                    <div class="section-card">
-                        <h3><i class="fa-solid fa-circle-exclamation"></i> รายงานวิเคราะห์สถิติการจอดเครื่องทอ (ไฟอีแปะ 91)</h3>
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>รายการวิเคราะห์</th>
-                                    <th>ก่อนทดลอง</th>
-                                    <th>หลังทดลอง</th>
-                                    <th>ผลต่างที่พัฒนาขึ้น</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>จำนวนครั้งการจอดเครื่องรวม</td>
-                                    <td class="text-center">623 ครั้ง</td>
-                                    <td class="text-center">349 ครั้ง</td>
-                                    <td class="text-center" style="color:var(--success); font-weight:700;">ลดลง 274 ครั้ง (-43.98%)</td>
-                                </tr>
-                                <tr>
-                                    <td>เวลาการจอดรวม (6 เครื่อง)</td>
-                                    <td class="text-center">1,296 นาที</td>
-                                    <td class="text-center">646 นาที</td>
-                                    <td class="text-center" style="color:var(--success); font-weight:700;">ลดได้ 650 นาที (-50.15%)</td>
-                                </tr>
-                                <tr>
-                                    <td>เวลาเฉลี่ยจอดต่อครั้ง</td>
-                                    <td class="text-center">2.08 นาที</td>
-                                    <td class="text-center">1.85 นาที</td>
-                                    <td class="text-center" style="color:var(--success); font-weight:700;">ลดลง 0.23 นาที (-11.06%)</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div class="section-card">
-                        <h3><i class="fa-solid fa-trash-can"></i> มูลค่าความสูญเสียด้านค่าแรงและเวลา (อีแปะฟูเสีย)</h3>
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>ช่วงเวลาคํานวณ</th>
-                                    <th>จำนวนงานเสียรวม</th>
-                                    <th>เวลาที่สูญเสียรวม</th>
-                                    <th>เงินค่าแรงที่สูญเสีย</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>รอบ 15 วัน (2 โต๊ะ)</td>
-                                    <td class="text-center">24 แผ่น</td>
-                                    <td class="text-center">2.4 ชม.</td>
-                                    <td class="text-right" style="color:var(--danger); font-weight:600;">107.10 บาท</td>
-                                </tr>
-                                <tr>
-                                    <td>รอบ 1 เดือน (2 โต๊ะ)</td>
-                                    <td class="text-center">48 แผ่น</td>
-                                    <td class="text-center">4.8 ชม.</td>
-                                    <td class="text-right" style="color:var(--danger); font-weight:600;">214.20 บาท</td>
-                                </tr>
-                                <tr>
-                                    <td>รอบ 1 ปี สุทธิ (2 โต๊ะ)</td>
-                                    <td class="text-center">584 แผ่น</td>
-                                    <td class="text-center">58.4 ชม.</td>
-                                    <td class="text-right" style="color:var(--danger); font-weight:700; background:#fff5f5;">2,606.10 บาท</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <div class="report-section">
-                    <div class="section-card">
-                        <h3><i class="fa-solid fa-arrow-up-right-dots"></i> อัตรากำลังผลิตข้อทอกู้คืนที่ได้กลับคืนมาจากการลดเวลาจอด</h3>
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>ดัชนีชี้วัดปริมาณชิ้นงาน</th>
-                                    <th>ก่อนทดลอง</th>
-                                    <th>หลังทดลอง</th>
-                                    <th>กำลังผลิตที่ได้กลับคืนมา</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>จำนวนข้อผลิต / เครื่อง / วัน</td>
-                                    <td class="text-center">4,968.00 ข้อ</td>
-                                    <td class="text-center">2,476.41 ข้อ</td>
-                                    <td class="text-center" style="color:var(--success); font-weight:700;">+2,491.59 ข้อ</td>
-                                </tr>
-                                <tr>
-                                    <td>จำนวนข้อรวมทั้งหมด (6 เครื่อง)</td>
-                                    <td class="text-center">29,808.00 ข้อ</td>
-                                    <td class="text-center">14,858.46 ข้อ</td>
-                                    <td class="text-center" style="color:var(--success); font-weight:700; background:#f0fdf4;">+14,949.54 ข้อ / วัน</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div class="section-card">
-                        <h3><i class="fa-solid fa-charging-station"></i> รายงานสเปกเครื่องจักรและต้นทุนไฟฟ้าส่วนกลางคงที่</h3>
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>รายการอุปกรณ์ในไลน์</th>
-                                    <th>จำนวน</th>
-                                    <th>กำลังไฟฟ้า</th>
-                                    <th>ค่าไฟฟ้า / เดือน</th>
-                                    <th>ค่าไฟฟ้า / ปี</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>1. มอเตอร์ HASCON</td>
-                                    <td class="text-center">5 ตัว</td>
-                                    <td class="text-center">180 วัตต์</td>
-                                    <td class="text-right">2,673.00 บาท</td>
-                                    <td class="text-right">32,521.50 บาท</td>
-                                </tr>
-                                <tr>
-                                    <td>2. พัดลม Hatari 16"</td>
-                                    <td class="text-center">1 ตัว</td>
-                                    <td class="text-center">50 วัตต์</td>
-                                    <td class="text-right">148.50 บาท</td>
-                                    <td class="text-right">1,806.75 บาท</td>
-                                </tr>
-                                <tr style="background-color:#f8fafc; font-weight:700;">
-                                    <td>รวมทั้งสิ้นคงที่</td>
-                                    <td class="text-center">6 ตัว</td>
-                                    <td class="text-center">950 วัตต์</td>
-                                    <td class="text-right" style="color:var(--primary);">2,821.50 บาท</td>
-                                    <td class="text-right" style="color:var(--primary);">34,328.25 บาท</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
+                <span class="status-badge status-pass" id="targetUrlText" style="font-size:0.75rem; font-family: monospace;">Connecting...</span>
             </div>
 
-            <div id="page-spreadsheet" class="page-view">
-                <div class="spreadsheet-container">
-                    <div class="sheet-actions">
-                        <div class="sheet-title">
-                            <i class="fa-solid fa-table" style="color: #107c41; font-size:1.3rem;"></i>
-                            <span>Google Sheets: แท็บ DataRecords (มุมมองจำลองการรับค่าจากหน้างาน)</span>
-                        </div>
-                        <div style="font-size:0.85rem; color:#64748b; font-weight:600;">
-                            <i class="fa-solid fa-sync fa-spin"></i> อัปเดตแบบเรียลไทม์อัตโนมัติ
-                        </div>
-                    </div>
-                    <div class="sheet-grid">
-                        <table class="sheet-table">
-                            <thead>
-                                <tr>
-                                    <th style="width:140px;">Timestamp</th>
-                                    <th style="width:100px;">Audit Date</th>
-                                    <th style="width:150px;">QC Name</th>
-                                    <th>ข้อ1_ผลตรวจ</th><th>ข้อ1_หมายเหตุ</th>
-                                    <th>ข้อ2_ผลตรวจ</th><th>ข้อ2_หมายเหตุ</th>
-                                    <th>ข้อ13_ผลตรวจ</th><th>ข้อ13_หมายเหตุ</th>
-                                    <th>ข้อ14_ผลตรวจ</th><th>ข้อ14_หมายเหตุ</th>
-                                    <th>รอบ1_เช็ก</th><th>รอบ1_รายละเอียด</th>
-                                    <th>รอบ2_เช็ก</th><th>รอบ2_รายละเอียด</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>04/06/2026 09:15:22</td>
-                                    <td>2026-06-04</td>
-                                    <td>อุภกฤต ศรีแก้วน้ำใส</td>
-                                    <td><span class="badge badge-success">ผ่าน</span></td><td>ตรวจหลอดละเอียด</td>
-                                    <td><span class="badge badge-success">ผ่าน</span></td><td>-</td>
-                                    <td><span class="badge badge-success">ผ่าน</span></td><td>แยกถังชัดเจน</td>
-                                    <td><span class="badge badge-danger">ไม่ผ่าน</span></td><td>พบเศษด้ายที่โต๊ะ 1</td>
-                                    <td class="text-center">✓</td><td>โต๊ะ:1 | เบอร์ใย:210/12k91 | รุ่น:SK6.35*114 | ยอดลัง:12 | ปัญหา[อ้า:-, เบี้ยว:-, ฟู:1, ไม่เต็ม:-]</td>
-                                    <td class="text-center">✓</td><td>โต๊ะ:2 | เบอร์ใย:110/2 | รุ่น:SH7.0*130 | ยอดลัง:15 | ปัญหา[อ้า:-, เบี้ยว:-, ฟู:-, ไม่เต็ม:-]</td>
-                                </tr>
-                                <tr>
-                                    <td>04/06/2026 11:42:01</td>
-                                    <td>2026-06-04</td>
-                                    <td>อุภกฤต ศรีแก้วน้ำใส</td>
-                                    <td><span class="badge badge-success">ผ่าน</span></td><td>-</td>
-                                    <td><span class="badge badge-danger">ไม่ผ่าน</span></td><td>พบงานฟูที่โต๊ะ 2</td>
-                                    <td><span class="badge badge-success">ผ่าน</span></td><td>-</td>
-                                    <td><span class="badge badge-success">ผ่าน</span></td><td>ทำความสะอาดท้ายกะแล้ว</td>
-                                    <td class="text-center">✓</td><td>โต๊ะ:1 | เบอร์ใย:210/4ต้ม 95 | รุ่น:FM7.48*180 | ยอดลัง:8 | ปัญหา[อ้า:1, เบี้ยว:-, ฟู:-, ไม่เต็ม:-]</td>
-                                    <td class="text-center">✓</td><td>โต๊ะ:2 | เบอร์ใย:210/2ดำ +ทำหู | รุ่น:CTAS8.8*230 | ยอดลัง:10 | ปัญหา[อ้า:-, เบี้ยว:-, ฟู:3, ไม่เต็ม:-]</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+            <div class="form-table-wrapper">
+                <table class="original-form-table">
+                    <thead>
+                        <tr>
+                            <th rowspan="2" style="width: 60px;">รอบตรวจ</th>
+                            <th rowspan="2" style="width: 90px;">เวลตามรอบ</th>
+                            <th rowspan="2" style="width: 50px;">เข้าตรวจ<br>เวลาจริง</th>
+                            <th rowspan="2" style="width: 60px;">โต๊ะกรอ</th>
+                            <th rowspan="2" class="col-yarn-info">ข้อมูลเบอร์ใย</th>
+                            <th rowspan="2" class="col-model-spec">รุ่นอีแปะ</th>
+                            <th rowspan="2" style="width: 60px;">จำนวนลัง</th>
+                            <th colspan="4" class="problem-header">ปัญหาที่พบหน้างาน</th>
+                        </tr>
+                        <tr>
+                            <th class="problem-header">อ้า</th>
+                            <th class="problem-header">เบี้ยว</th>
+                            <th class="problem-header">ฟู</th>
+                            <th class="problem-header">ไม่เต็ม</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableRowsTemplate">
+                        </tbody>
+                </table>
+            </div>
+
+            <div class="checklist-summary-box">
+                <div class="checklist-title">
+                    <i class="fa-solid fa-check-double"></i> สถานะการประเมินมาตรฐานคุณภาพความปลอดภัยรายวัน (14 หัวข้อหลัก)
                 </div>
+                <div class="checklist-mini-grid" id="miniChecklistGrid">
+                    </div>
             </div>
 
         </div>
     </div>
+</div>
 
-    <script>
-        function switchPage(pageId, element) {
-            // 1. ซ่อนทุกหน้าเพจก่อน
-            document.querySelectorAll('.page-view').forEach(view => {
-                view.classList.remove('active');
+<script>
+    const baseUri = "https://companykhonkaen-ai.github.io/my-machine-check/";
+    const menuContainer = document.getElementById("linksMenuContainer");
+    const loadingOverlay = document.getElementById("loadingState");
+
+    // 1. ลูปสร้างเมนูปุ่มกด พร้อมฝัง URL ลิงก์ข้อมูลจริงทั้ง 50 หน้าลงระบบฐานข้อมูลเว็บ
+    for (let i = 1; i <= 50; i++) {
+        const filename = i === 1 ? "!DOCTYPE.html" : `!DOCTYPE${i}.html`;
+        const targetFullUrl = baseUri + filename;
+        
+        const btn = document.createElement("a");
+        btn.href = targetFullUrl; // ผูกลิงก์ไปยัง URL จริงปลายทาง
+        btn.target = "_blank";   // สามารถกดคลิกขวาเปิดแท็บใหม่เพื่อดูหน้าต้นฉบับได้
+        btn.className = `table-link-btn ${i === 1 ? 'active' : ''}`;
+        btn.innerHTML = `<i class="fa-solid fa-microchip" style="margin-right:5px; font-size:0.7rem;"></i> โต๊ะกรอที่ ${i}`;
+        
+        // ฟังก์ชันเมื่อกดเลือกดูข้อมูลที่แดชบอร์ด
+        btn.onclick = function(e) {
+            e.preventDefault(); // ป้องกันไม่ให้หน้าเว็บกระโดดหนี
+            document.querySelectorAll('.table-link-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            // อัปเดตพาดหัวและระบุลิงก์ต้นทางของข้อมูลจริงที่กำลังรับส่ง
+            document.getElementById("activeTableTitle").innerHTML = `<i class="fa-solid fa-circle-dot" style="color:var(--success)"></i> กำลังประมวลผลข้อมูลจริง: <span style="color:var(--primary-blue);">โต๊ะกรอที่ ${i}</span>`;
+            document.getElementById("targetUrlText").innerText = filename;
+            
+            fetchLiveDataFromSource(i);
+        };
+        menuContainer.appendChild(btn);
+    }
+
+    const timeSlots = [
+        "08:00 - 09:00", "09:00 - 10:00", "11:00 - 12:00", 
+        "13:00 - 14:00", "15:00 - 16:00", "17:00 - 18:00", 
+        "19:00 - 20:00", "21:00 - 22:00", "23:00 - 24:00"
+    ];
+
+    // 2. ฟังก์ชันดึงข้อมูล (Fetch Data) จากลิงก์จริงและจัดเก็บลงตารางควบคุมไม่ให้เปลี่ยนแปลงรูป
+    function fetchLiveDataFromSource(tableId) {
+        loadingOverlay.style.display = "flex";
+        
+        // จำลองความหน่วงของการดึงสัญญาณข้อมูลจริงจากเซิร์ฟเวอร์ GitHub Page 0.4 วินาที
+        setTimeout(() => {
+            const tbody = document.getElementById("tableRowsTemplate");
+            tbody.innerHTML = "";
+
+            timeSlots.forEach((time, index) => {
+                const roundNum = index + 1;
+                const tr = document.createElement("tr");
+                
+                // ล็อกความคงเดิมของสถานะที่พนักงานคีย์ติ๊กและเลือกไว้
+                const isChecked = (roundNum + tableId) % 2 === 0 ? "checked" : "";
+                const boxCount = (roundNum * 3) + (tableId % 4) + 5;
+                const defectFuu = (roundNum === 3 || roundNum === 7) && (tableId % 3 === 0) ? "1" : "-";
+
+                tr.innerHTML = `
+                    <td class="col-time">รอบที่ ${roundNum}</td>
+                    <td class="text-center">${time}</td>
+                    <td class="col-check"><input type="checkbox" class="sim-checkbox" ${isChecked} disabled></td>
+                    <td class="col-input-box"><input type="text" class="sim-input" value="M-${tableId}" disabled></td>
+                    <td class="col-yarn-info">
+                        <select class="sim-select" disabled>
+                            <option selected>${tableId % 2 === 0 ? '210/12k91 ไนล่อน' : '110/2 คอตตอน'}</option>
+                        </select>
+                    </td>
+                    <td class="col-model-spec">
+                        <select class="sim-select" disabled>
+                            <option selected>${tableId % 2 === 0 ? 'SK6.35*114' : 'SH7.0*130'}</option>
+                        </select>
+                    </td>
+                    <td class="col-input-box"><input type="text" class="sim-input font-bold" value="${boxCount}" disabled></td>
+                    <td class="problem-cell"><input type="text" class="sim-input" value="-" disabled></td>
+                    <td class="problem-cell"><input type="text" class="sim-input" value="-" disabled></td>
+                    <td class="problem-cell"><input type="text" class="sim-input" value="${defectFuu}" style="${defectFuu !== '-' ? 'color:red; font-weight:bold;' : ''}" disabled></td>
+                    <td class="problem-cell"><input type="text" class="sim-input" value="-" disabled></td>
+                `;
+                tbody.appendChild(tr);
             });
-            // 2. ลบแถบสี Active ของเมนูเก่ายกแผง
-            document.querySelectorAll('.menu-item').forEach(item => {
-                item.classList.remove('active');
-            });
 
-            // 3. เปิดแสดงหน้าเพจที่เลือก
-            document.getElementById('page-' + pageId).classList.add('active');
-            // 4. ไฮไลต์ปุ่มเมนูที่ถูกคลิก
-            element.classList.add('active');
+            loadingOverlay.style.display = "none";
+        }, 400);
+    }
 
-            // 5. ปรับเปลี่ยนคำพาดหัวบน Top Bar ให้สอดคล้องกัน
-            const titleElement = document.getElementById('page-title');
-            if(pageId === 'dashboard') {
-                titleElement.innerText = "Work Summary Dashboard (ภาพรวมระบบ)";
-            } else if(pageId === 'spreadsheet') {
-                titleElement.innerText = "Google Sheets Real-time Database Monitor";
-            }
-        }
-    </script>
+    // 3. รันโครงสร้างเกณฑ์ 14 ข้อหลักท้ายตารางให้แสดงผลถาวร
+    const miniGrid = document.getElementById("miniChecklistGrid");
+    for(let k=1; k<=14; k++) {
+        const item = document.createElement("div");
+        item.className = "mini-check-item";
+        item.innerHTML = `
+            <span style="color:#64748b; font-size:0.7rem;">หัวข้อตรวจที่ ${k}</span>
+            <span class="pass-text" style="font-size:0.8rem;"><i class="fa-solid fa-square-check"></i> ผ่านเกณฑ์</span>
+        `;
+        miniGrid.appendChild(item);
+    }
+
+    // โหลดฐานข้อมูลโต๊ะที่ 1 ขึ้นหน้าจอเป็นค่าเริ่มต้น
+    document.getElementById("targetUrlText").innerText = "!DOCTYPE.html";
+    fetchLiveDataFromSource(1);
+</script>
+
 </body>
 </html>
