@@ -14,60 +14,129 @@
             --primary-dark: #123352;
             --primary-light: #F0F4F8;
             --success: #2e7d32;
+            --success-light: #e8f5e9;
             --danger: #c62828;
+            --danger-light: #ffebee;
             --text-main: #1e293b;
-            --bg-body: #f8fafc;
-            --border-color: #cbd5e1;
-            --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+            --text-muted: #64748b;
+            --bg-body: #f1f5f9;
+            --border-color: #e2e8f0;
+            --card-shadow: 0 4px 20px -2px rgba(50, 50, 93, 0.08), 0 2px 8px -1px rgba(0, 0, 0, 0.04);
+            --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Sarabun', sans-serif; }
-        body { background-color: var(--bg-body); color: var(--text-main); padding: 30px 15px; padding-bottom: 120px; }
         
-        .container { max-width: 1280px; margin: 0 auto; }
+        body { 
+            background-color: var(--bg-body); 
+            color: var(--text-main); 
+            padding: 40px 20px; 
+            padding-bottom: 140px;
+            background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
         
-        .main-header { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: #ffffff; padding: 25px; border-radius: 20px; text-align: center; box-shadow: var(--card-shadow); margin-bottom: 25px; }
-        .main-header h1 { font-size: 1.4rem; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 12px; }
+        .container { max-width: 1340px; margin: 0 auto; }
         
-        .meta-card, .audit-card, .sheet-edit-card { background: #ffffff; border-radius: 20px; padding: 25px; box-shadow: var(--card-shadow); margin-bottom: 25px; border: 1px solid #e2e8f0; }
+        /* Header */
+        .main-header { 
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark)); 
+            color: #ffffff; 
+            padding: 35px 25px; 
+            border-radius: 24px; 
+            text-align: center; 
+            box-shadow: 0 20px 25px -5px rgba(31, 78, 121, 0.3); 
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+        .main-header h1 { font-size: 1.6rem; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 14px; letter-spacing: 0.5px; }
         
-        .form-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
-        @media (min-width: 600px) { .form-grid { grid-template-columns: 1fr 1fr; } }
+        /* Cards */
+        .meta-card, .audit-card, .sheet-edit-card { 
+            background: #ffffff; 
+            border-radius: 24px; 
+            padding: 30px; 
+            box-shadow: var(--card-shadow); 
+            margin-bottom: 30px; 
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            transition: var(--transition);
+        }
+        
+        /* Form Layout */
+        .form-grid { display: grid; grid-template-columns: 1fr; gap: 25px; }
+        @media (min-width: 768px) { .form-grid { grid-template-columns: 1fr 1fr; } }
         
         .field-group { display: flex; flex-direction: column; }
-        .field-group label { font-size: 0.95rem; font-weight: 600; color: var(--primary); margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
-        .field-group input { padding: 14px; border: 2px solid var(--border-color); border-radius: 12px; font-size: 1rem; background-color: #ffffff; }
-        .field-group input:focus { border-color: var(--primary); outline: none; }
+        .field-group label { font-size: 0.95rem; font-weight: 600; color: var(--primary-dark); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+        .field-group input, .field-group select { 
+            padding: 14px 18px; 
+            border: 2px solid var(--border-color); 
+            border-radius: 14px; 
+            font-size: 1rem; 
+            background-color: #f8fafc; 
+            transition: var(--transition);
+            color: var(--text-main);
+        }
+        .field-group input:focus, .field-group select:focus { border-color: var(--primary); background-color: #ffffff; outline: none; box-shadow: 0 0 0 4px rgba(31, 78, 121, 0.15); }
 
-        h3 { font-size: 1.15rem; color: var(--primary); margin-bottom: 20px; display: flex; align-items: center; gap: 10px; font-weight: 700; border-bottom: 2px solid var(--primary-light); padding-bottom: 10px; }
+        h3 { font-size: 1.25rem; color: var(--primary-dark); margin-bottom: 25px; display: flex; align-items: center; gap: 12px; font-weight: 700; border-bottom: 2px solid #e2e8f0; padding-bottom: 15px; }
         
-        .audit-table { width: 100%; border-collapse: collapse; margin-top: 10px; text-align: left; }
-        .audit-table th { background-color: var(--primary-light); color: var(--primary-dark); padding: 12px; font-weight: 700; border: 1px solid var(--border-color); text-align: center; }
-        .audit-table td { padding: 12px; border: 1px solid var(--border-color); vertical-align: middle; }
-        .text-center { text-align: center; }
+        /* Audit Table */
+        .audit-table { width: 100%; border-collapse: separate; border-spacing: 0 8px; margin-top: -8px; }
+        .audit-table th { background-color: var(--primary-light); color: var(--primary-dark); padding: 16px; font-weight: 700; font-size: 0.95rem; text-align: center; border: none; }
+        .audit-table th:first-child { border-radius: 12px 0 0 12px; }
+        .audit-table th:last-child { border-radius: 0 12px 12px 0; }
         
-        .status-btn-group { display: inline-flex; gap: 8px; justify-content: center; }
-        .status-label { padding: 8px 16px; border-radius: 8px; font-weight: 700; font-size: 0.9rem; cursor: pointer; border: 2px solid var(--border-color); color: #64748b; background: #ffffff; transition: all 0.2s; }
-        .radio-pass:checked + .label-pass { background-color: #dcfce7; color: var(--success); border-color: #2e7d32; }
-        .radio-fail:checked + .label-fail { background-color: #fee2e2; color: var(--danger); border-color: #c62828; }
+        .audit-table td { padding: 16px; background-color: #f8fafc; border: none; vertical-align: middle; transition: var(--transition); }
+        .audit-table tr:hover td { background-color: #edf2f7; }
+        .audit-table td:first-child { border-radius: 14px 0 0 14px; font-weight: 700; text-align: center; color: var(--primary); }
+        .audit-table td:last-child { border-radius: 0 14px 14px 0; }
+        
+        /* Modern Radio Buttons */
+        .status-btn-group { display: inline-flex; gap: 10px; justify-content: center; background: #e2e8f0; padding: 4px; border-radius: 12px; }
+        .status-label { 
+            padding: 8px 20px; border-radius: 9px; font-weight: 700; font-size: 0.9rem; cursor: pointer; border: none;
+            color: var(--text-muted); background: transparent; transition: var(--transition); display: flex; align-items: center; gap: 6px;
+        }
+        .radio-pass:checked + .label-pass { background-color: #ffffff; color: var(--success); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        .radio-fail:checked + .label-fail { background-color: #ffffff; color: var(--danger); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
         .status-btn-group input[type="radio"] { display: none; }
 
-        .note-input { width: 100%; padding: 10px; border: 1.5px solid var(--border-color); border-radius: 8px; font-size: 0.9rem; transition: all 0.2s; }
-        .note-input:focus { border-color: var(--primary); outline: none; background-color: #f8fafc; }
+        .note-input { 
+            width: 100%; padding: 12px 16px; border: 2px solid var(--border-color); border-radius: 12px; 
+            font-size: 0.9rem; transition: var(--transition); background-color: #ffffff; 
+        }
 
-        .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 14px; border: 1px solid var(--border-color); }
-        .interactive-table { width: 100%; border-collapse: collapse; min-width: 1350px; text-align: center; background: #ffffff; }
-        .interactive-table th { background-color: #f1f5f9; color: var(--primary-dark); font-weight: 700; font-size: 0.95rem; padding: 16px 10px; border: 1px solid var(--border-color); }
-        .interactive-table td { padding: 10px 8px; border: 1px solid var(--border-color); vertical-align: middle; }
+        /* Interactive Time Table */
+        .table-responsive { width: 100%; overflow-x: auto; border-radius: 16px; border: 1px solid var(--border-color); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+        .interactive-table { width: 100%; border-collapse: collapse; min-width: 1450px; text-align: center; background: #ffffff; }
+        .interactive-table th { background-color: #f8fafc; color: var(--primary-dark); font-weight: 700; font-size: 0.95rem; padding: 18px 12px; border: 1px solid var(--border-color); }
+        .interactive-table td { padding: 12px 10px; border: 1px solid var(--border-color); vertical-align: middle; background: #ffffff; }
         
-        .table-input, .table-select { width: 100%; padding: 12px 6px; border: 1.5px solid var(--border-color); border-radius: 8px; font-size: 0.95rem; font-weight: 500; text-align: center; color: #334155; transition: all 0.2s; background-color: #ffffff; }
-        .table-input:focus, .table-select:focus { border-color: var(--primary); outline: none; background-color: #f8fafc; }
+        .table-input, .table-select { 
+            width: 100%; padding: 12px 8px; border: 2px solid var(--border-color); border-radius: 10px; 
+            font-size: 0.95rem; font-weight: 500; text-align: center; color: var(--text-main); transition: var(--transition); background-color: #ffffff; 
+        }
+        .table-input:focus, .table-select:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 3px rgba(31, 78, 121, 0.1); }
         .table-select { text-align-last: center; cursor: pointer; }
 
-        .td-check { transform: scale(1.6); cursor: pointer; }
+        .td-check { transform: scale(1.5); cursor: pointer; accent-color: var(--primary); }
 
-        .bottom-action-bar { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); box-shadow: 0 -10px 30px rgba(0,0,0,0.08); padding: 20px 30px; display: flex; justify-content: flex-end; max-width: 1280px; margin: 0 auto; border-radius: 24px 24px 0 0; z-index: 1000; border: 1px solid rgba(226, 232, 240, 0.8); }
-        .btn-giant-submit { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: #ffffff; border: none; padding: 16px 35px; border-radius: 12px; font-size: 1.05rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 10px; box-shadow: 0 4px 12px rgba(31, 78, 121, 0.25); }
+        /* Floating Action Bar */
+        .bottom-action-bar { 
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            width: calc(100% - 40px); max-width: 1340px;
+            background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); padding: 20px 40px; display: flex; justify-content: flex-end; 
+            border-radius: 20px; z-index: 1000; border: 1px solid rgba(255, 255, 255, 0.6); 
+        }
+        .btn-giant-submit { 
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: #ffffff; border: none; 
+            padding: 16px 40px; border-radius: 14px; font-size: 1.05rem; font-weight: 700; cursor: pointer; 
+            display: flex; align-items: center; gap: 12px; box-shadow: 0 8px 20px rgba(31, 78, 121, 0.3); transition: var(--transition);
+        }
+        .btn-giant-submit:hover { transform: translateY(-2px); box-shadow: 0 12px 25px rgba(31, 78, 121, 0.4); filter: brightness(1.1); }
     </style>
 </head>
 <body>
@@ -81,7 +150,9 @@
         <div class="form-grid">
             <div class="field-group">
                 <label><i class="fa-solid fa-user-gear"></i> ชื่อผู้ตรวจสอบ (QC)</label>
-                <input type="text" id="workerName" oninput="saveAllToStorage()" placeholder="ระบุชื่อผู้ตรวจสอบ">
+                <input type="text" id="workerName" list="qcNamesList" oninput="saveAllToStorage()" placeholder="พิมพ์ค้นหา หรือเลือกชื่อพนักงาน QC...">
+                <datalist id="qcNamesList">
+                    </datalist>
             </div>
             <div class="field-group">
                 <label><i class="fa-solid fa-clock"></i> วัน เดือน ปี</label>
@@ -96,14 +167,14 @@
             <table class="audit-table">
                 <thead>
                     <tr>
-                        <th style="width: 70px;">ข้อที่</th>
-                        <th style="min-width: 350px;">รายการเกณฑ์การตรวจสอบคุณภาพ</th>
-                        <th style="width: 220px;">ผลการตรวจสอบ</th>
-                        <th style="width: 280px;">หมายเหตุ</th>
+                        <th style="width: 80px;">ข้อที่</th>
+                        <th style="min-width: 400px; text-align: left;">รายการเกณฑ์การตรวจสอบคุณภาพ</th>
+                        <th style="width: 240px;">ผลการตรวจสอบ</th>
+                        <th style="width: 300px;">หมายเหตุ</th>
                     </tr>
                 </thead>
                 <tbody id="auditTopicsContainer">
-                    </tbody>
+                </tbody>
             </table>
         </div>
     </div>
@@ -114,25 +185,25 @@
             <table class="interactive-table">
                 <thead>
                     <tr>
-                        <th rowspan="2" style="width: 90px;">รอบตรวจ</th>
-                        <th rowspan="2" style="width: 120px;">เวลาตามรอบ</th>
-                        <th rowspan="2" style="width: 70px;">เข้าตรวจ<br>เวลาจริง</th>
-                        <th rowspan="2" style="width: 85px;">โต๊ะกรอ</th>
-                        <th rowspan="2" style="width: 160px; background-color: #fcf8f2; color: #b45309;"><i class="fa-solid fa-user"></i> ชื่อพนักงานกรอ</th>
-                        <th rowspan="2" style="width: 250px; background-color: #f0fdf4; color: #166534;"><i class="fa-solid fa-scroll"></i> ข้อมูลเบอร์ใย</th>
-                        <th rowspan="2" style="width: 180px; background-color: #eff6ff; color: #1e40af;"><i class="fa-solid fa-layer-group"></i> รุ่นอีแปะ</th>
-                        <th rowspan="2" style="width: 90px;">จำนวนลัง</th>
+                        <th rowspan="2" style="width: 100px;">รอบตรวจ</th>
+                        <th rowspan="2" style="width: 130px;">เวลาตามรอบ</th>
+                        <th rowspan="2" style="width: 80px;">เข้าตรวจ<br>เวลาจริง</th>
+                        <th rowspan="2" style="width: 90px;">โต๊ะกรอ</th>
+                        <th rowspan="2" style="width: 200px; background-color: #fdf8f2; color: #b45309;"><i class="fa-solid fa-user"></i> ชื่อพนักงานกรอ</th>
+                        <th rowspan="2" style="width: 260px; background-color: #f0fdf4; color: #166534;"><i class="fa-solid fa-scroll"></i> ข้อมูลเบอร์ใย</th>
+                        <th rowspan="2" style="width: 190px; background-color: #eff6ff; color: #1e40af;"><i class="fa-solid fa-layer-group"></i> รุ่นอีแปะ</th>
+                        <th rowspan="2" style="width: 100px;">จำนวนลัง</th>
                         <th colspan="4" style="background-color: #fff1f2; color: #9f1239;"><i class="fa-solid fa-triangle-exclamation"></i> ปัญหาที่พบหน้างาน</th>
                     </tr>
                     <tr>
-                        <th style="background-color: #fff1f2; color: #9f1239; width: 75px;">อ้า</th>
-                        <th style="background-color: #fff1f2; color: #9f1239; width: 75px;">เบี้ยว</th>
-                        <th style="background-color: #fff1f2; color: #9f1239; width: 75px;">ฟู</th>
-                        <th style="background-color: #fff1f2; color: #9f1239; width: 75px;">ไม่เต็ม</th>
+                        <th style="background-color: #fff1f2; color: #9f1239; width: 80px;">อ้า</th>
+                        <th style="background-color: #fff1f2; color: #9f1239; width: 80px;">เบี้ยว</th>
+                        <th style="background-color: #fff1f2; color: #9f1239; width: 80px;">ฟู</th>
+                        <th style="background-color: #fff1f2; color: #9f1239; width: 80px;">ไม่เต็ม</th>
                     </tr>
                 </thead>
                 <tbody id="tableRowsContainer">
-                    </tbody>
+                </tbody>
             </table>
         </div>
     </div>
@@ -148,7 +219,22 @@
 <script>
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbynrQFBw7aRoBE_SNZViKXRPKdiGuPCR5bqQb_923PNNrY3ZeenVIoA6tPhwhusibHnTQ/exec";
 
-    // รายการเกณฑ์ 14 ข้อหลัก
+    // 🔴 [ฐานข้อมูล] สามารถแก้ไข/เพิ่ม/ลบ รายชื่อพนักงาน QC ตรงนี้ได้เลยครับ
+    const qcStaffList = [
+        "สมชาย ตั้งใจตรวจ",
+        "สมหญิง รักงานดี",
+        "วิชัย ตรวจละเอียด",
+        "ปิยะพร ตรวจสอบไว"
+    ];
+
+    // 🔴 [ฐานข้อมูล] สามารถแก้ไข/เพิ่ม/ลบ รายชื่อพนักงานกรอ ตรงนี้ได้เลยครับ
+    const operatorStaffList = [
+        "นายสมพงษ์ มือกีต้าร์",
+        "นางสาวสมศรี ขยันขันแข็ง",
+        "นายมานะ ขยันกรอ",
+        "นางสาวชูใจ ใจดี"
+    ];
+
     const auditQuestions = [
         "ตรวจสอบความถูกต้องของเบอร์ใยและเช็กปัญหา [ใยปน] (วิธีการตรวจ: ตรวจหลอดใยที่โต๊ะกรออย่างละเอียด)",
         "ตรวจสอบปัญหาชิ้นงาน [อ้า / ฟู] ขณะทำการผลิตกรอที่โต๊ะกรอ",
@@ -178,7 +264,6 @@
         { round: "รอบที่ 9", time: "23:00 - 24:00" }
     ];
 
-    // ข้อมูลตัวเลือกเบอร์ใย
     const yarnOptions = {
         "ใยหู ไนล่อน": ["210/2(s,M) 100/95 เกลียวS", "210/2s101. 95", "210/2T05", "210/2ขาวต้ม95", "210/2", "210/2 เขียว+ดำ(ข+ด)", "210/3S101. ต้ม95", "210/3ขาวต้ม95", "210/4ต้ม 80(ใช้แทนต้ม95ได้)", "210/4", "210/4ต้ม 95", "210/6s101. ต้ม95", "210/6ขาวต้ม95", "245/6s208เหลือง", "210/6 S208เหลือง ต้ม 120\"", "210/9 S208เหลือง ต้ม 120\"", "210/9ดำ S101ต้ม95", "210/9ขาวต้ม95'", "210/9", "210/12 S208เหลือง ต้ม 120\"", "210/12 ขาวต้ม 95'", "210/12 ขาวต้ม95", "210/12k91", "210/12ดำ S101ต้ม 90'"],
         "ใยตัว ไนล่อน": ["110/2", "135/2", "210/1R", "210/2. 100/95", "210/2ดำ +ทำหู", "210/2 140/95. สติ๊กเกอร์เขียว", "210/3. 100/85", "210/3F", "210/3T05", "210/3 140/90 สติ๊กเกอร์เขียว", "210/4F", "210/4. 115/85", "210/6 128/85", "245/6", "210/6T05", "210/9. 128/75", "210/9 ใช้กลิ่นใย(เวียดนาม)ตาข่ายชั้น", "210/12"],
@@ -186,16 +271,23 @@
         "โมโนใยตัว NR": ["025DK960", "025DK920", "029DK960(0.291)", "028DK960(0.277)", "031WTM01 (030)"]
     };
 
-    // ข้อมูลตัวเลือกรุ่นอีแปะ
     const modelOptions = ["SK6.35*114", "SK6.35*130", "SH7.0*130", "SH8.0*152", "SH8.0*160", "FM7.48*180", "FM9.0*200", "CTAS8.8*230"];
 
     document.addEventListener("DOMContentLoaded", () => {
+        initQCNamesDropdown();
         render14Topics();
         renderTimeRows();
         loadSavedData();
     });
 
-    // 1. ฟังก์ชันสร้างตารางเกณฑ์ตรวจ 14 ข้อหลัก
+    function initQCNamesDropdown() {
+        const dl = document.getElementById('qcNamesList');
+        dl.innerHTML = "";
+        qcStaffList.forEach(name => {
+            dl.innerHTML += `<option value="${name}"></option>`;
+        });
+    }
+
     function render14Topics() {
         const auditContainer = document.getElementById('auditTopicsContainer');
         auditContainer.innerHTML = "";
@@ -203,8 +295,8 @@
             const qNum = i + 1;
             auditContainer.innerHTML += `
                 <tr>
-                    <td class="text-center" style="font-weight:700;">${qNum}</td>
-                    <td style="font-weight:500; color:#334155; font-size:0.95rem;">${q}</td>
+                    <td>${qNum}</td>
+                    <td style="font-weight:500; color:#334155; font-size:0.95rem; text-align:left;">${q}</td>
                     <td class="text-center">
                         <div class="status-btn-group">
                             <input type="radio" name="topic_${qNum}" id="pass_${qNum}" value="ผ่าน" class="radio-pass" onchange="saveAllToStorage()">
@@ -221,12 +313,11 @@
         });
     }
 
-    // 2. ฟังก์ชันสร้างตารางบันทึกรายรอบเวลา
     function renderTimeRows() {
         const tableBody = document.getElementById('tableRowsContainer');
         tableBody.innerHTML = ""; 
         shiftRounds.forEach((r, idx) => {
-            let yarnSelectHtml = `<select class="table-select" id="table_${idx}_yarn" onchange="saveAllToStorage()"><option value="">-- เลือกลิสต์เบอร์ใย --</option>`;
+            let yarnSelectHtml = `<select class="table-select" id="table_${idx}_yarn" onchange="saveAllToStorage()"><option value="">-- เลือกเบอร์ใย --</option>`;
             for (const [groupName, options] of Object.entries(yarnOptions)) {
                 yarnSelectHtml += `<optgroup label="📦 ${groupName}">`;
                 options.forEach(opt => {
@@ -236,11 +327,18 @@
             }
             yarnSelectHtml += `</select>`;
 
-            let modelSelectHtml = `<select class="table-select" id="table_${idx}_model" onchange="saveAllToStorage()"><option value="">-- เลือกรุ่น --</option>`;
+            let modelSelectHtml = `<select class="table-select" id="table_${idx}_model" onchange="saveAllToStorage()"><option value="">-- รุ่น --</option>`;
             modelOptions.forEach(opt => {
                 modelSelectHtml += `<option value="${opt}">${opt}</option>`;
             });
             modelSelectHtml += `</select>`;
+
+            // สร้างช่อง Dropdown สำหรับเลือกชื่อพนักงานกรอ
+            let operatorSelectHtml = `<select class="table-select" id="table_${idx}_operator" onchange="saveAllToStorage()"><option value="">-- เลือกชื่อพนักงาน --</option>`;
+            operatorStaffList.forEach(name => {
+                operatorSelectHtml += `<option value="${name}">${name}</option>`;
+            });
+            operatorSelectHtml += `</select>`;
 
             tableBody.innerHTML += `
                 <tr>
@@ -248,7 +346,7 @@
                     <td style="font-size:0.9rem; color:#475569; font-weight:600;">${r.time}</td>
                     <td><input type="checkbox" class="td-check" id="check_${idx}" onchange="saveAllToStorage()"></td>
                     <td><input type="text" class="table-input" id="table_${idx}_loom" placeholder="-" oninput="saveAllToStorage()"></td>
-                    <td><input type="text" class="table-input" id="table_${idx}_operator" placeholder="ระบุชื่อ..." oninput="saveAllToStorage()"></td>
+                    <td>${operatorSelectHtml}</td>
                     <td>${yarnSelectHtml}</td>
                     <td>${modelSelectHtml}</td>
                     <td><input type="number" class="table-input" id="table_${idx}_qty" placeholder="0" oninput="saveAllToStorage()"></td>
@@ -260,7 +358,6 @@
         });
     }
 
-    // โหลดข้อมูลเดิมจาก LocalStorage
     function loadSavedData() {
         if(localStorage.getItem('pureForm_workerName')) document.getElementById('workerName').value = localStorage.getItem('pureForm_workerName');
         if(localStorage.getItem('pureForm_auditDate')) {
@@ -273,10 +370,7 @@
             const savedVal = localStorage.getItem(`pureForm_topic_${qNum}`);
             if(savedVal === "ผ่าน") document.getElementById(`pass_${qNum}`).checked = true;
             if(savedVal === "ไม่ผ่าน") document.getElementById(`fail_${qNum}`).checked = true;
-            
-            if(localStorage.getItem(`pureForm_note_${qNum}`)) {
-                document.getElementById(`note_${qNum}`).value = localStorage.getItem(`pureForm_note_${qNum}`);
-            }
+            if(localStorage.getItem(`pureForm_note_${qNum}`)) document.getElementById(`note_${qNum}`).value = localStorage.getItem(`pureForm_note_${qNum}`);
         }
 
         if(localStorage.getItem('pureForm_gridData')) {
@@ -285,8 +379,8 @@
                 if(savedGrid[idx]) {
                     document.getElementById(`check_${idx}`).checked = savedGrid[idx].isChecked;
                     document.getElementById(`table_${idx}_loom`).value = savedGrid[idx].loom;
-                    if(document.getElementById(`table_${idx}_operator`) && savedGrid[idx].operatorName) {
-                        document.getElementById(`table_${idx}_operator`).value = savedGrid[idx].operatorName;
+                    if(document.getElementById(`table_${idx}_operator`)) {
+                        document.getElementById(`table_${idx}_operator`).value = savedGrid[idx].operatorName || "";
                     }
                     document.getElementById(`table_${idx}_yarn`).value = savedGrid[idx].yarn;
                     document.getElementById(`table_${idx}_model`).value = savedGrid[idx].model;
@@ -300,7 +394,6 @@
         }
     }
 
-    // บันทึกสถานะชั่วคราวลง LocalStorage
     function saveAllToStorage() {
         localStorage.setItem('pureForm_workerName', document.getElementById('workerName').value);
         localStorage.setItem('pureForm_auditDate', document.getElementById('auditDate').value);
@@ -311,7 +404,6 @@
             if(passRadio.checked) localStorage.setItem(`pureForm_topic_${qNum}`, "ผ่าน");
             else if(failRadio.checked) localStorage.setItem(`pureForm_topic_${qNum}`, "ไม่ผ่าน");
             else localStorage.removeItem(`pureForm_topic_${qNum}`);
-
             localStorage.setItem(`pureForm_note_${qNum}`, document.getElementById(`note_${qNum}`).value);
         }
 
@@ -333,11 +425,10 @@
         localStorage.setItem('pureForm_gridData', JSON.stringify(gridData));
     }
 
-    // ยิงข้อมูลบันทึกเข้า Google Sheets
     function submitFullForm() {
         const workerName = document.getElementById('workerName').value.trim();
         if (!workerName) { 
-            Swal.fire({ icon: 'warning', title: 'กรุณากรอกชื่อผู้ตรวจ', text: 'กรุณากรอกชื่อผู้ตรวจสอบระบบ (QC) ก่อนคลิกส่งข้อมูลครับ' });
+            Swal.fire({ icon: 'warning', title: 'กรุณากรอกชื่อผู้ตรวจ', text: 'กรุณากรอกหรือเลือกชื่อผู้ตรวจสอบระบบ (QC) ก่อนคลิกส่งข้อมูลครับ', confirmButtonColor: '#1F4E79' });
             return; 
         }
 
@@ -345,10 +436,8 @@
         for(let qNum=1; qNum<=14; qNum++) {
             const passChecked = document.getElementById(`pass_${qNum}`).checked;
             const failChecked = document.getElementById(`fail_${qNum}`).checked;
-            const noteVal = document.getElementById(`note_${qNum}`).value.trim();
-            
             auditResults[`ข้อที่_${qNum}_ผลตรวจ`] = passChecked ? "ผ่าน" : (failChecked ? "ไม่ผ่าน" : "ยังไม่ได้ตรวจ");
-            auditResults[`ข้อที่_${qNum}_หมายเหตุ`] = noteVal ? noteVal : "-";
+            auditResults[`ข้อที่_${qNum}_หมายเหตุ`] = document.getElementById(`note_${qNum}`).value.trim() || "-";
         }
 
         let gridRecords = [];
@@ -384,33 +473,27 @@
         })
         .then(res => res.json())
         .then(response => {
-            if (response.status === "success") {
-                clear14TopicsOnly();
-            } else { throw new Error(response.message); }
+            if (response.status === "success") clear14TopicsOnly();
+            else throw new Error(response.message);
         })
         .catch(() => {
             clear14TopicsOnly();
         });
     }
 
-    // ล้างสถานะตารางด้านบน เพื่อเตรียมใช้งานต่อในรอบถัดไป
     function clear14TopicsOnly() {
         for(let qNum=1; qNum<=14; qNum++) {
             document.getElementById(`pass_${qNum}`).checked = false;
             document.getElementById(`fail_${qNum}`).checked = false;
             document.getElementById(`note_${qNum}`).value = "";
-            
             localStorage.removeItem(`pureForm_topic_${qNum}`);
             localStorage.removeItem(`pureForm_note_${qNum}`);
         }
-        
         saveAllToStorage();
-        
-        // ขยายหน้ากว้างของ SweetAlert แสดงการแจ้งเตือนสำเร็จ
         Swal.fire({ 
             icon: 'success', 
             title: 'ส่งบันทึกข้อมูลเรียบร้อย!', 
-            text: 'ระบบเคลียร์สถานะประเมิน 14 ข้อหลักให้ใหม่เรียบร้อยแล้ว ส่วนตารางเวลารอบข้างล่างยังคงเก็บข้อมูลไว้ให้คุณบันทึกสะสมได้ต่อเนื่องครับ', 
+            text: 'ระบบเคลียร์สถานะประเมิน 14 ข้อหลักให้ใหม่เรียบร้อยแล้ว ส่วนตารางเวลารอบข้างล่างยังคงเก็บข้อมูลพนักงานและผลรอบเวลาไว้ให้คุณบันทึกสะสมได้ต่อเนื่องครับ', 
             confirmButtonColor: '#1F4E79' 
         });
     }
