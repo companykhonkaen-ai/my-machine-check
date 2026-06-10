@@ -1,10 +1,10 @@
-:ระบบบันทึกเวลาพนักงาน หน้าต่างสรุปข้อมูลครบจบในช่องเดียวพรีเมียม:index.html
+:ระบบบันทึกเวลาและสรุปยอดพนักงานและโอทีภาษาไทยชัดเจน:index.html
 <!DOCTYPE html>
 <html lang="th">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TechCheck Analytics - หน้าต่างสรุปข้อมูลครบจบในช่องเดียว</title>
+    <title>ระบบสรุปยอดพนักงานและโอที - แสดงสถานะภาษาไทย</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -20,7 +20,6 @@
         .font-mono-tech {
             font-family: 'JetBrains Mono', monospace;
         }
-        /* ตกแต่ง Scrollbar ให้สวยงามเข้ากับธีม */
         ::-webkit-scrollbar {
             width: 6px;
         }
@@ -31,9 +30,6 @@
             background: #1e293b;
             border-radius: 10px;
         }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #334155;
-        }
     </style>
 </head>
 <body class="text-slate-200 min-h-screen pb-12">
@@ -43,12 +39,12 @@
         <header class="flex flex-col lg:flex-row justify-between items-start lg:items-center bg-slate-900/30 backdrop-blur-md p-6 rounded-2xl border border-slate-800/60 mb-6 gap-4 shadow-2xl">
             <div>
                 <span class="text-xs font-semibold text-cyan-400 uppercase tracking-widest bg-cyan-500/10 px-3 py-1 rounded-full border border-cyan-500/20">
-                    <i class="fa-solid fa-table-list mr-1.5 animate-pulse"></i> All-In-One Dashboard Control
+                    <i class="fa-solid fa-clipboard-user mr-1.5 animate-pulse"></i> Digital Time Attendance System
                 </span>
                 <h1 class="text-2xl md:text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-indigo-400 to-teal-400 mt-1">
-                    ระบบบันทึกเวลาและสรุปยอดรวมในหน้าต่างเดียว
+                    ระบบบันทึกสถิติและสถานะพนักงาน
                 </h1>
-                <p class="text-slate-400 text-xs mt-1">ลงเวลาทำงานและโอทีฝั่งซ้าย ข้อมูลสรุปประจำวัน/รายงวด/รายเดือนจะแสดงผลพร้อมกันในช่องขวาเพื่อส่ง LINE ได้ทันที</p>
+                <p class="text-slate-400 text-xs mt-1">คลิกเลือกสถานะในตารางฝั่งซ้าย แผงสรุปผลฝั่งขวาจะแปรผลเป็นภาษาไทยและคำนวณยอดสะสมให้ทันทีในหน้าเดียว</p>
             </div>
 
             <div class="relative bg-slate-950 border border-slate-800 px-4 py-2.5 rounded-xl flex items-center gap-3 min-w-[220px] shadow-lg">
@@ -80,8 +76,8 @@
                             <tr class="bg-slate-950 border-b border-slate-800 text-slate-400 text-[10px] font-bold uppercase tracking-wider">
                                 <th class="p-3 text-center w-16">รูปภาพ</th>
                                 <th class="p-3">ชื่อพนักงาน / แผนก</th>
-                                <th class="p-3 text-center w-20 bg-slate-900/40">เข้างาน</th>
-                                <th class="p-3 text-center w-16 bg-slate-900/60">โอที</th>
+                                <th class="p-3 text-center w-24 bg-slate-900/40">ลงสถานะวันนี้</th>
+                                <th class="p-3 text-center w-16 bg-slate-900/60">โอที (OT)</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-900" id="employee-rows">
@@ -99,41 +95,36 @@
                     <span class="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-cyan-400 rounded-br"></span>
 
                     <div class="text-center pb-4 border-b border-slate-900 mb-4">
-                        <div class="text-[9px] text-cyan-400 font-bold tracking-widest uppercase font-mono-tech">TOTAL MASTER WORKFORCE STATEMENT</div>
-                        <h3 class="text-lg font-bold text-slate-100 mt-0.5">แผงสรุปยอดพนักงานและโอที (ครบจบในหน้าเดียว)</h3>
-                        <div class="mt-1 text-xs text-slate-400" id="master-card-date-sub">ประจำวันที่ 10 มิถุนายน 2026</div>
+                        <h3 class="text-xl font-bold text-slate-100 tracking-wide">สรุปยอดพนักงานและโอที</h3>
+                        <div class="mt-1 text-xs text-slate-400 font-mono-tech" id="master-card-date-sub">ประจำวันที่ 10 มิถุนายน 2026</div>
                     </div>
 
                     <div class="overflow-x-auto">
                         <table class="w-full text-left border-collapse">
                             <thead>
                                 <tr class="bg-slate-900/80 border-b border-slate-800 text-slate-400 text-[10px] font-bold">
-                                    <th class="p-2.5">ข้อมูลพนักงาน</th>
-                                    <th class="p-2.5 text-center bg-cyan-950/30 text-cyan-400 border-x border-slate-900">สถานะวันนี้</th>
-                                    <th class="p-2.5 text-center bg-slate-900/60 border-r border-slate-900">งวด 1-12 วัน</th>
-                                    <th class="p-2.5 text-center bg-slate-900/60 border-r border-slate-900">งวด 13-24 วัน</th>
-                                    <th class="p-2.5 text-center bg-amber-950/20 text-amber-400">สรุปทั้งเดือน</th>
+                                    <th class="p-2.5 w-[35%]">ข้อมูลพนักงาน</th>
+                                    <th class="p-2.5 text-center bg-cyan-950/30 text-cyan-400 border-x border-slate-900 w-[25%]">สถานะวันนี้</th>
+                                    <th class="p-2.5 text-center bg-slate-900/60 border-r border-slate-900 w-[13%]">งวด 1-12</th>
+                                    <th class="p-2.5 text-center bg-slate-900/60 border-r border-slate-900 w-[13%]">งวด 13-24</th>
+                                    <th class="p-2.5 text-center bg-amber-950/20 text-amber-400 w-[14%]">รวมทั้งเดือน</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-slate-900/60 text-xs" id="master-summary-rows">
+                            <tbody class="text-xs" id="master-summary-rows">
                                 </tbody>
                         </table>
                     </div>
 
                     <div class="mt-4 pt-3 border-t border-slate-900 flex flex-wrap justify-between items-center text-[9px] text-slate-500 font-mono-tech gap-2">
                         <div class="flex gap-2">
-                            <span><b>คำอธิบาย:</b> เช้า (✓)</span>
-                            <span>ดึก (✅)</span>
-                            <span>หยุด (H)</span>
-                            <span>ขาด (❌)</span>
-                            <span>โอที (⚡)</span>
+                            <span><b>วิธีติ๊กเปลี่ยน:</b> กะเช้า (✓) -> กะดึก (✅) -> วันหยุด (H) -> ขาดงาน (❌)</span>
                         </div>
-                        <span id="pres-card-timestamp">ประมวลผลระบบอัตโนมัติประจำเดือนมิถุนายน 2569</span>
+                        <span id="pres-card-timestamp">ระบบจัดการข้อมูลเวลาทำงานดิจิทัล</span>
                     </div>
                 </div>
 
                 <button onclick="exportMasterReportImage()" class="w-full py-4 bg-gradient-to-r from-cyan-500 via-indigo-500 to-teal-500 hover:brightness-110 text-slate-950 font-extrabold rounded-2xl text-sm transition flex items-center justify-center gap-2 shadow-xl shadow-cyan-500/10">
-                    <i class="fa-solid fa-file-image text-lg"></i> 📸 ดาวน์โหลดเป็นรูปภาพสรุป All-in-One ส่ง LINE
+                    <i class="fa-solid fa-file-image text-lg"></i> 📸 ดาวน์โหลดเป็นรูปภาพสรุปยอดส่ง LINE
                 </button>
             </div>
 
@@ -173,7 +164,6 @@
 
 
     <script>
-        // ชุดรายชื่อพนักงานหลัก
         const employeeDataSeed = [
             { id: "4200467", name: "นส.พนา ซูกลิ่นหอม", department: "พนักงานปั๊มป้าย", avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=200&h=200", attendance: {}, ot: {} },
             { id: "6900051", name: "นส. ZIN MAY HLAING", department: "พนักงานปั๊มป้าย", avatar: "https://images.unsplash.com/photo-1554151228-14d9def656e4?auto=format&fit=crop&q=80&w=200&h=200", attendance: {}, ot: {} },
@@ -188,22 +178,47 @@
             { id: "0000000", name: "ลำดวน (ไม่ระบุรหัส)", department: "พนักงานปั่นเวียนกะ", avatar: "https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?auto=format&fit=crop&q=80&w=200&h=200", attendance: {}, ot: {} }
         ];
 
-        let employees = JSON.parse(JSON.stringify(employeeDataSeed));
+        let employees = [];
         let currentDayStr = "2026-06-10"; 
         let targetModalId = null;
         let modalImgBuffer = "";
 
-        // จำลองประวัติข้อมูลเดือนมิถุนายนต้นงวดให้เห็นสถิติสะสมสวยๆ ในหน้าต่างรายงาน
-        for(let d=1; d<=12; d++) {
-            const dateKey = `2026-06-${d < 10 ? '0'+d : d}`;
-            employees.forEach((e, idx) => {
-                e.attendance[dateKey] = (d === 7 || d === 8) ? "H" : (idx % 4 === 0 ? "✅" : "✓");
-                e.ot[dateKey] = (d % 3 === 0 && e.attendance[dateKey] !== "H") ? true : false;
-            });
+        function initData() {
+            const saved = localStorage.getItem('payroll_employees_data_v3');
+            if (saved) {
+                employees = JSON.parse(saved);
+            } else {
+                employees = JSON.parse(JSON.stringify(employeeDataSeed));
+                // ตั้งสถิติจำลองเพื่อความสวยงามในครั้งแรก
+                for(let d=1; d<=12; d++) {
+                    const dateKey = `2026-06-${d < 10 ? '0'+d : d}`;
+                    employees.forEach((e, idx) => {
+                        e.attendance[dateKey] = (d === 7 || d === 8) ? "H" : (idx % 3 === 0 ? "✅" : "✓");
+                        e.ot[dateKey] = (d % 3 === 0 && e.attendance[dateKey] !== "H") ? true : false;
+                    });
+                }
+                saveToLocalStorage();
+            }
+        }
+
+        function saveToLocalStorage() {
+            localStorage.setItem('payroll_employees_data_v3', JSON.stringify(employees));
         }
 
         const attendCycle = ["", "✓", "✅", "H", "❌"];
         function getNextAttend(val) { return attendCycle[(attendCycle.indexOf(val) + 1) % attendCycle.length]; }
+
+        // แปลงเครื่องหมายสัญลักษณ์เป็น "ข้อความสถานะภาษาไทย" ชัดเจนตามสั่ง
+        function translateStatusToThai(val, hasOT) {
+            let otText = hasOT ? " + โอที" : "";
+            switch(val) {
+                case '✓': return `<span class="text-emerald-400 font-bold">มางาน (กะเช้า)${otText}</span>`;
+                case '✅': return `<span class="text-teal-300 font-bold">มางาน (กะดึก)${otText}</span>`;
+                case 'H': return `<span class="text-purple-400 font-medium">วันหยุด</span>`;
+                case '❌': return `<span class="text-rose-400 font-bold">ขาดงาน</span>`;
+                default: return `<span class="text-slate-500">- ไม่ได้ลงชื่อ -</span>`;
+            }
+        }
 
         function getAttendStyle(val) {
             switch(val) {
@@ -234,6 +249,7 @@
             const emp = employees.find(e => e.id === id);
             if(emp) {
                 emp.attendance[currentDayStr] = getNextAttend(emp.attendance[currentDayStr] || "");
+                saveToLocalStorage();
                 renderTable();
                 renderMasterAllInOneReport();
             }
@@ -243,12 +259,12 @@
             const emp = employees.find(e => e.id === id);
             if(emp) {
                 emp.ot[currentDayStr] = !emp.ot[currentDayStr];
+                saveToLocalStorage();
                 renderTable();
                 renderMasterAllInOneReport();
             }
         }
 
-        // วาดตารางกรอกข้อมูลฝั่งซ้ายมือ
         function renderTable() {
             const sQuery = document.getElementById('search-input').value.toLowerCase();
             const box = document.getElementById('employee-rows');
@@ -281,13 +297,13 @@
                         <span class="text-slate-500 text-[9px]">${e.id === '0000000' ? 'ไม่มีรหัส' : 'ID: '+e.id}</span>
                     </td>
                     <td class="p-3 bg-slate-900/10 text-center">
-                        <button onclick="stepAttendance('${e.id}')" class="w-8 h-8 rounded-lg text-xs font-extrabold mx-auto transition ${getAttendStyle(currentAttend)}">
+                        <button onclick="stepAttendance('${e.id}')" class="w-12 h-8 rounded-lg text-xs font-extrabold mx-auto transition ${getAttendStyle(currentAttend)}">
                             ${currentAttend || "-"}
                         </button>
                     </td>
                     <td class="p-3 bg-slate-900/30 text-center">
                         <button onclick="toggleOTField('${e.id}')" class="w-11 h-8 rounded-lg text-[9px] font-bold transition ${isOTChecked ? 'bg-amber-500/20 text-amber-400 border border-amber-500/40 font-extrabold' : 'bg-slate-950 text-slate-600 border border-slate-900'}">
-                            ${isOTChecked ? '⚡' : '💤'}
+                            ${isOTChecked ? '⚡ ทำ' : '💤'}
                         </button>
                     </td>
                 `;
@@ -295,7 +311,7 @@
             });
         }
 
-        // ฟังก์ชันหัวใจหลัก: คำนวณความต้องการประจำวัน, 1-12, 13-24 และรายเดือน แสดงพร้อมกันทีเดียวรายบุคคล!
+        // หน้าต่างสรุปผล All-in-one ที่เปลี่ยนการแสดงสถานะวันนี้เป็นภาษาไทยตามคำสั่ง
         function renderMasterAllInOneReport() {
             const pParts = currentDayStr.split('-');
             const year = parseInt(pParts[0]);
@@ -303,72 +319,80 @@
             const daysInMonth = new Date(year, month, 0).getDate();
 
             const mTh = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
-            document.getElementById('pres-card-timestamp').innerText = `รอบข้อมูล ${mTh[month-1]} ${year+543}`;
+            document.getElementById('pres-card-timestamp').innerText = `รอบประมวลผลข้อมูลประจำเดือน ${mTh[month-1]} ${year+543}`;
 
             const tbody = document.getElementById('master-summary-rows');
             tbody.innerHTML = '';
 
-            employees.forEach(e => {
-                // 1. ประมวลผลสถานะประจำวันปัจจุบัน
-                const dAttend = e.attendance[currentDayStr] || "-";
-                const dOT = e.ot[currentDayStr] ? " ⚡" : "";
-                let dailyBadge = `<span class="px-1.5 py-0.5 rounded text-[10px] ${getAttendStyle(dAttend)}">${dAttend}${dOT}</span>`;
+            // แยกพนักงานออกเป็นกลุ่มแผนกตามรูปภาพเพื่อความเป็นระเบียบเรียบร้อย
+            const departments = ["พนักงานปั๊มป้าย", "พนักงานคลังสินค้า", "พนักงานปั่นเวียนกะ", "พนักงานปั่นเพดานกะเช้า"];
+            
+            departments.forEach(dept => {
+                const deptEmps = employees.filter(e => e.department === dept);
+                if(deptEmps.length === 0) return;
 
-                // ฟังก์ชันย่อยสำหรับนับช่วงวันที่ต้องการ
-                const getStatsForRange = (start, end) => {
-                    let work = 0, ot = 0;
-                    for (let d = start; d <= end; d++) {
-                        const dKey = `${year}-${month < 10 ? '0'+month : month}-${d < 10 ? '0'+d : d}`;
-                        if (e.attendance[dKey] === '✓' || e.attendance[dKey] === '✅') work++;
-                        if (e.ot[dKey]) ot++;
-                    }
-                    return { work, ot };
-                };
+                // หัวข้อชื่อแผนก
+                const deptRow = document.createElement('tr');
+                deptRow.className = "bg-slate-900/60 font-bold border-y border-slate-800 text-[10px]";
+                deptRow.innerHTML = `<td colspan="5" class="p-1.5 pl-3 text-yellow-400 font-semibold"><i class="fa-solid fa-tags mr-1.5"></i> ${dept}</td>`;
+                tbody.appendChild(deptRow);
 
-                // 2. ประมวลผลช่วงงวด วันที่ 1 - 12
-                const p1 = getStatsForRange(1, 12);
-                // 3. ประมวลผลช่วงงวด วันที่ 13 - 24
-                const p2 = getStatsForRange(13, 24);
-                // 4. ประมวลผลยอดรวมทั้งเดือน
-                const pMonth = getStatsForRange(1, daysInMonth);
+                deptEmps.forEach(e => {
+                    const dAttend = e.attendance[currentDayStr] || "";
+                    const hasOT = e.ot[currentDayStr] || false;
+                    
+                    // คำนวณความถี่สะสมตามช่วงเวลา
+                    const getStatsForRange = (start, end) => {
+                        let work = 0, ot = 0;
+                        for (let d = start; d <= end; d++) {
+                            const dKey = `${year}-${month < 10 ? '0'+month : month}-${d < 10 ? '0'+d : d}`;
+                            if (e.attendance[dKey] === '✓' || e.attendance[dKey] === '✅') work++;
+                            if (e.ot[dKey]) ot++;
+                        }
+                        return { work, ot };
+                    };
 
-                // สร้างโครงสร้างตารางข้อมูลรวมหน้าเดียวแบบหรูหรา
-                const tr = document.createElement('tr');
-                tr.className = "hover:bg-slate-900/40 border-b border-slate-900/60";
+                    const p1 = getStatsForRange(1, 12);
+                    const p2 = getStatsForRange(13, 24);
+                    const pMonth = getStatsForRange(1, daysInMonth);
 
-                const picHtml = e.avatar ? 
-                    `<img src="${e.avatar}" class="w-7 h-7 rounded-full object-cover border border-slate-800">` :
-                    `<div class="w-7 h-7 rounded-full bg-slate-800 flex items-center justify-center text-[9px] font-bold text-slate-400">${e.name.substring(2,4)}</div>`;
+                    const tr = document.createElement('tr');
+                    tr.className = "hover:bg-slate-900/40 border-b border-slate-900/60 transition";
 
-                tr.innerHTML = `
-                    <td class="p-2 flex items-center gap-2 overflow-hidden max-w-[160px]">
-                        ${picHtml}
-                        <div class="truncate">
-                            <div class="font-bold text-slate-200 text-[11px] truncate">${e.name}</div>
-                            <div class="text-[8px] font-mono-tech text-slate-500">${e.id === '0000000' ? 'ไม่มีรหัส' : 'ID: '+e.id}</div>
-                        </div>
-                    </td>
-                    <td class="p-2 text-center bg-cyan-950/10 border-x border-slate-900/60 font-bold">
-                        ${dailyBadge}
-                    </td>
-                    <td class="p-2 text-center font-mono-tech text-[10px] text-slate-300 border-r border-slate-900/60">
-                        <div>งาน: <span class="text-emerald-400 font-bold">${p1.work}ว</span></div>
-                        <div>โอที: <span class="text-amber-400">${p1.ot}ว</span></div>
-                    </td>
-                    <td class="p-2 text-center font-mono-tech text-[10px] text-slate-300 border-r border-slate-900/60">
-                        <div>งาน: <span class="text-emerald-400 font-bold">${p2.work}ว</span></div>
-                        <div>โอที: <span class="text-amber-400">${p2.ot}ว</span></div>
-                    </td>
-                    <td class="p-2 text-center bg-amber-950/10 font-mono-tech text-[11px]">
-                        <div class="text-emerald-400 font-bold">งาน: ${pMonth.work} วัน</div>
-                        <div class="text-amber-400 font-bold">โอที: ${pMonth.ot} วัน</div>
-                    </td>
-                `;
-                tbody.appendChild(tr);
+                    const picHtml = e.avatar ? 
+                        `<img src="${e.avatar}" class="w-7 h-7 rounded-full object-cover border border-slate-800">` :
+                        `<div class="w-7 h-7 rounded-full bg-slate-800 flex items-center justify-center text-[9px] font-bold text-slate-400">${e.name.substring(2,4)}</div>`;
+
+                    tr.innerHTML = `
+                        <td class="p-2 flex items-center gap-2 overflow-hidden max-w-[160px]">
+                            ${picHtml}
+                            <div class="truncate">
+                                <div class="font-bold text-slate-200 text-[11px] truncate">${e.name}</div>
+                                <div class="text-[8px] font-mono-tech text-slate-500">${e.id === '0000000' ? 'ไม่มีรหัส' : 'ID: '+e.id}</div>
+                            </div>
+                        </td>
+                        <td class="p-2 text-center bg-cyan-950/10 border-x border-slate-900/60 font-medium text-[10px]">
+                            ${translateStatusToThai(dAttend, hasOT)}
+                        </td>
+                        <td class="p-2 text-center font-mono-tech text-[10px] text-slate-300 border-r border-slate-900/60">
+                            <div>งาน: <span class="text-emerald-400 font-bold">${p1.work}ว</span></div>
+                            <div>โอที: <span class="text-amber-400">${p1.ot}ว</span></div>
+                        </td>
+                        <td class="p-2 text-center font-mono-tech text-[10px] text-slate-300 border-r border-slate-900/60">
+                            <div>งาน: <span class="text-emerald-400 font-bold">${p2.work}ว</span></div>
+                            <div>โอที: <span class="text-amber-400">${p2.ot}ว</span></div>
+                        </td>
+                        <td class="p-2 text-center bg-amber-950/10 font-mono-tech text-[11px]">
+                            <div class="text-emerald-400 font-bold">${pMonth.work} วัน</div>
+                            <div class="text-amber-400 font-bold">โอที: ${pMonth.ot} วัน</div>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
             });
         }
 
-        // === จัดการโมดัลโปรไฟล์พนักงาน ===
+        // === ปรับแต่งข้อมูลพนักงาน ===
         function openProfileModal(id) {
             const emp = employees.find(e => e.id === id); if(!emp) return;
             targetModalId = id; modalImgBuffer = emp.avatar;
@@ -394,21 +418,22 @@
             if(emp) {
                 emp.name = document.getElementById('modal-emp-name').value;
                 emp.avatar = modalImgBuffer;
+                saveToLocalStorage();
                 renderTable(); renderMasterAllInOneReport(); closeProfileModal();
-                showToast("อัปเดตข้อมูลพนักงานสำเร็จ");
+                showToast("อัปเดตข้อมูลสำเร็จ");
             }
         }
         function closeProfileModal() { document.getElementById('profile-modal').classList.add('hidden'); }
 
-        // === สั่งบันทึกภาพหน้าต่างเดียวครบทุกข้อมูลไปแชร์ลง LINE ===
+        // === เซฟเป็นรูปภาพส่ง LINE ===
         function exportMasterReportImage() {
             const target = document.getElementById('presentation-card');
-            showToast("📸 กำลังรวมข้อมูลสถิติมิติต่างๆ เป็นไฟล์ภาพความละเอียดสูง...");
+            showToast("📸 กำลังประมวลผลสรุปข้อมูลเป็นรูปภาพภาษาไทยความละเอียดสูง...");
             html2canvas(target, { backgroundColor: "#040711", scale: 2, useCORS: true }).then(cv => {
                 const a = document.createElement('a');
-                a.download = `แผงรายงานมาสเตอร์พนักงาน_${currentDayStr}.png`;
+                a.download = `สรุปยอดพนักงานและโอที_${currentDayStr}.png`;
                 a.href = cv.toDataURL('image/png'); a.click();
-                showToast("✨ บันทึกภาพ All-in-One สำเร็จ! นำไปส่งรายงานในกลุ่ม LINE ได้เลย");
+                showToast("✨ บันทึกภาพเสร็จสิ้น! สามารถส่งรายงานเข้า LINE ได้ทันที");
             });
         }
 
@@ -419,7 +444,7 @@
         }
 
         document.getElementById('search-input').addEventListener('input', renderTable);
-        window.onload = () => { renderTable(); renderMasterAllInOneReport(); }
+        window.onload = () => { initData(); renderTable(); renderMasterAllInOneReport(); }
     </script>
 </body>
 </html>
