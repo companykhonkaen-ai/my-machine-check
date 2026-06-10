@@ -1,492 +1,527 @@
-:ระบบบันทึกเวลา เช็คชื่อ และส่งออกรายงานรูปภาพสำหรับ LINE:index.html
+:ระบบบันทึกเวลาพร้อมปฏิทินและสรุปรายงานรูปแบบรูปภาพพรีเมียม:index.html
 <!DOCTYPE html>
 <html lang="th">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TechCheck Pro Max - ระบบบันทึกสถิติและส่งออกรูปภาพรายงานไลน์</title>
-    <!-- Tailwind CSS -->
+    <title>TechCheck Ultimate - ระบบบันทึกเวลาและส่งออกรูปภาพรายงานไลน์พรีเมียม</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Font Noto Sans Thai & JetBrains Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- html2canvas สำหรับแปลง HTML เป็นรูปภาพดาวน์โหลดส่ง LINE -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
     <style>
         body {
             font-family: 'Noto Sans Thai', sans-serif;
-            background-color: #0b0f19;
+            background-color: #060a13;
         }
         .font-mono-tech {
             font-family: 'JetBrains Mono', monospace;
+        }
+        /* ซ่อนหน้าตาเดิมของ Input Date เพื่อความสวยงามล้ำสมัย */
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            background: transparent;
+            bottom: 0;
+            color: transparent;
+            cursor: pointer;
+            left: 0;
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: auto;
+            height: auto;
         }
     </style>
 </head>
 <body class="text-slate-200 min-h-screen pb-12">
 
-    <!-- APP CONTAINER -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
         
-        <!-- HEADER -->
-        <header class="flex flex-col md:flex-row justify-between items-start md:items-center bg-slate-900/60 backdrop-blur-md p-6 rounded-2xl border border-slate-800 mb-6 gap-4 shadow-2xl">
+        <header class="flex flex-col md:flex-row justify-between items-start md:items-center bg-slate-900/40 backdrop-blur-md p-6 rounded-2xl border border-slate-800/80 mb-6 gap-4 shadow-2xl">
             <div>
                 <span class="text-xs font-semibold text-cyan-400 uppercase tracking-widest bg-cyan-500/10 px-3 py-1 rounded-full border border-cyan-500/20">
-                    <i class="fa-solid fa-satellite-dish mr-1.5 animate-pulse"></i> Attendance Intelligence Dashboard
+                    <i class="fa-solid fa-shield-halved mr-1.5 animate-pulse"></i> Enterprise Time Attendance System
                 </span>
-                <h1 class="text-2xl md:text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-teal-400 to-indigo-400 mt-2">
-                    ระบบบันทึกและสรุปสถิติงานพนักงาน
+                <h1 class="text-2xl md:text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-teal-400 to-indigo-400 mt-1">
+                    ระบบบันทึกเวลาและสรุปผลรูปแบบรูปภาพ
                 </h1>
-                <p class="text-slate-400 text-sm mt-1">บันทึกเวลาทำงาน เลือกสถานะภาพรวม และแปลงหน้ารายงานสรุปเป็นรูปภาพสำหรับส่งกลุ่ม LINE</p>
+                <p class="text-slate-400 text-xs mt-1">เลือกวันที่จากปฏิทิน ติ๊กบันทึกสถิติไม่สับสน และส่งออกการ์ดรายงานที่มีภาพพนักงานเข้ากลุ่ม LINE</p>
             </div>
-            <div class="bg-slate-950/80 px-4 py-2.5 rounded-xl border border-slate-800 font-mono-tech text-sm text-cyan-400" id="current-time">
-                วันพุธที่ 10 มิถุนายน 2026
+
+            <div class="relative bg-slate-950 border-2 border-cyan-500/40 px-4 py-2.5 rounded-xl flex items-center gap-3 shadow-lg shadow-cyan-500/5 cursor-pointer hover:border-cyan-400 transition min-w-[220px]">
+                <i class="fa-solid fa-calendar-days text-cyan-400 text-lg"></i>
+                <div class="flex flex-col text-left">
+                    <span class="text-[10px] text-slate-500 font-bold uppercase tracking-wider">วันที่เรียกรายงาน / บันทึก</span>
+                    <span id="calendar-display-string" class="text-xs font-bold text-slate-200">10 มิถุนายน 2026</span>
+                </div>
+                <input type="date" id="main-date-picker" value="2026-06-10" class="absolute inset-0 opacity-0 cursor-pointer" onchange="handleDateChange(this.value)">
+                <i class="fa-solid fa-chevron-down text-slate-500 text-xs ml-auto"></i>
             </div>
         </header>
 
-        <!-- MAIN LAYOUT: DIVIDED INTO 2 COLUMNS -->
-        <div class="grid grid-cols-1 xl:grid-cols-12 gap-6">
+        <div class="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
             
-            <!-- LEFT COLUMN: EMPLOYEE LIST TABLE (8 Cols) -->
-            <div class="xl:col-span-8 space-y-4">
+            <div class="xl:col-span-7 space-y-4">
                 
-                <!-- SEARCH & FILTER BAR -->
-                <div class="bg-slate-900/40 p-4 rounded-xl border border-slate-800 flex flex-col sm:flex-row justify-between gap-4">
-                    <div class="relative flex-1">
+                <div class="bg-slate-900/40 p-4 rounded-xl border border-slate-800 flex flex-col sm:flex-row justify-between items-center gap-4">
+                    <div class="relative w-full sm:flex-1">
                         <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-500">
-                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <i class="fa-solid fa-magnifying-glass text-xs"></i>
                         </span>
-                        <input type="text" id="search-input" placeholder="ค้นหาชื่อพนักงาน หรือรหัสประจำตัว..." class="w-full pl-10 pr-4 py-2 bg-slate-950 border border-slate-800 rounded-xl focus:outline-none focus:border-cyan-500 text-sm text-slate-200 transition">
+                        <input type="text" id="search-input" placeholder="ค้นหาชื่อพนักงาน หรือรหัสประจำตัว..." class="w-full pl-9 pr-4 py-2 bg-slate-950 border border-slate-800 rounded-xl focus:outline-none focus:border-cyan-500 text-xs text-slate-200 transition">
                     </div>
-                    <button onclick="resetToOriginalData()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-semibold transition flex items-center gap-1.5 self-end sm:self-auto">
-                        <i class="fa-solid fa-arrow-rotate-left"></i> รีเซ็ตค่ารูปภาพดั้งเดิม
+                    <button onclick="resetToOriginalData()" class="w-full sm:w-auto px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-semibold transition flex items-center justify-center gap-1.5 whitespace-nowrap">
+                        <i class="fa-solid fa-arrow-rotate-left text-[10px]"></i> รีเซ็ตค่ารูปภาพดั้งเดิม
                     </button>
                 </div>
 
-                <!-- TABLE GRID -->
-                <div class="bg-slate-900/30 rounded-2xl border border-slate-800 overflow-hidden shadow-xl">
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left border-collapse min-w-[650px]">
-                            <thead>
-                                <tr class="bg-slate-950 border-b border-slate-800 text-slate-400 text-xs font-bold uppercase tracking-wider">
-                                    <th class="p-4 text-center w-24">โปรไฟล์</th>
-                                    <th class="p-4 w-48">ข้อมูลรายชื่อพนักงาน</th>
-                                    <th class="p-4 text-center w-28 bg-slate-900/40 border-l border-slate-800">วันที่ 9</th>
-                                    <th class="p-4 text-center w-28 bg-slate-900/40 border-l border-slate-800">วันที่ 10</th>
-                                    <th class="p-4 text-center w-28 bg-slate-900/40 border-l border-slate-800">วันที่ 11</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-slate-900" id="employee-rows">
-                                <!-- วาดรายชื่อจาก JavaScript -->
+                <div class="bg-slate-900/20 rounded-2xl border border-slate-800 overflow-hidden shadow-xl">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-950 border-b border-slate-800 text-slate-400 text-xs font-bold uppercase tracking-wider">
+                                <th class="p-4 text-center w-24">รูปภาพ</th>
+                                <th class="p-4">รายชื่อพนักงาน / สังกัดกลุ่มงาน</th>
+                                <th class="p-4 text-center w-36 bg-slate-900/30">
+                                    <div id="table-header-day" class="text-cyan-400 font-bold font-mono-tech text-sm">ติ๊กสถานะวันนี้</div>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-900" id="employee-rows">
                             </tbody>
-                        </table>
-                    </div>
+                    </table>
                 </div>
 
-                <!-- INSTRUCTION CAPTION -->
-                <p class="text-xs text-slate-500"><i class="fa-solid fa-circle-info mr-1"></i> วิธีเช็คชื่อ: สามารถคลิกกดเปลี่ยนสัญลักษณ์สถานะบนปุ่มของพนักงานแต่ละคน ตารางสรุปด้านขวาจะอัปเดตข้อมูลให้ทันทีครับ</p>
+                <div class="p-3 bg-slate-900/20 rounded-xl border border-slate-800/60 flex items-center justify-between text-xs text-slate-500">
+                    <span>💡 คลิกที่ปุ่มสถานะเพื่อวนเปลี่ยนค่า: ลำดับคือ ว่างเปล่า ➔ กะเช้า ➔ กะดึก ➔ วันหยุด ➔ ขาดงาน</span>
+                    <div class="flex gap-2 font-mono-tech text-[10px]">
+                        <span class="text-emerald-400">✓ เช้า</span>
+                        <span class="text-teal-300">✅ ดึก</span>
+                        <span class="text-purple-400">H หยุด</span>
+                        <span class="text-rose-400">❌ ขาด</span>
+                    </div>
+                </div>
             </div>
 
-            <!-- RIGHT COLUMN: SUMMARY PRESENTATION & IMAGE EXPORT (4 Cols) -->
-            <div class="xl:col-span-4 space-y-4">
+            <div class="xl:col-span-5 space-y-4">
                 
-                <!-- SELECT REPORT DAY BAR -->
-                <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-800 flex items-center justify-between">
-                    <span class="text-xs font-bold text-slate-400">เลือกวันที่รายงาน:</span>
-                    <div class="flex gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800">
-                        <button onclick="switchReportDay('9')" id="btn-report-9" class="px-3 py-1.5 rounded font-mono-tech text-xs font-bold transition">9</button>
-                        <button onclick="switchReportDay('10')" id="btn-report-10" class="px-3 py-1.5 rounded font-mono-tech text-xs font-bold transition">10</button>
-                        <button onclick="switchReportDay('11')" id="btn-report-11" class="px-3 py-1.5 rounded font-mono-tech text-xs font-bold transition">11</button>
+                <div class="bg-slate-950 rounded-2xl border-2 border-cyan-500/30 p-5 shadow-2xl relative" id="presentation-card">
+                    <span class="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-cyan-400 rounded-tl"></span>
+                    <span class="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-cyan-400 rounded-tr"></span>
+                    <span class="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-cyan-400 rounded-bl"></span>
+                    <span class="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-cyan-400 rounded-br"></span>
+
+                    <div class="text-center pb-4 border-b border-slate-900">
+                        <div class="text-[9px] text-cyan-400 font-bold tracking-widest uppercase font-mono-tech">DAILY ATTENDANCE PHOTO REPORT</div>
+                        <h3 class="text-base font-bold text-slate-100 mt-1">สรุปภาพรวมรายงานผลประจำวัน</h3>
+                        <div class="mt-1.5 inline-block bg-gradient-to-r from-cyan-950 to-slate-900 text-cyan-400 border border-cyan-500/20 px-4 py-0.5 rounded-full text-xs font-bold font-mono-tech" id="pres-card-day-title">
+                            10 มิถุนายน 2026
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-4 gap-1.5 my-4 text-center text-[10px]">
+                        <div class="bg-slate-900/80 p-2 rounded-xl border border-slate-800">
+                            <div class="text-emerald-400 font-bold">กะเช้า (✓)</div>
+                            <div class="text-base font-bold text-emerald-400 font-mono-tech mt-0.5" id="sum-count-morning">0</div>
+                        </div>
+                        <div class="bg-slate-900/80 p-2 rounded-xl border border-slate-800">
+                            <div class="text-teal-300 font-bold">กะดึก (✅)</div>
+                            <div class="text-base font-bold text-teal-300 font-mono-tech mt-0.5" id="sum-count-night">0</div>
+                        </div>
+                        <div class="bg-slate-900/80 p-2 rounded-xl border border-slate-800">
+                            <div class="text-purple-400 font-bold">วันหยุด (H)</div>
+                            <div class="text-base font-bold text-purple-400 font-mono-tech mt-0.5" id="sum-count-holiday">0</div>
+                        </div>
+                        <div class="bg-slate-900/80 p-2 rounded-xl border border-slate-800">
+                            <div class="text-rose-400 font-bold">ขาดงาน (❌)</div>
+                            <div class="text-base font-bold text-rose-400 font-mono-tech mt-0.5" id="sum-count-absent">0</div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="p-3 bg-slate-900/30 rounded-xl border border-slate-900/80">
+                            <div class="text-xs text-emerald-400 font-bold mb-2 flex items-center gap-1.5 border-b border-slate-900 pb-1.5">
+                                <span class="w-2 h-2 rounded-full bg-emerald-400 inline-block animate-pulse"></span>
+                                <i class="fa-solid fa-sun text-xs"></i> รายชื่อพนักงานเข้างานกะเช้า (✓)
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2" id="grid-morning">
+                                </div>
+                        </div>
+
+                        <div class="p-3 bg-slate-900/30 rounded-xl border border-slate-900/80">
+                            <div class="text-xs text-teal-300 font-bold mb-2 flex items-center gap-1.5 border-b border-slate-900 pb-1.5">
+                                <span class="w-2 h-2 rounded-full bg-teal-400 inline-block"></span>
+                                <i class="fa-solid fa-moon text-xs"></i> รายชื่อพนักงานเข้างานกะดึก (✅)
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2" id="grid-night"></div>
+                        </div>
+
+                        <div class="p-3 bg-slate-900/30 rounded-xl border border-slate-900/80">
+                            <div class="text-xs text-purple-400 font-bold mb-2 flex items-center gap-1.5 border-b border-slate-900 pb-1.5">
+                                <span class="w-2 h-2 rounded-full bg-purple-400 inline-block"></span>
+                                <i class="fa-solid fa-umbrella-beach text-xs"></i> รายชื่อพนักงานวันหยุดพักผ่อน (H)
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2" id="grid-holiday"></div>
+                        </div>
+
+                        <div class="p-3 bg-slate-900/30 rounded-xl border border-slate-900/80">
+                            <div class="text-xs text-rose-400 font-bold mb-2 flex items-center gap-1.5 border-b border-slate-900 pb-1.5">
+                                <span class="w-2 h-2 rounded-full bg-rose-400 inline-block"></span>
+                                <i class="fa-solid fa-triangle-exclamation text-xs"></i> รายชื่อขาดการติดต่อปฏิบัติงาน (❌)
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2" id="grid-absent"></div>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 pt-3 border-t border-slate-900 text-center flex justify-between items-center text-[9px] text-slate-500 font-mono-tech">
+                        <span>Report Hub Dashboard</span>
+                        <span>Generated by TechCheck v3.0</span>
                     </div>
                 </div>
 
-                <!-- VISUAL REPORT CARD FOR CAPTURING (IMAGE CONTAINER) -->
-                <div class="bg-slate-950 rounded-2xl border-2 border-cyan-500/40 p-5 shadow-2xl relative" id="presentation-card">
-                    <!-- Tech Decorative Frame Line -->
-                    <span class="absolute top-0 left-0 w-3.5 h-3.5 border-t-2 border-l-2 border-cyan-400 rounded-tl"></span>
-                    <span class="absolute top-0 right-0 w-3.5 h-3.5 border-t-2 border-r-2 border-cyan-400 rounded-tr"></span>
-                    <span class="absolute bottom-0 left-0 w-3.5 h-3.5 border-b-2 border-l-2 border-cyan-400 rounded-bl"></span>
-                    <span class="absolute bottom-0 right-0 w-3.5 h-3.5 border-b-2 border-r-2 border-cyan-400 rounded-br"></span>
-
-                    <!-- Card Header -->
-                    <div class="text-center pb-4 border-b border-slate-800/80">
-                        <div class="text-[10px] text-cyan-400 font-bold tracking-widest uppercase">WORKFORCE SUMMARY REPORT</div>
-                        <h3 class="text-base font-bold text-slate-100 mt-1">สรุปภาพรวมสถิติการทำงาน</h3>
-                        <span class="inline-block mt-1 bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 px-3 py-0.5 rounded-full text-xs font-bold font-mono-tech" id="pres-card-day">
-                            ประจำวันที่ 10 มิถุนายน 2026
-                        </span>
-                    </div>
-
-                    <!-- Counter Badge Overview Grid -->
-                    <div class="grid grid-cols-4 gap-1.5 my-4 text-center">
-                        <div class="bg-slate-900 p-2 rounded-xl border border-slate-800">
-                            <div class="text-[9px] text-emerald-400 font-bold">กะเช้า (✓)</div>
-                            <div class="text-lg font-bold font-mono-tech text-emerald-400 mt-0.5" id="count-morning">0</div>
-                        </div>
-                        <div class="bg-slate-900 p-2 rounded-xl border border-slate-800">
-                            <div class="text-[9px] text-teal-300 font-bold">กะดึก (✅)</div>
-                            <div class="text-lg font-bold font-mono-tech text-teal-300 mt-0.5" id="count-night">0</div>
-                        </div>
-                        <div class="bg-slate-900 p-2 rounded-xl border border-slate-800">
-                            <div class="text-[9px] text-purple-400 font-bold">วันหยุด (H)</div>
-                            <div class="text-lg font-bold font-mono-tech text-purple-400 mt-0.5" id="count-holiday">0</div>
-                        </div>
-                        <div class="bg-slate-900 p-2 rounded-xl border border-slate-800">
-                            <div class="text-[9px] text-rose-400 font-bold">ขาดงาน (❌)</div>
-                            <div class="text-lg font-bold font-mono-tech text-rose-400 mt-0.5" id="count-absent">0</div>
-                        </div>
-                    </div>
-
-                    <!-- Detailed Name Lists grouped by status -->
-                    <div class="space-y-3.5 text-xs">
-                        <div class="p-2.5 bg-slate-900/40 rounded-xl border border-slate-800">
-                            <div class="text-emerald-400 font-bold mb-1"><i class="fa-solid fa-circle-check text-[10px] mr-1"></i> พนักงานที่มาทำงานกะเช้า</div>
-                            <div class="text-slate-300 pl-3 leading-relaxed space-y-0.5 font-medium" id="list-morning">ไม่มีข้อมูล</div>
-                        </div>
-                        
-                        <div class="p-2.5 bg-slate-900/40 rounded-xl border border-slate-800">
-                            <div class="text-teal-400 font-bold mb-1"><i class="fa-solid fa-moon text-[10px] mr-1"></i> พนักงานที่มาทำงานกะดึก</div>
-                            <div class="text-slate-300 pl-3 leading-relaxed space-y-0.5 font-medium" id="list-night">ไม่มีข้อมูล</div>
-                        </div>
-
-                        <div class="p-2.5 bg-slate-900/40 rounded-xl border border-slate-800">
-                            <div class="text-purple-400 font-bold mb-1"><i class="fa-solid fa-mug-hot text-[10px] mr-1"></i> รายชื่อวันหยุดพักผ่อน</div>
-                            <div class="text-slate-300 pl-3 leading-relaxed space-y-0.5 font-medium" id="list-holiday">ไม่มีข้อมูล</div>
-                        </div>
-
-                        <div class="p-2.5 bg-slate-900/40 rounded-xl border border-slate-800">
-                            <div class="text-rose-400 font-bold mb-1"><i class="fa-solid fa-triangle-exclamation text-[10px] mr-1"></i> รายชื่อขาดปฏิบัติงาน</div>
-                            <div class="text-slate-400 pl-3 leading-relaxed space-y-0.5 font-medium" id="list-absent">ไม่มีข้อมูล</div>
-                        </div>
-                    </div>
-
-                    <div class="mt-4 pt-3 border-t border-slate-900 text-center">
-                        <div class="text-[9px] text-slate-500 font-mono-tech">TechCheck Auto Generated Content</div>
-                    </div>
-                </div>
-
-                <!-- EXPORT IMAGE ACTION BUTTON -->
-                <button onclick="exportSummaryImage()" class="w-full py-3.5 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-slate-950 font-extrabold rounded-xl text-sm transition flex items-center justify-center gap-2 shadow-xl shadow-emerald-500/10">
-                    <i class="fa-solid fa-file-image text-lg"></i> 📸 บันทึกเป็นรูปภาพสรุปส่ง LINE
+                <button onclick="downloadVisualReportCard()" class="w-full py-4 bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 hover:from-emerald-600 hover:to-cyan-600 text-slate-950 font-extrabold rounded-2xl text-sm transition flex items-center justify-center gap-2 shadow-xl shadow-teal-500/15">
+                    <i class="fa-solid fa-cloud-arrow-down text-lg"></i> 📸 ดาวน์โหลดเป็นรูปภาพสรุปส่ง LINE
                 </button>
             </div>
-
         </div>
     </div>
 
-    <!-- ================= PROFILE PROFILE CONTEXT MODAL (EDIT/CHANGE/DELETE) ================= -->
     <div id="profile-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl relative">
             <button onclick="closeProfileModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-200">
                 <i class="fa-solid fa-xmark text-lg"></i>
             </button>
             
-            <h3 class="text-base font-bold text-slate-100 mb-6 flex items-center gap-2">
-                <i class="fa-solid fa-user-gear text-cyan-400"></i> จัดการโปรไฟล์พนักงาน
+            <h3 class="text-sm font-bold text-slate-100 mb-6 flex items-center gap-2">
+                <i class="fa-solid fa-id-card text-cyan-400"></i> ปรับแต่งข้อมูลและรูปภาพพนักงาน
             </h3>
             
-            <!-- Avatar Action Panel -->
             <div class="flex flex-col items-center p-4 bg-slate-950 rounded-xl border border-slate-800 mb-4">
-                <div id="modal-avatar-frame" class="w-24 h-24 rounded-full border-4 border-slate-800 shadow-xl overflow-hidden flex items-center justify-center bg-slate-800 text-slate-500 text-3xl font-bold">
-                    <!-- จะใส่รูปภาพพรีวิว หรืออักษรย่อเมื่อลบรูปภาพ -->
-                </div>
+                <div id="modal-avatar-preview-box" class="w-24 h-24 rounded-full border-4 border-slate-800 shadow-2xl overflow-hidden flex items-center justify-center bg-slate-800 text-slate-400 text-3xl font-extrabold">
+                    </div>
                 
                 <div class="flex gap-2 mt-4">
-                    <!-- ปุ่มกดเปลี่ยนรูป -->
-                    <label for="upload-image-file" class="px-3 py-1.5 bg-cyan-600 hover:bg-cyan-500 text-white rounded-lg text-xs font-semibold transition cursor-pointer flex items-center gap-1">
-                        <i class="fa-solid fa-upload"></i> กดเปลี่ยนรูปภาพ
+                    <label for="file-uploader-input" class="px-3 py-1.5 bg-cyan-600 hover:bg-cyan-500 text-white rounded-lg text-xs font-semibold transition cursor-pointer flex items-center gap-1 shadow-md">
+                        <i class="fa-solid fa-image"></i> เปลี่ยนรูปภาพ
                     </label>
-                    <input type="file" id="upload-image-file" accept="image/*" class="hidden" onchange="processProfileUpload(event)">
+                    <input type="file" id="file-uploader-input" accept="image/*" class="hidden" onchange="handleModalPhotoUpload(event)">
                     
-                    <!-- ปุ่มกดลบรูป -->
-                    <button onclick="deleteProfilePhoto()" class="px-3 py-1.5 bg-rose-950 text-rose-400 border border-rose-800/40 hover:bg-rose-900/50 rounded-lg text-xs font-semibold transition flex items-center gap-1">
-                        <i class="fa-solid fa-trash-can"></i> กดลบรูป
+                    <button onclick="clearModalPhoto()" class="px-3 py-1.5 bg-rose-950 text-rose-400 border border-rose-900/40 hover:bg-rose-900/60 rounded-lg text-xs font-semibold transition flex items-center gap-1">
+                        <i class="fa-solid fa-trash"></i> ลบรูปภาพ
                     </button>
                 </div>
             </div>
 
-            <!-- ข้อมูลชื่อเสียงเรียงนามประกอบ -->
-            <div class="space-y-3">
+            <div class="space-y-3 text-xs">
                 <div>
-                    <label class="block text-[11px] font-bold text-slate-400 mb-1">ชื่อพนักงาน</label>
-                    <input type="text" id="modal-emp-name" class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-cyan-500">
+                    <label class="block font-bold text-slate-400 mb-1">ชื่อ - นามสกุล พนักงาน</label>
+                    <input type="text" id="modal-emp-name" class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 focus:outline-none focus:border-cyan-500">
                 </div>
                 <div>
-                    <label class="block text-[11px] font-bold text-slate-400 mb-1">รหัสพนักงาน</label>
-                    <input type="text" id="modal-emp-id" disabled class="w-full px-3 py-2 bg-slate-950/60 border border-slate-800/80 text-slate-500 font-mono-tech rounded-xl text-xs">
+                    <label class="block font-bold text-slate-400 mb-1">รหัสประจำตัวพนักงาน (ID)</label>
+                    <input type="text" id="modal-emp-id" disabled class="w-full px-3 py-2 bg-slate-950/60 border border-slate-800/60 text-slate-500 font-mono-tech rounded-xl">
                 </div>
             </div>
 
-            <!-- ปุ่มกดยอมรับบันทึกภาพ -->
-            <button onclick="saveProfileBoxData()" class="w-full mt-6 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-extrabold rounded-xl text-xs transition shadow-lg shadow-emerald-500/10">
-                <i class="fa-solid fa-floppy-disk mr-1"></i> บันทึกการเปลี่ยนรูปภาพและข้อมูล
+            <button onclick="saveModalProfileState()" class="w-full mt-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-extrabold rounded-xl text-xs transition shadow-lg">
+                <i class="fa-solid fa-check-double mr-1"></i> ยืนยันบันทึกข้อมูลส่วนบุคคล
             </button>
         </div>
     </div>
 
-    <!-- TOAST ALERT FLASH NOTIFICATION -->
-    <div id="toast-flash" class="fixed bottom-6 right-6 bg-slate-900 border border-emerald-500 text-emerald-400 px-5 py-3 rounded-xl shadow-2xl flex items-center gap-3 z-[100] transform translate-y-20 opacity-0 transition-all duration-300">
+    <div id="toast-alert" class="fixed bottom-6 right-6 bg-slate-900 border border-cyan-500 text-cyan-400 px-5 py-3 rounded-xl shadow-2xl flex items-center gap-3 z-[100] transform translate-y-20 opacity-0 transition-all duration-300">
         <i class="fa-solid fa-circle-check text-lg"></i>
-        <div class="text-xs font-bold" id="toast-text">สำเร็จ!</div>
+        <div class="text-xs font-bold" id="toast-message">แจ้งเตือนสำเร็จ</div>
     </div>
 
 
-    <!-- CORE JAVASCRIPT LOGIC -->
     <script>
-        // โครงสร้างชุดข้อมูลพนักงานเดิมที่ถอดความจากรูปภาพต้นฉบับของคุณ
+        // ข้อมูลหลักถอดแบบจากรูปภาพของคุณ
         const originalEmployees = [
-            { id: "4200467", name: "นส.พนา ซูกลิ่นหอม", department: "พนักงานปั๊มป้าย", avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=200&h=200", status: { "9": "✓", "10": "✓", "11": "" } },
-            { id: "6900051", name: "นส. ZIN MAY HLAING", department: "พนักงานปั๊มป้าย", subdept: "ตัดป้าย / ปั่นเพลา", avatar: "https://images.unsplash.com/photo-1554151228-14d9def656e4?auto=format&fit=crop&q=80&w=200&h=200", status: { "9": "✓", "10": "✓", "11": "" } },
-            { id: "6900292", name: "นายจิรานุวัฒน์ สิงหวิชา", department: "พนักงานคลังสินค้า", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200&h=200", status: { "9": "✓", "10": "✓", "11": "" } },
-            { id: "6800841", name: "นายKAUNG PYAE KYAW", department: "พนักงานคลังสินค้า", avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=200&h=200", status: { "9": "✓", "10": "✓", "11": "" } },
-            { id: "5901147", name: "นาย KYAW SOE", department: "พนักงานปั่นเวียนกะ", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=200&h=200", status: { "9": "✅", "10": "✅", "11": "" } },
-            { id: "6800607", name: "นาย MYO KHAUNG OO", department: "พนักงานปั่นเวียนกะ", avatar: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=200&h=200", status: { "9": "✅", "10": "✅", "11": "H" } },
-            { id: "6700662", name: "นาย AUNG KYAW THAT", department: "พนักงานปั่นเวียนกะ", subdept: "ปัญหาสุขภาพ", avatar: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=200&h=200", status: { "9": "✓", "10": "✓", "11": "" } },
-            { id: "6900047", name: "นาย CHIT YIN HTOO", department: "พนักงานปั่นเวียนกะ", avatar: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&q=80&w=200&h=200", status: { "9": "✓", "10": "✓", "11": "H" } },
-            { id: "6900414", name: "นาย SOE PYAE KYAW", department: "พนักงานปั่นเพดานถ่ายตู กะเช้า", avatar: "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?auto=format&fit=crop&q=80&w=200&h=200", status: { "9": "✓", "10": "H", "11": "" } },
-            { id: "6900401", name: "นาย THAN HTIKE", department: "พนักงานปั่นเพดานถ่ายตู กะเช้า", avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200&h=200", status: { "9": "H", "10": "✓", "11": "" } },
-            { id: "0000000", name: "ลำดวน (ไม่ระบุรหัส)", department: "พนักงานปั่นเวียนกะ", avatar: "https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?auto=format&fit=crop&q=80&w=200&h=200", status: { "9": "✓", "10": "✓", "11": "" } }
+            { id: "4200467", name: "นส.พนา ซูกลิ่นหอม", department: "พนักงานปั๊มป้าย", avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=200&h=200", status: {} },
+            { id: "6900051", name: "นส. ZIN MAY HLAING", department: "พนักงานปั๊มป้าย", subdept: "ตัดป้าย / ปั่นเพลา", avatar: "https://images.unsplash.com/photo-1554151228-14d9def656e4?auto=format&fit=crop&q=80&w=200&h=200", status: {} },
+            { id: "6900292", name: "นายจิรานุวัฒน์ สิงหวิชา", department: "พนักงานคลังสินค้า", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200&h=200", status: {} },
+            { id: "6800841", name: "นายKAUNG PYAE KYAW", department: "พนักงานคลังสินค้า", avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=200&h=200", status: {} },
+            { id: "5901147", name: "นาย KYAW SOE", department: "พนักงานปั่นเวียนกะ", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=200&h=200", status: {} },
+            { id: "6800607", name: "นาย MYO KHAUNG OO", department: "พนักงานปั่นเวียนกะ", avatar: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=200&h=200", status: {} },
+            { id: "6700662", name: "นาย AUNG KYAW THAT", department: "พนักงานปั่นเวียนกะ", subdept: "ปัญหาสุขภาพ", avatar: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=200&h=200", status: {} },
+            { id: "6900047", name: "นาย CHIT YIN HTOO", department: "พนักงานปั่นเวียนกะ", avatar: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&q=80&w=200&h=200", status: {} },
+            { id: "6900414", name: "นาย SOE PYAE KYAW", department: "พนักงานปั่นเพดานถ่ายตู กะเช้า", avatar: "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?auto=format&fit=crop&q=80&w=200&h=200", status: {} },
+            { id: "6900401", name: "นาย THAN HTIKE", department: "พนักงานปั่นเพดานถ่ายตู กะเช้า", avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200&h=200", status: {} },
+            { id: "0000000", name: "ลำดวน (ไม่ระบุรหัส)", department: "พนักงานปั่นเวียนกะ", avatar: "https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?auto=format&fit=crop&q=80&w=200&h=200", status: {} }
         ];
+
+        // ใส่ข้อมูลจำลองตั้งต้นในระบบให้ตรงตามหน้ากระดาษพรีวิว
+        originalEmployees[0].status["2026-06-09"] = "✓"; originalEmployees[0].status["2026-06-10"] = "✓";
+        originalEmployees[1].status["2026-06-09"] = "✓"; originalEmployees[1].status["2026-06-10"] = "✓";
+        originalEmployees[2].status["2026-06-09"] = "✓"; originalEmployees[2].status["2026-06-10"] = "✓";
+        originalEmployees[3].status["2026-06-09"] = "✓"; originalEmployees[3].status["2026-06-10"] = "✓";
+        originalEmployees[4].status["2026-06-09"] = "✅"; originalEmployees[4].status["2026-06-10"] = "✅";
+        originalEmployees[5].status["2026-06-09"] = "✅"; originalEmployees[5].status["2026-06-10"] = "✅";
+        originalEmployees[6].status["2026-06-09"] = "✓"; originalEmployees[6].status["2026-06-10"] = "✓";
+        originalEmployees[7].status["2026-06-09"] = "✓"; originalEmployees[7].status["2026-06-10"] = "✓";
+        originalEmployees[8].status["2026-06-09"] = "✓"; originalEmployees[8].status["2026-06-10"] = "H";
+        originalEmployees[9].status["2026-06-09"] = "H"; originalEmployees[9].status["2026-06-10"] = "✓";
+        originalEmployees[10].status["2026-06-09"] = "✓"; originalEmployees[10].status["2026-06-10"] = "✓";
 
         let employees = JSON.parse(JSON.stringify(originalEmployees));
         
-        // ตัวแปรควบคุมระบบ
-        let selectedDay = "10"; 
-        let targetEditId = null; 
-        let currentModalAvatarBuffer = ""; 
+        // ตัวแปรเก็บสถานะการทำงานปัจจุบัน
+        let currentTargetDate = "2026-06-10"; 
+        let profileEditTargetId = null;
+        let tempAvatarBuffer = "";
 
-        // ระบบบอกเวลานาฬิกาด้านบน
-        function syncClock() {
-            const monthsThai = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
-            const d = new Date();
-            document.getElementById('current-time').innerText = `วันที่ ${d.getDate()} ${monthsThai[d.getMonth()]} ${d.getFullYear()+543} | ${d.toLocaleTimeString()}`;
-        }
-        setInterval(syncClock, 1000);
-        syncClock();
-
-        const cycleArray = ["", "✓", "✅", "H", "❌"];
-        function nextStatusValue(val) {
-            return cycleArray[(cycleArray.indexOf(val) + 1) % cycleArray.length];
+        const statusSequence = ["", "✓", "✅", "H", "❌"];
+        
+        function getNextCycleValue(current) {
+            return statusSequence[(statusSequence.indexOf(current) + 1) % statusSequence.length];
         }
 
-        function determineButtonStyle(val) {
+        function getStyleClass(val) {
             switch(val) {
                 case '✓': return 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30';
                 case '✅': return 'bg-teal-500/20 text-teal-300 border border-teal-500/30';
                 case 'H': return 'bg-purple-500/20 text-purple-400 border border-purple-500/30';
                 case '❌': return 'bg-rose-500/20 text-rose-400 border border-rose-500/30';
-                default: return 'bg-slate-950 text-slate-600 border border-slate-800/80 hover:text-slate-400 hover:border-slate-700';
+                default: return 'bg-slate-950 text-slate-600 border border-slate-800 hover:text-slate-400 hover:border-slate-700';
             }
         }
 
-        // คลิกเปลี่ยนสัญลักษณ์ในตารางช่องติ๊ก
-        function toggleDayStatus(empId, day) {
+        // แปลงรูปแบบวันที่ '2026-06-10' ให้กลายเป็นภาษาไทยสวยๆ '10 มิถุนายน 2569'
+        function formatThaiDate(dateString) {
+            const months = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
+            const parts = dateString.split('-');
+            if(parts.length !== 3) return dateString;
+            const day = parseInt(parts[2]);
+            const month = months[parseInt(parts[1]) - 1];
+            const year = parseInt(parts[0]) + 543;
+            return `${day} ${month} ${year}`;
+        }
+
+        // เมื่อยูสเซอร์คลิกเปลี่ยนวันที่ในปฏิทิน
+        function handleDateChange(newDateValue) {
+            if(!newDateValue) return;
+            currentTargetDate = newDateValue;
+            
+            // อัปเดตข้อความหัวตารางและกล่องรายงาน
+            const formatted = formatThaiDate(newDateValue);
+            document.getElementById('calendar-display-string').innerText = formatted;
+            document.getElementById('pres-card-day-title').innerText = formatted;
+            
+            renderTable();
+            renderVisualReportCard();
+        }
+
+        // คลิกเปลี่ยนสถานะในตารางหลัก (ช่องเดี่ยวไม่สับสน)
+        function incrementStaffStatus(empId) {
             const emp = employees.find(e => e.id === empId);
             if(emp) {
-                emp.status[day] = nextStatusValue(emp.status[day] || "");
+                const currentVal = emp.status[currentTargetDate] || "";
+                emp.status[currentTargetDate] = getNextCycleValue(currentVal);
                 renderTable();
-                updateSummaryComponent();
+                renderVisualReportCard();
             }
         }
 
         // วาดตารางฝั่งซ้ายมือ
         function renderTable() {
-            const q = document.getElementById('search-input').value.toLowerCase();
-            const root = document.getElementById('employee-rows');
-            root.innerHTML = '';
+            const searchStr = document.getElementById('search-input').value.toLowerCase();
+            const tbody = document.getElementById('employee-rows');
+            tbody.innerHTML = '';
 
-            const filtered = employees.filter(e => e.name.toLowerCase().includes(q) || e.id.includes(q));
+            const filtered = employees.filter(e => e.name.toLowerCase().includes(searchStr) || e.id.includes(searchStr));
 
             filtered.forEach(e => {
                 const tr = document.createElement('tr');
-                tr.className = 'hover:bg-slate-900/10 border-b border-slate-900 text-sm';
+                tr.className = 'hover:bg-slate-900/10 border-b border-slate-900 text-xs transition';
                 
-                const subText = e.subdept ? `<span class="mt-0.5 block text-[9px] text-pink-400 font-bold bg-pink-500/10 px-1 py-0.2 rounded w-fit">${e.subdept}</span>` : '';
+                const badgeSub = e.subdept ? `<span class="mt-0.5 inline-block text-[9px] text-pink-400 font-bold bg-pink-500/10 px-1 py-0.2 rounded border border-pink-500/10">${e.subdept}</span>` : '';
                 
-                // ถ้ารูปไม่มีโปรไฟล์ให้แสดงเป็นตัวอักษรย่อ
-                const avatarView = e.avatar ? 
-                    `<img src="${e.avatar}" class="w-11 h-11 rounded-full object-cover border border-slate-800 shadow">` :
-                    `<div class="w-11 h-11 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-xs font-bold text-slate-400">${e.name.substring(2,4)}</div>`;
+                const profileImgHtml = e.avatar ? 
+                    `<img src="${e.avatar}" class="w-12 h-12 rounded-full object-cover border border-slate-800 shadow-md">` :
+                    `<div class="w-12 h-12 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center font-bold text-slate-400 text-xs">${e.name.substring(2,4)}</div>`;
+
+                const currentStatus = e.status[currentTargetDate] || "";
 
                 tr.innerHTML = `
-                    <td class="p-3 text-center">
+                    <td class="p-4 text-center">
                         <div class="relative inline-block group">
-                            ${avatarView}
-                            <button onclick="triggerProfileSetup('${e.id}')" class="absolute -bottom-1 -right-1 w-5 h-5 bg-cyan-500 hover:bg-cyan-400 text-slate-950 rounded-full flex items-center justify-center text-[9px] shadow-md transition">
-                                <i class="fa-solid fa-pen-to-square"></i>
+                            ${profileImgHtml}
+                            <button onclick="openProfileModal('${e.id}')" class="absolute -bottom-1 -right-1 w-5 h-5 bg-cyan-500 hover:bg-cyan-400 text-slate-950 rounded-full flex items-center justify-center shadow-lg text-[9px] transition">
+                                <i class="fa-solid fa-user-pen"></i>
                             </button>
                         </div>
                     </td>
-                    <td class="p-3">
-                        <span class="text-[10px] font-mono-tech text-cyan-400 block">${e.id === '0000000' ? 'ไม่มีรหัสพนักงาน' : 'ID: ' + e.id}</span>
-                        <span class="font-bold text-slate-200 mt-0.5 block">${e.name}</span>
-                        ${subText}
+                    <td class="p-4">
+                        <span class="font-mono-tech text-cyan-400 font-bold block text-[10px]">${e.id === '0000000' ? 'ไม่มีรหัสพนักงาน' : 'ID: ' + e.id}</span>
+                        <span class="font-bold text-slate-200 text-sm mt-0.5 block">${e.name}</span>
+                        <span class="text-slate-400 text-[10px] mr-2">${e.department}</span> ${badgeSub}
                     </td>
-                    <td class="p-3 border-l border-slate-900/40 text-center">
-                        <button onclick="toggleDayStatus('${e.id}', '9')" class="w-10 h-10 rounded-lg text-sm font-bold transition ${determineButtonStyle(e.status["9"])}">${e.status["9"] || "-"}</button>
-                    </td>
-                    <td class="p-3 border-l border-slate-900/40 text-center">
-                        <button onclick="toggleDayStatus('${e.id}', '10')" class="w-10 h-10 rounded-lg text-sm font-bold transition ${determineButtonStyle(e.status["10"])}">${e.status["10"] || "-"}</button>
-                    </td>
-                    <td class="p-3 border-l border-slate-900/40 text-center">
-                        <button onclick="toggleDayStatus('${e.id}', '11')" class="w-10 h-10 rounded-lg text-sm font-bold transition ${determineButtonStyle(e.status["11"])}">${e.status["11"] || "-"}</button>
+                    <td class="p-4 bg-slate-900/10 text-center">
+                        <button onclick="incrementStaffStatus('${e.id}')" class="w-11 h-11 rounded-xl text-base font-extrabold transition flex items-center justify-center mx-auto ${getStyleClass(currentStatus)}">
+                            ${currentStatus || "-"}
+                        </button>
                     </td>
                 `;
-                root.appendChild(tr);
+                tbody.appendChild(tr);
             });
         }
 
-        // เปลี่ยนแท็บบันทึกรายงานประจำวันด้านขวามือ
-        function switchReportDay(day) {
-            selectedDay = day;
-            ["9", "10", "11"].forEach(d => {
-                const b = document.getElementById(`btn-report-${d}`);
-                if(d === day) {
-                    b.className = "px-3 py-1.5 rounded text-xs font-bold bg-cyan-500 text-slate-950 shadow-md shadow-cyan-500/10";
-                } else {
-                    b.className = "px-3 py-1.5 rounded text-xs font-bold text-slate-500 hover:text-slate-200";
-                }
-            });
-            updateSummaryComponent();
-        }
+        // ฟังก์ชันวาดการ์ดสรุปผลด้านขวา "แบบเห็นรูปและเห็นชื่อทุกคนครบถ้วน"
+        function renderVisualReportCard() {
+            const morningBox = document.getElementById('grid-morning');
+            const nightBox = document.getElementById('grid-night');
+            const holidayBox = document.getElementById('grid-holiday');
+            const absentBox = document.getElementById('grid-absent');
 
-        // คํานวณจัดกรองรายชื่อพนักงานว่าใครมา/ไม่มา/หยุด ในวันนั้นๆ ลงกล่องสรุปภาพรวม
-        function updateSummaryComponent() {
-            document.getElementById('pres-card-day').innerText = `ประจำวันที่ ${selectedDay} มิถุนายน 2026`;
-            
-            const morningArr = [], nightArr = [], holidayArr = [], absentArr = [];
+            // เคลียร์กล่องเดิมออกทั้งหมด
+            morningBox.innerHTML = ''; nightBox.innerHTML = ''; holidayBox.innerHTML = ''; absentBox.innerHTML = '';
+
+            let cMorning = 0, cNight = 0, cHoliday = 0, cAbsent = 0;
 
             employees.forEach(e => {
-                const currentDayStat = e.status[selectedDay] || "";
-                const rowString = `• ${e.name} (${e.id === '0000000' ? 'ไม่มีรหัส' : e.id})`;
+                const stat = e.status[currentTargetDate] || "";
+                
+                if(!stat) return; // หากไม่มีสถานะติ๊ก ไม่ต้องนำมาวาดลงรูปภาพสรุป
 
-                if(currentDayStat === '✓') morningArr.push(rowString);
-                else if(currentDayStat === '✅') nightArr.push(rowString);
-                else if(currentDayStat === 'H') holidayArr.push(rowString);
-                else if(currentDayStat === '❌') absentArr.push(rowString);
+                // สร้างบล็อกข้อมูลพนักงานตัวอย่าง (รูปเล็กกลม + ชื่อย่อ) เพื่อความสวยงามในเนื้อที่จำกัด
+                const cardBlock = document.createElement('div');
+                cardBlock.className = "flex items-center gap-2 bg-slate-900/60 p-1.5 rounded-lg border border-slate-800";
+                
+                const imgHtml = e.avatar ? 
+                    `<img src="${e.avatar}" class="w-7 h-7 rounded-full object-cover border border-slate-700">` :
+                    `<div class="w-7 h-7 rounded-full bg-slate-800 flex items-center justify-center text-[9px] font-bold text-slate-400">${e.name.substring(2,4)}</div>`;
+
+                cardBlock.innerHTML = `
+                    ${imgHtml}
+                    <div class="overflow-hidden">
+                        <div class="text-[10px] font-bold text-slate-200 truncate">${e.name}</div>
+                        <div class="text-[8px] font-mono-tech text-slate-500">${e.id === '0000000' ? 'ไม่มีรหัส' : 'ID:'+e.id}</div>
+                    </div>
+                `;
+
+                if(stat === '✓') { morningBox.appendChild(cardBlock); cMorning++; }
+                else if(stat === '✅') { nightBox.appendChild(cardBlock); cNight++; }
+                else if(stat === 'H') { holidayBox.appendChild(cardBlock); cHoliday++; }
+                else if(stat === '❌') { absentBox.appendChild(cardBlock); cAbsent++; }
             });
 
-            // อัปเดตตัวเลขบอกจํานวนคนภาพรวม
-            document.getElementById('count-morning').innerText = morningArr.length;
-            document.getElementById('count-night').innerText = nightArr.length;
-            document.getElementById('count-holiday').innerText = holidayArr.length;
-            document.getElementById('count-absent').innerText = absentArr.length;
+            // ใส่ข้อความกรณีไม่มีรายชื่อเลย
+            if(cMorning === 0) morningBox.innerHTML = '<span class="text-[10px] text-slate-600 italic font-normal pl-1">ไม่มีรายชื่อ</span>';
+            if(cNight === 0) nightBox.innerHTML = '<span class="text-[10px] text-slate-600 italic font-normal pl-1">ไม่มีรายชื่อ</span>';
+            if(cHoliday === 0) holidayBox.innerHTML = '<span class="text-[10px] text-slate-600 italic font-normal pl-1">ไม่มีรายชื่อ</span>';
+            if(cAbsent === 0) absentBox.innerHTML = '<span class="text-[10px] text-slate-600 italic font-normal pl-1">ไม่มีรายชื่อ</span>';
 
-            // พิมพ์แจกแจงรายชื่อลงกล่อง
-            document.getElementById('list-morning').innerHTML = morningArr.length > 0 ? morningArr.join('<br>') : '<span class="text-slate-600 font-normal">ไม่มีพนักงานกะเช้า</span>';
-            document.getElementById('list-night').innerHTML = nightArr.length > 0 ? nightArr.join('<br>') : '<span class="text-slate-600 font-normal">ไม่มีพนักงานกะดึก</span>';
-            document.getElementById('list-holiday').innerHTML = holidayArr.length > 0 ? holidayArr.join('<br>') : '<span class="text-slate-600 font-normal">ไม่มีพนักงานใช้วันหยุด</span>';
-            document.getElementById('list-absent').innerHTML = absentArr.length > 0 ? absentArr.join('<br>') : '<span class="text-slate-600 font-normal">ไม่มีพนักงานขาดงาน</span>';
+            // อัปเดตตัวเลขบอกจํานวนคนด้านบนตัวนับสถิติ
+            document.getElementById('sum-count-morning').innerText = cMorning;
+            document.getElementById('sum-count-night').innerText = cNight;
+            document.getElementById('sum-count-holiday').innerText = cHoliday;
+            document.getElementById('sum-count-absent').innerText = cAbsent;
         }
 
-        // === จัดการระบบจัดการโปรไฟล์ (เปลี่ยนรูป/ลบรูป) ===
-        function triggerProfileSetup(empId) {
+        // === จัดการโมดัลโปรไฟล์พนักงาน (เปลี่ยนรูปภาพ / ลบภาพ / บันทึก) ===
+        function openProfileModal(empId) {
             const emp = employees.find(e => e.id === empId);
             if(!emp) return;
 
-            targetEditId = empId;
-            currentModalAvatarBuffer = emp.avatar; // ดึงข้อมูลจำลองภาพเดิมเก็บไว้
+            profileEditTargetId = empId;
+            tempAvatarBuffer = emp.avatar;
 
             document.getElementById('modal-emp-name').value = emp.name;
             document.getElementById('modal-emp-id').value = emp.id === '0000000' ? 'ไม่มีรหัสประจำตัว' : emp.id;
             
-            refreshModalAvatarFrame();
+            refreshModalAvatarView();
             document.getElementById('profile-modal').classList.remove('hidden');
         }
 
-        function refreshModalAvatarFrame() {
-            const frame = document.getElementById('modal-avatar-frame');
-            if(currentModalAvatarBuffer) {
-                frame.innerHTML = `<img src="${currentModalAvatarBuffer}" class="w-full h-full object-cover">`;
+        function refreshModalAvatarView() {
+            const box = document.getElementById('modal-avatar-preview-box');
+            if(tempAvatarBuffer) {
+                box.innerHTML = `<img src="${tempAvatarBuffer}" class="w-full h-full object-cover">`;
             } else {
-                frame.innerHTML = `<i class="fa-solid fa-user-ninja"></i>`; // เมื่อลบรูปจะแสดงเป็นไอคอนหุ่นจำลองแทน
+                box.innerHTML = `<i class="fa-solid fa-user"></i>`;
             }
         }
 
-        // จัดการฟังก์ชันอัปโหลดรูปภาพใหม่เข้าไปทันที
-        function processProfileUpload(event) {
-            const f = event.target.files[0];
-            if(f) {
-                const r = new FileReader();
-                r.onload = function(e) {
-                    currentModalAvatarBuffer = e.target.result; // อัปเดตข้อมูล Base64 พรีวิวภาพใหม่
-                    refreshModalAvatarFrame();
+        function handleModalPhotoUpload(event) {
+            const file = event.target.files[0];
+            if(file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    tempAvatarBuffer = e.target.result; // แปลงภาพเป็นข้อมูล Base64 พรีวิวทันที
+                    refreshModalAvatarView();
                 }
-                r.readAsDataURL(f);
+                reader.readAsDataURL(file);
             }
         }
 
-        // ฟังก์ชันกดลบรูปภาพ
-        function deleteProfilePhoto() {
-            currentModalAvatarBuffer = ""; // เคลียร์ให้เป็นค่าว่างเปล่า
-            refreshModalAvatarFrame();
+        function clearModalPhoto() {
+            tempAvatarBuffer = ""; // กดลบรูปโปรไฟล์ออก
+            refreshModalAvatarView();
         }
 
-        // กดบันทึกข้อมูลภาพโปรไฟล์
-        function saveProfileBoxData() {
-            const emp = employees.find(e => e.id === targetEditId);
+        function saveModalProfileState() {
+            const emp = employees.find(e => e.id === profileEditTargetId);
             if(emp) {
                 emp.name = document.getElementById('modal-emp-name').value;
-                emp.avatar = currentModalAvatarBuffer; // แนบค่ากลับไปที่ข้อมูลหลัก
+                emp.avatar = tempAvatarBuffer;
                 
                 renderTable();
-                updateSummaryComponent();
+                renderVisualReportCard();
                 closeProfileModal();
-                triggerToastFlash("บันทึกการปรับเปลี่ยนโปรไฟล์พนักงานแล้ว");
+                showToastAlert("บันทึกการปรับปรุงข้อมูลภาพโปรไฟล์พนักงานแล้ว");
             }
         }
 
         function closeProfileModal() {
             document.getElementById('profile-modal').classList.add('hidden');
-            targetEditId = null;
+            profileEditTargetId = null;
         }
 
-        // === ฟังก์ชันแปลงข้อมูลภาพรวมเป็นรูปภาพส่งกลุ่ม LINE ===
-        function exportSummaryImage() {
-            const targetElement = document.getElementById('presentation-card');
+        // === ฟังก์ชันประมวลผลดาวน์โหลดหน้ารายงานสรุปเป็นรูปภาพเพื่อส่ง LINE ===
+        function downloadVisualReportCard() {
+            const element = document.getElementById('presentation-card');
             
-            // เรียกใช้ html2canvas สร้างแปลง HTML Element เป็น Canvas ภาพ .png
-            html2canvas(targetElement, {
-                backgroundColor: "#0b0f19",
-                scale: 2, // เพิ่มความละเอียดของภาพคมชัดสองเท่าเมื่อนำไปแชร์ในแอปแชต
-                logging: false,
-                useCORS: true
+            showToastAlert("📷 กำลังประมวลผลจัดทำไฟล์รูปภาพ...");
+
+            html2canvas(element, {
+                backgroundColor: "#060a13",
+                scale: 2, // สั่งให้ภาพคูณความคมชัดสองเท่าเพื่อความเนียนละเอียดในแอปมือถือ LINE
+                useCORS: true,
+                logging: false
             }).then(canvas => {
-                const imgUri = canvas.toDataURL("image/png");
-                const dlLink = document.createElement('a');
-                dlLink.download = `รายงานสรุปผลการทำงาน_วันที่_${selectedDay}_มิถุนายน.png`;
-                dlLink.href = imgUri;
-                dlLink.click(); // สั่งดาวน์โหลดลงเครื่องทันที
-                triggerToastFlash("สร้างรูปภาพและบันทึกดาวน์โหลดแล้ว! นำส่งแชร์ใน LINE ได้เลย");
+                const link = document.createElement('a');
+                link.download = `รายงานสรุปผลพนักงาน_${currentTargetDate}.png`;
+                link.href = canvas.toDataURL("image/png");
+                link.click();
+                showToastAlert("✨ บันทึกภาพลงอุปกรณ์สำเร็จ! พร้อมส่งแชร์ใน LINE");
             });
         }
 
-        function triggerToastFlash(text) {
-            const t = document.getElementById('toast-flash');
-            document.getElementById('toast-text').innerText = text;
-            t.classList.remove('translate-y-20', 'opacity-0');
-            t.classList.add('translate-y-0', 'opacity-100');
+        function showToastAlert(msg) {
+            const toast = document.getElementById('toast-alert');
+            document.getElementById('toast-message').innerText = msg;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
             setTimeout(() => {
-                t.classList.remove('translate-y-0', 'opacity-100');
-                t.classList.add('translate-y-20', 'opacity-0');
-            }, 3500);
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
         }
 
         function resetToOriginalData() {
             employees = JSON.parse(JSON.stringify(originalEmployees));
             renderTable();
-            updateSummaryComponent();
-            triggerToastFlash("รีเซ็ตเป็นข้อมูลรูปภาพเริ่มต้นเรียบร้อยแล้ว");
+            renderVisualReportCard();
+            showToastAlert("รีเซ็ตสถิติและรูปภาพกลับเป็นค่าเริ่มต้นแล้ว");
         }
 
         document.getElementById('search-input').addEventListener('input', renderTable);
 
         window.onload = function() {
             renderTable();
-            switchReportDay("10"); // เปิดตัวกรองเริ่มต้นที่วันที่ 10 ประจำงวดตามหน้าเอกสาร
+            renderVisualReportCard();
         }
     </script>
 </body>
