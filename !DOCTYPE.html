@@ -1,13 +1,13 @@
-:ระบบเช็คชื่อและสถิติการทำงานพนักงาน:index.html
+:ระบบบันทึกและสรุปสถิติงานพร้อมรายงานไลน์:index.html
 <!DOCTYPE html>
 <html lang="th">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบบันทึกสถิติการทำงานประจำวัน - TechCheck</title>
+    <title>TechCheck Plus - ระบบบันทึกเวลาและสรุปส่งไลน์อัจฉริยะ</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Font Noto Sans Thai & JetBrains Mono for Code -->
+    <!-- Google Font Noto Sans Thai & JetBrains Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -48,19 +48,18 @@
         <header class="flex flex-col md:flex-row justify-between items-start md:items-center bg-slate-900/60 backdrop-blur-md p-6 rounded-2xl border border-slate-800 mb-6 gap-4 shadow-2xl">
             <div>
                 <span class="text-xs font-semibold text-emerald-400 uppercase tracking-widest bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
-                    <i class="fa-solid fa-microchip mr-1.5 animate-pulse"></i> Digital Smart Sheet
+                    <i class="fa-solid fa-microchip mr-1.5 animate-pulse"></i> Smart Attendance & Reporting
                 </span>
                 <h1 class="text-2xl md:text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-teal-400 to-indigo-400 mt-2">
                     บันทึกสถิติการทำงานประจำวัน
                 </h1>
-                <p class="text-slate-400 text-sm mt-1">ระบบติดตามเวลาทำหน้าที่ ฝ่ายพนักงานปั๊มป้าย พนักงานคลังสินค้า และพนักงานปั่นเวียนกะ</p>
+                <p class="text-slate-400 text-sm mt-1">ระบบติดตามเวลาพนักงานและส่งออกฟอร์แมตรายงานสรุปทางแอปพลิเคชัน LINE</p>
             </div>
             
             <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto">
-                <div class="bg-slate-950/80 px-4 py-2.5 rounded-xl border border-slate-800 text-left md:text-right min-w-[180px]">
-                    <span class="text-[10px] text-cyan-400 block font-bold tracking-wider">ระบบเวลาปัจจุบัน</span>
-                    <span id="current-time" class="text-sm font-semibold font-mono-tech text-slate-100">วันพุธที่ 10 มิถุนายน 2026</span>
-                </div>
+                <button onclick="openPresentationModal()" class="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-slate-950 font-bold px-5 py-3 rounded-xl transition shadow-lg shadow-orange-500/10 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-bullhorn text-lg"></i> 📢 นำเสนอและสรุปส่ง LINE
+                </button>
             </div>
         </header>
 
@@ -72,7 +71,7 @@
                     <i class="fa-solid fa-users text-cyan-500"></i>
                 </div>
                 <div class="mt-2">
-                    <span class="text-2xl font-bold font-mono-tech text-slate-100" id="total-staff">11</span>
+                    <span class="text-2xl font-bold font-mono-tech text-slate-100" id="total-staff">0</span>
                     <span class="text-xs text-slate-500 ml-1">คน</span>
                 </div>
             </div>
@@ -150,11 +149,11 @@
         <!-- MAIN ATTENDANCE SHEET GRID -->
         <div class="bg-slate-900/30 rounded-2xl border border-slate-800 overflow-hidden shadow-2xl">
             <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse min-w-[800px]">
+                <table class="w-full text-left border-collapse min-w-[900px]">
                     <thead>
                         <tr class="bg-slate-950 border-b border-slate-800 text-slate-400 text-xs font-bold uppercase tracking-wider">
-                            <th class="p-4 text-center w-24">ภาพถ่าย</th>
-                            <th class="p-4 w-40">ข้อมูลพนักงาน</th>
+                            <th class="p-4 text-center w-28">ภาพโปรไฟล์</th>
+                            <th class="p-4 w-44">ข้อมูลพนักงาน</th>
                             <th class="p-4">กลุ่มงาน / แผนก</th>
                             <!-- วันที่ 9 -->
                             <th class="p-4 text-center w-36 border-l border-slate-800 bg-slate-900/20">
@@ -174,16 +173,16 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-900" id="employee-rows">
-                        <!-- รายชื่อถูกวาดจาก JS ด้านล่าง -->
+                        <!-- รายชื่อถูกวาดจาก JS -->
                     </tbody>
                 </table>
             </div>
         </div>
 
-        <!-- RECENT LEGEND AND STATS REFERENCE (FOOTER BAR) -->
+        <!-- RECENT LEGEND -->
         <div class="mt-6 p-4 bg-slate-900/50 rounded-xl border border-slate-800 flex flex-wrap justify-between items-center gap-4 text-xs text-slate-400">
             <div>
-                <span class="font-semibold text-slate-300">ตัวชี้วัดด่วน:</span> คลิกที่ปุ่มสถานะของแต่ละคนเพื่อปรับเปลี่ยนสถิติโดยตรง
+                <span class="font-semibold text-slate-300">ตัวชี้วัดด่วน:</span> คลิกที่ปุ่มสถานะของแต่ละวันเพื่อปรับเปลี่ยนสถิติโดยตรง หรือคลิกที่ <i class="fa-solid fa-camera text-cyan-400"></i> เพื่ออัปโหลดเปลี่ยนภาพพนักงานได้
             </div>
             <div class="flex flex-wrap gap-4 font-mono-tech">
                 <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-emerald-500 inline-block"></span> ✓ กะเช้า</span>
@@ -196,7 +195,164 @@
 
     </div>
 
-    <!-- MODAL FOR SYMBOL EXPLANATION -->
+    <!-- ================= MODAL 1: EDIT PROFILE & AVATAR ================= -->
+    <div id="edit-profile-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl relative">
+            <button onclick="closeEditModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-200">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <h3 class="text-lg font-bold text-slate-100 mb-6 flex items-center gap-2">
+                <i class="fa-solid fa-user-pen text-cyan-400"></i> แก้ไขข้อมูลพนักงาน
+            </h3>
+            
+            <div class="flex flex-col items-center mb-6">
+                <div class="relative group">
+                    <img id="edit-avatar-preview" src="" alt="Preview" class="w-24 h-24 rounded-full object-cover border-4 border-slate-800 shadow-xl">
+                    <label for="avatar-file-input" class="absolute inset-0 bg-slate-950/60 rounded-full flex items-center justify-center cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity">
+                        <i class="fa-solid fa-camera text-white text-xl"></i>
+                    </label>
+                </div>
+                <input type="file" id="avatar-file-input" accept="image/*" class="hidden" onchange="handleAvatarChange(event)">
+                <p class="text-xs text-slate-400 mt-2">คลิกที่รูปด้านบนเพื่ออัปโหลดไฟล์ภาพใหม่</p>
+            </div>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-400 mb-1.5">รหัสพนักงาน</label>
+                    <input type="text" id="edit-emp-id" class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-sm text-slate-100 font-mono-tech focus:outline-none focus:border-cyan-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-400 mb-1.5">ชื่อ - นามสกุล</label>
+                    <input type="text" id="edit-emp-name" class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-sm text-slate-100 focus:outline-none focus:border-cyan-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-400 mb-1.5">แผนก / หน้าที่หลัก</label>
+                    <input type="text" id="edit-emp-dept" class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-sm text-slate-100 focus:outline-none focus:border-cyan-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-400 mb-1.5">หน้าที่ย่อย / สถานะพิเศษ (ระบุหรือไม่ก็ได้)</label>
+                    <input type="text" id="edit-emp-subdept" placeholder="เช่น ปัญหาสุขภาพ / ตัดป้าย" class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-sm text-slate-100 focus:outline-none focus:border-cyan-500">
+                </div>
+            </div>
+
+            <div class="flex gap-3 mt-6">
+                <button onclick="closeEditModal()" class="flex-1 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold rounded-xl text-sm transition">
+                    ยกเลิก
+                </button>
+                <button onclick="saveProfileChanges()" class="flex-1 py-2.5 bg-cyan-600 hover:bg-cyan-500 text-white font-semibold rounded-xl text-sm transition">
+                    บันทึกข้อมูล
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ================= MODAL 2: PRESENTATION & LINE REPORT SUMMARY ================= -->
+    <div id="presentation-modal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-4xl w-full p-6 shadow-2xl relative overflow-y-auto max-h-[90vh]">
+            <button onclick="closePresentationModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-200">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+            
+            <h3 class="text-xl font-bold text-slate-100 mb-2 flex items-center gap-2">
+                <i class="fa-solid fa-bullhorn text-amber-400"></i> สรุปนำเสนอรายงานส่ง LINE
+            </h3>
+            <p class="text-xs text-slate-400 mb-6">เลือกวันที่ต้องการนำเสนอ ระบบจะอัปเดตข้อมูลและรายชื่อพนักงานตามสถานะของวันนั้นให้อัตโนมัติ</p>
+
+            <!-- แถบเลือกวันที่นำเสนอ -->
+            <div class="flex gap-2 mb-6 bg-slate-950 p-1.5 rounded-xl border border-slate-800/80 w-fit">
+                <button onclick="switchReportDay('9')" id="btn-report-9" class="px-5 py-2 rounded-lg text-sm font-bold transition">วันที่ 9</button>
+                <button onclick="switchReportDay('10')" id="btn-report-10" class="px-5 py-2 rounded-lg text-sm font-bold transition">วันที่ 10</button>
+                <button onclick="switchReportDay('11')" id="btn-report-11" class="px-5 py-2 rounded-lg text-sm font-bold transition">วันที่ 11</button>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- ฝั่งซ้าย: หน้าต่างดีไซน์พรีเซนต์ (สำหรับแคปหน้าจอ) -->
+                <div class="lg:col-span-7 bg-slate-950 p-6 rounded-2xl border-2 border-cyan-500/30 relative" id="screenshot-area">
+                    <!-- Tech frame corner effect -->
+                    <span class="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-cyan-400 rounded-tl-md"></span>
+                    <span class="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-cyan-400 rounded-tr-md"></span>
+                    <span class="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-cyan-400 rounded-bl-md"></span>
+                    <span class="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-cyan-400 rounded-br-md"></span>
+
+                    <!-- เนื้อหานำเสนอ -->
+                    <div class="text-center pb-4 border-b border-slate-800">
+                        <div class="text-[10px] text-cyan-400 font-extrabold tracking-wider uppercase">WORKFORCE STATS REPORT</div>
+                        <h4 class="text-md font-bold text-slate-100 mt-1">บันทึกสถิติการปฏิบัติงาน</h4>
+                        <p class="text-sm text-cyan-400 font-bold mt-1 font-mono-tech" id="report-title-day">ประจำวันที่ 9 มิถุนายน 2026</p>
+                    </div>
+
+                    <!-- สรุปตัวเลขในภาพแคป -->
+                    <div class="grid grid-cols-4 gap-2 my-4 text-center">
+                        <div class="bg-slate-900/50 p-2 rounded-lg border border-slate-800">
+                            <div class="text-[10px] text-slate-400">ทั้งหมด</div>
+                            <div class="text-lg font-bold text-slate-100 font-mono-tech" id="pres-total">11</div>
+                        </div>
+                        <div class="bg-emerald-950/20 p-2 rounded-lg border border-emerald-500/10">
+                            <div class="text-[10px] text-emerald-400">กะเช้า (✓)</div>
+                            <div class="text-lg font-bold text-emerald-400 font-mono-tech" id="pres-morning">0</div>
+                        </div>
+                        <div class="bg-teal-950/20 p-2 rounded-lg border border-teal-500/10">
+                            <div class="text-[10px] text-teal-400">กะดึก (✅)</div>
+                            <div class="text-lg font-bold text-teal-300 font-mono-tech" id="pres-night">0</div>
+                        </div>
+                        <div class="bg-rose-950/20 p-2 rounded-lg border border-rose-500/10">
+                            <div class="text-[10px] text-rose-400">ขาด/ลา</div>
+                            <div class="text-lg font-bold text-rose-400 font-mono-tech" id="pres-absent">0</div>
+                        </div>
+                    </div>
+
+                    <!-- แยกแยะรายกลุ่มตามสถานะ -->
+                    <div class="space-y-3 text-xs max-h-[250px] overflow-y-auto pr-1">
+                        <!-- รายชื่อกะเช้า -->
+                        <div class="p-2.5 bg-slate-900/30 rounded-lg border border-slate-800">
+                            <div class="text-emerald-400 font-bold mb-1"><i class="fa-solid fa-sun mr-1"></i> รายชื่อพนักงานเข้าทำงานกะเช้า (✓)</div>
+                            <div class="text-slate-300 pl-4 leading-relaxed font-semibold" id="pres-list-morning">ไม่มีข้อมูล</div>
+                        </div>
+                        <!-- รายชื่อกะดึก -->
+                        <div class="p-2.5 bg-slate-900/30 rounded-lg border border-slate-800">
+                            <div class="text-teal-400 font-bold mb-1"><i class="fa-solid fa-moon mr-1"></i> รายชื่อพนักงานเข้าทำงานกะดึก (✅)</div>
+                            <div class="text-slate-300 pl-4 leading-relaxed font-semibold" id="pres-list-night">ไม่มีข้อมูล</div>
+                        </div>
+                        <!-- รายชื่อวันหยุด -->
+                        <div class="p-2.5 bg-slate-900/30 rounded-lg border border-slate-800">
+                            <div class="text-purple-400 font-bold mb-1"><i class="fa-solid fa-calendar-day mr-1"></i> รายชื่อพนักงานที่เป็นวันหยุด (H)</div>
+                            <div class="text-slate-300 pl-4 leading-relaxed font-semibold" id="pres-list-holiday">ไม่มีข้อมูล</div>
+                        </div>
+                        <!-- รายชื่อขาดงาน -->
+                        <div class="p-2.5 bg-slate-900/30 rounded-lg border border-slate-800">
+                            <div class="text-rose-400 font-bold mb-1"><i class="fa-solid fa-circle-xmark mr-1"></i> รายชื่อขาดงาน (❌)</div>
+                            <div class="text-slate-300 pl-4 leading-relaxed font-semibold" id="pres-list-absent">ไม่มีข้อมูล</div>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 pt-3 border-t border-slate-800 text-center">
+                        <span class="text-[10px] text-slate-500">💡 คุณสามารถใช้ฟังก์ชันแคปภาพหน้าจอคอมพิวเตอร์/มือถือส่วนนี้เพื่อส่งรายงานกลุ่ม LINE ได้</span>
+                    </div>
+                </div>
+
+                <!-- ฝั่งขวา: กล่องคัดลอกข้อความสำหรับ LINE -->
+                <div class="lg:col-span-5 flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-center mb-2">
+                            <label class="block text-xs font-semibold text-slate-300">📱 ฟอร์แมตข้อความส่งห้องแชต LINE</label>
+                            <span class="text-[10px] text-emerald-400 font-semibold bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">พร้อมใช้งาน</span>
+                        </div>
+                        <textarea id="line-message-text" rows="12" readonly class="w-full p-3 bg-slate-950 border border-slate-800 rounded-xl text-xs font-mono-tech text-slate-300 focus:outline-none focus:ring-1 focus:ring-cyan-500 leading-relaxed"></textarea>
+                    </div>
+
+                    <div class="mt-4 space-y-2">
+                        <button onclick="copyLineMessage()" class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-extrabold rounded-xl text-sm transition flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/10">
+                            <i class="fa-solid fa-clipboard-check text-lg"></i> คัดลอกข้อความรายงานไลน์
+                        </button>
+                        <p class="text-[10px] text-center text-slate-500">หลังจากคัดลอกแล้ว สามารถเปิด LINE แล้วกดวาง (Paste / Ctrl+V) เพื่อส่งได้ทันที</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= MODAL 3: EXPLANATION ================= -->
     <div id="legend-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl relative">
             <button onclick="toggleLegendModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-200">
@@ -219,15 +375,15 @@
                     <div class="w-10 h-10 rounded-lg bg-teal-500/20 text-teal-400 flex items-center justify-center font-bold text-lg">✅</div>
                     <div>
                         <h4 class="text-sm font-semibold text-slate-200">กะดึกอมซ้อย</h4>
-                        <p class="text-xs text-slate-400">การเข้าปฏิบัติงานในช่วงกะกลางคืน (มีสวัสดิการกะดึกพิเศษ)</p>
+                        <p class="text-xs text-slate-400">การเข้าปฏิบัติงานในช่วงกะดึกกะดึก</p>
                     </div>
                 </div>
 
                 <div class="flex items-center gap-4 p-3 bg-slate-950/60 rounded-xl border border-slate-800/50">
                     <div class="w-10 h-10 rounded-lg bg-purple-500/20 text-purple-400 flex items-center justify-center font-bold text-lg">H</div>
                     <div>
-                        <h4 class="text-sm font-semibold text-slate-200">วันหยุดประจําสัปดาห์ / วันหยุดพักผ่อน</h4>
-                        <p class="text-xs text-slate-400">พนักงานใช้สิทธิ์วันหยุดพักผ่อนประจําสัปดาห์</p>
+                        <h4 class="text-sm font-semibold text-slate-200">วันหยุด (Holiday)</h4>
+                        <p class="text-xs text-slate-400">วันหยุดนักขัตฤกษ์ หรือวันหยุดตามสิทธิ์</p>
                     </div>
                 </div>
 
@@ -235,7 +391,7 @@
                     <div class="w-10 h-10 rounded-lg bg-rose-500/20 text-rose-400 flex items-center justify-center font-bold text-lg">❌</div>
                     <div>
                         <h4 class="text-sm font-semibold text-slate-200">ขาดงาน (Absent)</h4>
-                        <p class="text-xs text-slate-400">ไม่ได้เข้าทำงานตามตารางงานโดยไม่มีการลางานล่วงหน้า</p>
+                        <p class="text-xs text-slate-400">ไม่ได้มาปฏิบัติหน้าที่ในวันกำหนดกะการทำงาน</p>
                     </div>
                 </div>
             </div>
@@ -246,15 +402,25 @@
         </div>
     </div>
 
+    <!-- TOAST NOTIFICATION FOR COPY SUCCESS -->
+    <div id="toast-notif" class="fixed bottom-6 right-6 bg-slate-900 border border-emerald-500 text-emerald-400 px-5 py-3 rounded-xl shadow-2xl flex items-center gap-3 z-[100] transform translate-y-20 opacity-0 transition-all duration-300">
+        <i class="fa-solid fa-circle-check text-xl"></i>
+        <div>
+            <div class="font-bold text-sm">คัดลอกสำเร็จ!</div>
+            <div class="text-[10px] text-slate-400">วางข้อความใน LINE ได้ทันที</div>
+        </div>
+    </div>
+
+
     <!-- CORE LOGIC JAVASCRIPT -->
     <script>
-        // ข้อมูลพนักงานและสถิติจากเอกสาร
+        // ข้อมูลพนักงานเริ่มต้นจากภาพของคุณ
         const originalEmployees = [
             {
                 id: "4200467",
                 name: "นส.พนา ซูกลิ่นหอม",
                 department: "พนักงานปั๊มป้าย",
-                avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=200&h=200", // จำลองเพื่อความสวยงาม
+                avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=200&h=200",
                 status: { "9": "✓", "10": "✓", "11": "" }
             },
             {
@@ -331,23 +497,27 @@
             }
         ];
 
-        // คัดลอกข้อมูลเชิงลึกเก็บไว้แก้ไขสดในความจำ (In-Memory state)
         let employees = JSON.parse(JSON.stringify(originalEmployees));
+        
+        // สำหรับระบุตัวชี้แก้ไขภาพและโปรไฟล์
+        let activeEditEmployeeId = null; 
+        let tempAvatarDataUrl = null;
 
-        // การแสดงผลวันที่และเวลาปัจจุบัน
+        // รายงานสถิตินำเสนอ
+        let activeReportDay = "10"; 
+
+        // จัดการแสดงเวลาปัจจุบัน
         function updateDateTime() {
             const daysThai = ['วันอาทิตย์', 'วันจันทร์', 'วันอังคาร', 'วันพุธ', 'วันพฤหัสบดี', 'วันศุกร์', 'วันเสาร์'];
             const monthsThai = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
             const now = new Date();
-            
-            // ปี ค.ศ. เป็น พ.ศ. (+543)
             const dateStr = `${daysThai[now.getDay()]}ที่ ${now.getDate()} ${monthsThai[now.getMonth()]} ${now.getFullYear() + 543} | ${now.toLocaleTimeString()}`;
             document.getElementById('current-time').innerText = dateStr;
         }
         setInterval(updateDateTime, 1000);
         updateDateTime();
 
-        // คำนวณสถิติภาพรวมจากข้อมูลล่าสุด
+        // คำนวณสถิติภาพรวม
         function calculateStats() {
             let morning = 0;
             let night = 0;
@@ -370,7 +540,6 @@
             document.getElementById('stat-absent').innerText = absent;
         }
 
-        // สถานะลำดับถัดไปสำหรับการเปลี่ยนสถานะผ่านปุ่ม
         const statusCycle = ["", "✓", "✅", "H", "❌"];
         
         function getNextStatus(current) {
@@ -380,42 +549,30 @@
 
         function getStatusBadgeStyle(status) {
             switch(status) {
-                case '✓':
-                    return 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30';
-                case '✅':
-                    return 'bg-teal-500/20 text-teal-300 border border-teal-500/30';
-                case 'H':
-                    return 'bg-purple-500/20 text-purple-400 border border-purple-500/30';
-                case '❌':
-                    return 'bg-rose-500/20 text-rose-400 border border-rose-500/30';
-                default:
-                    return 'bg-slate-950/60 text-slate-600 border border-slate-800/80 hover:border-slate-700 hover:text-slate-400';
+                case '✓': return 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30';
+                case '✅': return 'bg-teal-500/20 text-teal-300 border border-teal-500/30';
+                case 'H': return 'bg-purple-500/20 text-purple-400 border border-purple-500/30';
+                case '❌': return 'bg-rose-500/20 text-rose-400 border border-rose-500/30';
+                default: return 'bg-slate-950/60 text-slate-600 border border-slate-800/80 hover:border-slate-700 hover:text-slate-400';
             }
         }
 
-        // สลับเปลี่ยนสถานะการเข้างานของวัน
+        // กดเปลี่ยนสถานะ
         function cycleStatus(employeeId, day) {
             const employee = employees.find(emp => emp.id === employeeId);
             if (employee) {
                 const currentStatus = employee.status[day] || "";
-                const nextStatus = getNextStatus(currentStatus);
-                employee.status[day] = nextStatus;
-                
-                // วาดตารางใหม่และอัปเดตสถิติ
+                employee.status[day] = getNextStatus(currentStatus);
                 renderTable();
                 calculateStats();
+                // อัปเดตพรีเซนต์ของโมดัลหากหน้าจอเปิดอยู่
+                if (!document.getElementById('presentation-modal').classList.contains('hidden')) {
+                    updatePresentationData();
+                }
             }
         }
 
-        // คัดลอกและอัปเดตข้อความย่อย (เช่นตัดป้าย/มีปัญหาสุขภาพ)
-        function getBadgeInfo(emp) {
-            if (emp.subdept) {
-                return `<span class="mt-1 block text-[10px] text-pink-400 font-semibold bg-pink-500/10 px-2 py-0.5 rounded-md border border-pink-500/20 w-fit">${emp.subdept}</span>`;
-            }
-            return '';
-        }
-
-        // วาดหน้าตารางหลัก
+        // วาดตารางรายชื่อพนักงาน
         function renderTable() {
             const searchQuery = document.getElementById('search-input').value.toLowerCase();
             const deptFilter = document.getElementById('department-filter').value;
@@ -433,7 +590,7 @@
                     <tr>
                         <td colspan="6" class="p-12 text-center text-slate-500">
                             <i class="fa-solid fa-folder-open text-4xl mb-3 block opacity-30"></i>
-                            ไม่พบข้อมูลพนักงานที่ตรงกับเงื่อนไขการค้นหา
+                            ไม่พบข้อมูลพนักงานที่ต้องการหา
                         </td>
                     </tr>
                 `;
@@ -444,44 +601,47 @@
                 const tr = document.createElement('tr');
                 tr.className = 'hover:bg-slate-900/10 transition border-b border-slate-900';
 
-                // วันที่ 9-11 Status
-                const status9 = emp.status["9"] || "-";
-                const status10 = emp.status["10"] || "-";
-                const status11 = emp.status["11"] || "-";
+                const subBadge = emp.subdept ? `<span class="mt-1 block text-[9px] text-pink-400 font-semibold bg-pink-500/10 px-1.5 py-0.5 rounded border border-pink-500/20 w-fit">${emp.subdept}</span>` : '';
 
                 tr.innerHTML = `
                     <td class="p-4 text-center">
-                        <div class="relative inline-block">
-                            <img src="${emp.avatar}" alt="${emp.name}" class="w-12 h-12 rounded-full object-cover border-2 border-slate-800 shadow-md">
-                            <span class="absolute bottom-0 right-0 w-3.5 h-3.5 bg-emerald-500 border-2 border-slate-900 rounded-full"></span>
+                        <div class="relative inline-block group">
+                            <img src="${emp.avatar}" alt="${emp.name}" class="w-14 h-14 rounded-full object-cover border-2 border-slate-800 shadow-md">
+                            <button onclick="openEditModal('${emp.id}')" class="absolute -bottom-1 -right-1 w-6 h-6 bg-cyan-500 hover:bg-cyan-400 text-slate-950 rounded-full border border-slate-950 flex items-center justify-center text-[10px] transition shadow-lg">
+                                <i class="fa-solid fa-camera"></i>
+                            </button>
                         </div>
                     </td>
                     <td class="p-4">
-                        <div class="text-xs font-semibold text-cyan-400 font-mono-tech">${emp.id === "0000000" ? 'ไม่มีรหัส' : emp.id}</div>
-                        <div class="text-sm font-bold text-slate-100 mt-1">${emp.name}</div>
-                        ${getBadgeInfo(emp)}
+                        <div class="text-xs font-semibold text-cyan-400 font-mono-tech flex items-center gap-1.5">
+                            ID: ${emp.id === "0000000" ? 'ไม่มีรหัส' : emp.id}
+                        </div>
+                        <div class="text-sm font-bold text-slate-100 mt-1 flex items-center gap-1">
+                            ${emp.name}
+                            <button onclick="openEditModal('${emp.id}')" class="text-slate-500 hover:text-cyan-400 text-xs pl-1">
+                                <i class="fa-solid fa-pen"></i>
+                            </button>
+                        </div>
+                        ${subBadge}
                     </td>
                     <td class="p-4">
-                        <span class="text-xs font-medium bg-slate-900 text-slate-300 px-3 py-1.5 rounded-lg border border-slate-800">
+                        <span class="text-xs font-medium bg-slate-950 text-slate-300 px-3 py-1.5 rounded-lg border border-slate-800">
                             ${emp.department}
                         </span>
                     </td>
-                    <!-- วันที่ 9 -->
                     <td class="p-4 border-l border-slate-900 text-center">
                         <button onclick="cycleStatus('${emp.id}', '9')" class="w-12 h-12 rounded-xl text-lg font-bold transition flex items-center justify-center mx-auto ${getStatusBadgeStyle(emp.status["9"])}">
-                            ${status9}
+                            ${emp.status["9"] || "-"}
                         </button>
                     </td>
-                    <!-- วันที่ 10 -->
                     <td class="p-4 border-l border-slate-900 text-center">
                         <button onclick="cycleStatus('${emp.id}', '10')" class="w-12 h-12 rounded-xl text-lg font-bold transition flex items-center justify-center mx-auto ${getStatusBadgeStyle(emp.status["10"])}">
-                            ${status10}
+                            ${emp.status["10"] || "-"}
                         </button>
                     </td>
-                    <!-- วันที่ 11 -->
                     <td class="p-4 border-l border-slate-900 text-center">
                         <button onclick="cycleStatus('${emp.id}', '11')" class="w-12 h-12 rounded-xl text-lg font-bold transition flex items-center justify-center mx-auto ${getStatusBadgeStyle(emp.status["11"])}">
-                            ${status11}
+                            ${emp.status["11"] || "-"}
                         </button>
                     </td>
                 `;
@@ -489,24 +649,186 @@
             });
         }
 
-        // รีเซ็ตค่าสถิติกลับเป็นข้อมูลเดิมจากรูปภาพ
+        // === ฟังก์ชันสำหรับแก้ไขข้อมูลและเปลี่ยนภาพพนักงาน ===
+        function openEditModal(employeeId) {
+            const emp = employees.find(e => e.id === employeeId);
+            if (!emp) return;
+
+            activeEditEmployeeId = employeeId;
+            tempAvatarDataUrl = emp.avatar;
+
+            document.getElementById('edit-avatar-preview').src = emp.avatar;
+            document.getElementById('edit-emp-id').value = emp.id;
+            document.getElementById('edit-emp-name').value = emp.name;
+            document.getElementById('edit-emp-dept').value = emp.department;
+            document.getElementById('edit-emp-subdept').value = emp.subdept || "";
+
+            // หากเป็นลำดวนไม่ระบุรหัส ให้สามารถแก้ได้
+            document.getElementById('edit-emp-id').disabled = (employeeId === "0000000");
+
+            document.getElementById('edit-profile-modal').classList.remove('hidden');
+        }
+
+        function closeEditModal() {
+            document.getElementById('edit-profile-modal').classList.add('hidden');
+            activeEditEmployeeId = null;
+            tempAvatarDataUrl = null;
+        }
+
+        // จัดการอัปเดตไฟล์รูปภาพสดๆ ด้วย FileReader
+        function handleAvatarChange(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    tempAvatarDataUrl = e.target.result;
+                    document.getElementById('edit-avatar-preview').src = tempAvatarDataUrl;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // กดบันทึกข้อมูลแก้ไขโปรไฟล์
+        function saveProfileChanges() {
+            const emp = employees.find(e => e.id === activeEditEmployeeId);
+            if (emp) {
+                emp.name = document.getElementById('edit-emp-name').value;
+                emp.department = document.getElementById('edit-emp-dept').value;
+                emp.subdept = document.getElementById('edit-emp-subdept').value;
+                emp.avatar = tempAvatarDataUrl;
+
+                // อัปเดต ID พนักงานหากไม่ล็อกไว้
+                if (activeEditEmployeeId !== "0000000") {
+                    const newId = document.getElementById('edit-emp-id').value;
+                    // ตรวจสอบว่า ID ใหม่ไม่ซ้ำ (ยกเว้นไอดีของตัวเอง)
+                    if (newId !== emp.id && employees.some(e => e.id === newId)) {
+                        alert("รหัสพนักงานซ้ำซ้อนกับผู้อื่น กรุณาตรวจสอบอีกครั้ง");
+                        return;
+                    }
+                    emp.id = newId;
+                }
+
+                renderTable();
+                calculateStats();
+                closeEditModal();
+                showToastNotification("บันทึกข้อมูลส่วนตัวเรียบร้อยแล้ว");
+            }
+        }
+
+        // === ฟังก์ชันสำหรับระบบนำเสนอและรายงานไลน์ (Presentation Mode) ===
+        function openPresentationModal() {
+            document.getElementById('presentation-modal').classList.remove('hidden');
+            switchReportDay(activeReportDay);
+        }
+
+        function closePresentationModal() {
+            document.getElementById('presentation-modal').classList.add('hidden');
+        }
+
+        // คลิกเลือกวันในหน้าจอนำเสนอ
+        function switchReportDay(day) {
+            activeReportDay = day;
+            
+            // อัปเดตสไตล์ปุ่มสลับวัน
+            ["9", "10", "11"].forEach(d => {
+                const btn = document.getElementById(`btn-report-${d}`);
+                if (d === day) {
+                    btn.className = "px-5 py-2 rounded-lg text-sm font-bold bg-cyan-500 text-slate-950 shadow-lg shadow-cyan-500/20";
+                } else {
+                    btn.className = "px-5 py-2 rounded-lg text-sm font-bold text-slate-400 hover:text-slate-100 hover:bg-slate-900";
+                }
+            });
+
+            updatePresentationData();
+        }
+
+        // คำนวณรายชื่อและสถานะเพื่อวาดการ์ดนำเสนอ + ร่างข้อความส่ง LINE
+        function updatePresentationData() {
+            const day = activeReportDay;
+            document.getElementById('report-title-day').innerText = `ประจำวันที่ ${day} มิถุนายน 2026`;
+
+            // แยกพนักงานตามสถานะของวันนั้นๆ
+            const morningList = [];
+            const nightList = [];
+            const holidayList = [];
+            const absentList = [];
+
+            employees.forEach(emp => {
+                const status = emp.status[day] || "";
+                const empNameWithId = `${emp.name} (ID: ${emp.id === "0000000" ? 'ไม่มีรหัส' : emp.id})`;
+                if (status === '✓') morningList.push(empNameWithId);
+                else if (status === '✅') nightList.push(empNameWithId);
+                else if (status === 'H') holidayList.push(empNameWithId);
+                else if (status === '❌') absentList.push(empNameWithId);
+            });
+
+            // แสดงตัวเลขสรุปในหน้าจอนำเสนอ
+            document.getElementById('pres-total').innerText = employees.length;
+            document.getElementById('pres-morning').innerText = morningList.length;
+            document.getElementById('pres-night').innerText = nightList.length;
+            document.getElementById('pres-absent').innerText = absentList.length;
+
+            // วาดแสดงรายชื่อลงหน้าจอนำเสนอ
+            document.getElementById('pres-list-morning').innerHTML = morningList.length > 0 ? morningList.join('<br>') : '<span class="text-slate-600 font-normal">ไม่มีพนักงานเข้ากะเช้า</span>';
+            document.getElementById('pres-list-night').innerHTML = nightList.length > 0 ? nightList.join('<br>') : '<span class="text-slate-600 font-normal">ไม่มีพนักงานเข้ากะดึก</span>';
+            document.getElementById('pres-list-holiday').innerHTML = holidayList.length > 0 ? holidayList.join('<br>') : '<span class="text-slate-600 font-normal">ไม่มีพนักงานหยุดงาน</span>';
+            document.getElementById('pres-list-absent').innerHTML = absentList.length > 0 ? absentList.join('<br>') : '<span class="text-slate-600 font-normal">ไม่มีประวัติขาดงาน</span>';
+
+            // ร่างข้อความรายงานฟอร์แมตสุดน่ารักสำหรับส่งลงกลุ่ม LINE
+            const lineMessage = `📊 สรุปสถิติเวลาทำงานพนักงาน\n📅 ประจำวันที่ ${day} มิถุนายน 2026\n----------------------------------\n👥 พนักงานทั้งหมด: ${employees.length} คน\n\n🟢 1. เข้างานกะเช้า (✓) [ทั้งหมด ${morningList.length} คน]\n${morningList.map((n, i) => `   └─ [${i+1}] ${n}`).join('\n') || '   └─ (ไม่มีพนักงานเข้ากะเช้า)'}\n\n🔵 2. เข้างานกะดึก (✅) [ทั้งหมด ${nightList.length} คน]\n${nightList.map((n, i) => `   └─ [${i+1}] ${n}`).join('\n') || '   └─ (ไม่มีพนักงานเข้ากะดึก)'}\n\n🟣 3. วันหยุดพนักงาน (H) [ทั้งหมด ${holidayList.length} คน]\n${holidayList.map((n, i) => `   └─ [${i+1}] ${n}`).join('\n') || '   └─ (ไม่มีพนักงานวันหยุด)'}\n\n🔴 4. ขาดการติดต่อ (❌) [ทั้งหมด ${absentList.length} คน]\n${absentList.map((n, i) => `   └─ [${i+1}] ${n}`).join('\n') || '   └─ (ไม่มีพนักงานขาดงาน)'}\n----------------------------------\n📝 รายงานผลโดย: ระบบสารสนเทศ TechCheck`;
+            
+            document.getElementById('line-message-text').value = lineMessage;
+        }
+
+        // คัดลอกข้อความ LINE ไปที่คลิปบอร์ด
+        function copyLineMessage() {
+            const textarea = document.getElementById('line-message-text');
+            textarea.select();
+            textarea.setSelectionRange(0, 99999); // สำหรับมือถือ
+
+            // คัดลอกแบบ iFrame-Safe
+            document.execCommand('copy');
+            
+            // แสดง Notification
+            showToastNotification();
+        }
+
+        // แสดงแจ้งเตือนคัดลอกสำเร็จด้านล่างจอ
+        function showToastNotification(customMessage = null) {
+            const toast = document.getElementById('toast-notif');
+            if (customMessage) {
+                toast.querySelector('.font-bold').innerText = customMessage;
+                toast.querySelector('.text-\\[10px\\]').innerText = "ข้อมูลได้รับการอัปเดตเรียบร้อย";
+            } else {
+                toast.querySelector('.font-bold').innerText = "คัดลอกสำเร็จ!";
+                toast.querySelector('.text-\\[10px\\]').innerText = "วางข้อความใน LINE ได้ทันที";
+            }
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        // รีเซ็ตข้อมูลกลับเป็นของเอกสารดั้งเดิม
         function resetToOriginalData() {
             employees = JSON.parse(JSON.stringify(originalEmployees));
             renderTable();
             calculateStats();
+            showToastNotification("รีเซ็ตเป็นข้อมูลรูปภาพเรียบร้อย");
         }
 
-        // เปิด/ปิด Modal อธิบายความหมายปุ่ม
         function toggleLegendModal() {
-            const modal = document.getElementById('legend-modal');
-            modal.classList.toggle('hidden');
+            document.getElementById('legend-modal').classList.toggle('hidden');
         }
 
-        // Event Listeners สำหรับการค้นหาและฟิลเตอร์
+        // ลิงก์ช่องค้นหาและตัวกรอง
         document.getElementById('search-input').addEventListener('input', renderTable);
         document.getElementById('department-filter').addEventListener('change', renderTable);
 
-        // เริ่มต้นการเรนเดอร์ครั้งแรก
+        // หน้าต่างโหลดเริ่มต้น
         window.onload = function() {
             renderTable();
             calculateStats();
@@ -514,3 +836,14 @@
     </script>
 </body>
 </html>
+
+___
+
+### 💡 วิธีใช้งานฟังก์ชันสรุปรายงานและเปลี่ยนรูป:
+1. **เปลี่ยนภาพพนักงาน/รูปถ่ายตัวเอง:**
+   * นำเมาส์ไปชี้ที่รูปโปรไฟล์พนักงานในตาราง แล้วคลิกที่ **ไอคอนรูปกล้องถ่ายรูปสีเขียวมินต์**
+   * ระบบจะแสดงหน้าต่างอัปโหลดภาพ คุณสามารถคลิกที่วงกลมรูปพนักงานเพื่อเลือกรูปไฟล์ใหม่จากโทรศัพท์มือถือหรือในคอมพิวเตอร์ของคุณเพื่อเปลี่ยนภาพได้ทันทีครับ! และสามารถแก้ชื่อจริง-รหัสเพิ่มเติมได้ในหน้าต่างเดียวกัน
+2. **การสรุปนำเสนอและส่งรายงาน LINE:**
+   * กดปุ่ม **"📢 นำเสนอและสรุปส่ง LINE"** สีเหลืองปะการังที่มุมขวาบนของหน้าจอ
+   * ด้านซ้ายจะเป็นการ์ดดีไซน์สุดล้ำ สีน้ำเงิน-เขียวนีออน พร้อมสถิติแบบย่อและสรุปรายชื่อพนักงานที่แบ่งแยกตามสถานะเรียบร้อย **คุณสามารถแคปหน้าจอส่วนนี้ (Screenshot)** ไปแชร์ลงไลน์ได้เลย หน้าต่างจัดมุมกรอบมาอย่างลงตัว
+   * ด้านขวาจะมีข้อความที่เขียนสลักไว้อย่างเรียบร้อยโดยแบ่งตามเลขข้อ เพียงแค่กดปุ่ม **"คัดลอกข้อความรายงานไลน์"** แล้วไปกดวาง (Paste) ลงในแชต LINE ได้ทันทีเลยครับ
