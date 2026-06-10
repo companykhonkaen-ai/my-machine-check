@@ -3,500 +3,152 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบบันทึกข้อมูลและตรวจสอบคุณภาพการผลิต - โต๊ะที่ 10</title>
-    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>TechCheck - ระบบเช็คชื่ออัจฉริยะ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     
     <style>
-        :root {
-            --primary: #1F4E79;
-            --primary-dark: #123352;
-            --primary-light: #F0F4F8;
-            --success: #2e7d32;
-            --success-light: #e8f5e9;
-            --danger: #c62828;
-            --danger-light: #ffebee;
-            --text-main: #1e293b;
-            --text-muted: #64748b;
-            --bg-body: #f1f5f9;
-            --border-color: #e2e8f0;
-            --card-shadow: 0 4px 20px -2px rgba(50, 50, 93, 0.08), 0 2px 8px -1px rgba(0, 0, 0, 0.04);
-            --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        body {
+            font-family: 'Noto Sans Thai', sans-serif;
+            background-color: #0f172a; /* สีกรมท่าเข้มสไตล์ Tech */
         }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Sarabun', sans-serif; }
-        
-        body { 
-            background-color: var(--bg-body); 
-            color: var(--text-main); 
-            padding: 40px 20px; 
-            padding-bottom: 140px;
-            background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
-            background-size: 24px 24px;
-        }
-        
-        .container { max-width: 1340px; margin: 0 auto; }
-        
-        /* Header */
-        .main-header { 
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark)); 
-            color: #ffffff; 
-            padding: 35px 25px; 
-            border-radius: 24px; 
-            text-align: center; 
-            box-shadow: 0 20px 25px -5px rgba(31, 78, 121, 0.3); 
-            margin-bottom: 30px;
-            position: relative;
-            overflow: hidden;
-        }
-        .main-header h1 { font-size: 1.6rem; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 14px; letter-spacing: 0.5px; }
-        
-        /* Cards */
-        .meta-card, .audit-card, .sheet-edit-card { 
-            background: #ffffff; 
-            border-radius: 24px; 
-            padding: 30px; 
-            box-shadow: var(--card-shadow); 
-            margin-bottom: 30px; 
-            border: 1px solid rgba(255, 255, 255, 0.8);
-            transition: var(--transition);
-        }
-        
-        /* Form Layout */
-        .form-grid { display: grid; grid-template-columns: 1fr; gap: 25px; }
-        @media (min-width: 768px) { .form-grid { grid-template-columns: 1fr 1fr; } }
-        
-        .field-group { display: flex; flex-direction: column; }
-        .field-group label { font-size: 0.95rem; font-weight: 600; color: var(--primary-dark); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
-        .field-group input, .field-group select { 
-            padding: 14px 18px; 
-            border: 2px solid var(--border-color); 
-            border-radius: 14px; 
-            font-size: 1rem; 
-            background-color: #f8fafc; 
-            transition: var(--transition);
-            color: var(--text-main);
-        }
-        .field-group input:focus, .field-group select:focus { border-color: var(--primary); background-color: #ffffff; outline: none; box-shadow: 0 0 0 4px rgba(31, 78, 121, 0.15); }
-
-        h3 { font-size: 1.25rem; color: var(--primary-dark); margin-bottom: 25px; display: flex; align-items: center; gap: 12px; font-weight: 700; border-bottom: 2px solid #e2e8f0; padding-bottom: 15px; }
-        
-        /* Audit Table */
-        .audit-table { width: 100%; border-collapse: separate; border-spacing: 0 8px; margin-top: -8px; }
-        .audit-table th { background-color: var(--primary-light); color: var(--primary-dark); padding: 16px; font-weight: 700; font-size: 0.95rem; text-align: center; border: none; }
-        .audit-table th:first-child { border-radius: 12px 0 0 12px; }
-        .audit-table th:last-child { border-radius: 0 12px 12px 0; }
-        
-        .audit-table td { padding: 16px; background-color: #f8fafc; border: none; vertical-align: middle; transition: var(--transition); }
-        .audit-table tr:hover td { background-color: #edf2f7; }
-        .audit-table td:first-child { border-radius: 14px 0 0 14px; font-weight: 700; text-align: center; color: var(--primary); }
-        .audit-table td:last-child { border-radius: 0 14px 14px 0; }
-        
-        /* Modern Radio Buttons */
-        .status-btn-group { display: inline-flex; gap: 10px; justify-content: center; background: #e2e8f0; padding: 4px; border-radius: 12px; }
-        .status-label { 
-            padding: 8px 20px; border-radius: 9px; font-weight: 700; font-size: 0.9rem; cursor: pointer; border: none;
-            color: var(--text-muted); background: transparent; transition: var(--transition); display: flex; align-items: center; gap: 6px;
-        }
-        .radio-pass:checked + .label-pass { background-color: #ffffff; color: var(--success); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
-        .radio-fail:checked + .label-fail { background-color: #ffffff; color: var(--danger); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
-        .status-btn-group input[type="radio"] { display: none; }
-
-        .note-input { 
-            width: 100%; padding: 12px 16px; border: 2px solid var(--border-color); border-radius: 12px; 
-            font-size: 0.9rem; transition: var(--transition); background-color: #ffffff; 
-        }
-
-        /* Interactive Time Table */
-        .table-responsive { width: 100%; overflow-x: auto; border-radius: 16px; border: 1px solid var(--border-color); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
-        .interactive-table { width: 100%; border-collapse: collapse; min-width: 1450px; text-align: center; background: #ffffff; }
-        .interactive-table th { background-color: #f8fafc; color: var(--primary-dark); font-weight: 700; font-size: 0.95rem; padding: 18px 12px; border: 1px solid var(--border-color); }
-        .interactive-table td { padding: 12px 10px; border: 1px solid var(--border-color); vertical-align: middle; background: #ffffff; }
-        
-        .table-input, .table-select { 
-            width: 100%; padding: 12px 8px; border: 2px solid var(--border-color); border-radius: 10px; 
-            font-size: 0.95rem; font-weight: 500; text-align: center; color: var(--text-main); transition: var(--transition); background-color: #ffffff; 
-        }
-        .table-input:focus, .table-select:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 3px rgba(31, 78, 121, 0.1); }
-        .table-select { text-align-last: center; cursor: pointer; }
-
-        .td-check { transform: scale(1.5); cursor: pointer; accent-color: var(--primary); }
-
-        /* Floating Action Bar */
-        .bottom-action-bar { 
-            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-            width: calc(100% - 40px); max-width: 1340px;
-            background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); padding: 20px 40px; display: flex; justify-content: flex-end; 
-            border-radius: 20px; z-index: 1000; border: 1px solid rgba(255, 255, 255, 0.6); 
-        }
-        .btn-giant-submit { 
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: #ffffff; border: none; 
-            padding: 16px 40px; border-radius: 14px; font-size: 1.05rem; font-weight: 700; cursor: pointer; 
-            display: flex; align-items: center; gap: 12px; box-shadow: 0 8px 20px rgba(31, 78, 121, 0.3); transition: var(--transition);
-        }
-        .btn-giant-submit:hover { transform: translateY(-2px); box-shadow: 0 12px 25px rgba(31, 78, 121, 0.4); filter: brightness(1.1); }
     </style>
 </head>
-<body>
+<body class="text-slate-200 min-h-screen p-4 md:p-8">
 
-<div class="container">
-    <header class="main-header">
-        <h1><i class="fa-solid fa-square-poll-horizontal"></i> ระบบบันทึกข้อมูลและตรวจสอบคุณภาพการผลิต - โต๊ะที่ 10</h1>
-    </header>
-
-    <div class="meta-card">
-        <div class="form-grid">
-            <div class="field-group">
-                <label><i class="fa-solid fa-user-gear"></i> ชื่อผู้ตรวจสอบ (QC)</label>
-                <input type="text" id="workerName" list="qcNamesList" oninput="saveAllToStorage()" placeholder="พิมพ์ค้นหา หรือเลือกชื่อพนักงาน QC...">
-                <datalist id="qcNamesList">
-                    </datalist>
+    <div class="max-w-7xl mx-auto">
+        
+        <header class="flex flex-col md:flex-row justify-between items-start md:items-center bg-slate-800/50 backdrop-blur-md p-6 rounded-2xl border border-slate-700/50 mb-6 gap-4">
+            <div>
+                <h1 class="text-2xl md:text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-teal-400 flex items-center gap-3">
+                    <i class="fa-solid fa-user-check"></i> TechCheck System
+                </h1>
+                <p class="text-slate-400 text-sm mt-1">ระบบบันทึกเวลาเรียนและเข้าทำกิจกรรมอัตโนมัติ</p>
             </div>
-            <div class="field-group">
-                <label><i class="fa-solid fa-clock"></i> วัน เดือน ปี</label>
-                <input type="date" id="auditDate" onchange="saveAllToStorage()">
+            <div class="bg-slate-900/80 px-4 py-2 rounded-xl border border-slate-700 text-right">
+                <span class="text-xs text-cyan-400 block font-semibold tracking-wider">DATE & TIME</span>
+                <span class="text-sm font-medium" id="current-date">วันพุธที่ 10 มิถุนายน 2026</span>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            <div class="bg-slate-800/40 p-4 rounded-xl border border-slate-700/50 flex items-center gap-4">
+                <div class="w-12 h-12 rounded-lg bg-slate-700/50 flex items-center justify-center text-slate-300 text-xl"><i class="fa-solid fa-users"></i></div>
+                <div><p class="text-xs text-slate-400">นักเรียนทั้งหมด</p><p class="text-xl font-bold">45 คน</p></div>
+            </div>
+            <div class="bg-emerald-950/30 p-4 rounded-xl border border-emerald-500/30 flex items-center gap-4">
+                <div class="w-12 h-12 rounded-lg bg-emerald-500/20 flex items-center justify-center text-emerald-400 text-xl"><i class="fa-solid fa-circle-check"></i></div>
+                <div><p class="text-xs text-emerald-400">มาเรียน</p><p class="text-xl font-bold text-emerald-400">38 คน</p></div>
+            </div>
+            <div class="bg-amber-950/30 p-4 rounded-xl border border-amber-500/30 flex items-center gap-4">
+                <div class="w-12 h-12 rounded-lg bg-amber-500/20 flex items-center justify-center text-amber-400 text-xl"><i class="fa-solid fa-clock"></i></div>
+                <div><p class="text-xs text-amber-400">สาย</p><p class="text-xl font-bold text-amber-400">2 คน</p></div>
+            </div>
+            <div class="bg-rose-950/30 p-4 rounded-xl border border-rose-500/30 flex items-center gap-4">
+                <div class="w-12 h-12 rounded-lg bg-rose-500/20 flex items-center justify-center text-rose-400 text-xl"><i class="fa-solid fa-circle-xmark"></i></div>
+                <div><p class="text-xs text-rose-400">ขาด / ลา</p><p class="text-xl font-bold text-rose-400">5 คน</p></div>
             </div>
         </div>
-    </div>
 
-    <div class="audit-card">
-        <h3><i class="fa-solid fa-list-check"></i> 1. การประเมินเกณฑ์มาตรฐานคุณภาพระบบงาน (14 ข้อหลัก)</h3>
-        <div style="overflow-x: auto;">
-            <table class="audit-table">
-                <thead>
-                    <tr>
-                        <th style="width: 80px;">ข้อที่</th>
-                        <th style="min-width: 400px; text-align: left;">รายการเกณฑ์การตรวจสอบคุณภาพ</th>
-                        <th style="width: 240px;">ผลการตรวจสอบ</th>
-                        <th style="width: 300px;">หมายเหตุ</th>
-                    </tr>
-                </thead>
-                <tbody id="auditTopicsContainer">
-                </tbody>
-            </table>
+        <div class="bg-slate-800/40 p-4 rounded-xl border border-slate-700/50 mb-6 flex flex-col sm:flex-row justify-between gap-4">
+            <div class="relative flex-1 max-w-md">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </span>
+                <input type="text" placeholder="ค้นหาชื่อ, รหัสนักเรียน..." class="w-full pl-10 pr-4 py-2 bg-slate-900 border border-slate-700 rounded-lg focus:outline-none focus:border-cyan-500 text-sm text-slate-200">
+            </div>
+            <div class="flex gap-2">
+                <button class="bg-cyan-600 hover:bg-cyan-500 text-white px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2">
+                    <i class="fa-solid fa-qrcode"></i> แสกนคิวอาร์โค้ด
+                </button>
+                <button class="bg-slate-700 hover:bg-slate-600 text-slate-200 px-4 py-2 rounded-lg text-sm font-medium transition">
+                    <i class="fa-solid fa-file-export"></i> ส่งออกรายงาน
+                </button>
+            </div>
         </div>
-    </div>
 
-    <div class="sheet-edit-card">
-        <h3><i class="fa-solid fa-table"></i> 2. แบบฟอร์มตรวจสอบ คุณภาพอีแปะภายนอก (บันทึกรายรอบเวลา)</h3>
-        <div class="table-responsive">
-            <table class="interactive-table">
-                <thead>
-                    <tr>
-                        <th rowspan="2" style="width: 100px;">รอบตรวจ</th>
-                        <th rowspan="2" style="width: 130px;">เวลาตามรอบ</th>
-                        <th rowspan="2" style="width: 80px;">เข้าตรวจ<br>เวลาจริง</th>
-                        <th rowspan="2" style="width: 90px;">โต๊ะกรอ</th>
-                        <th rowspan="2" style="width: 200px; background-color: #fdf8f2; color: #b45309;"><i class="fa-solid fa-user"></i> ชื่อพนักงานกรอ</th>
-                        <th rowspan="2" style="width: 260px; background-color: #f0fdf4; color: #166534;"><i class="fa-solid fa-scroll"></i> ข้อมูลเบอร์ใย</th>
-                        <th rowspan="2" style="width: 190px; background-color: #eff6ff; color: #1e40af;"><i class="fa-solid fa-layer-group"></i> รุ่นอีแปะ</th>
-                        <th rowspan="2" style="width: 100px;">จำนวนลัง</th>
-                        <th colspan="4" style="background-color: #fff1f2; color: #9f1239;"><i class="fa-solid fa-triangle-exclamation"></i> ปัญหาที่พบหน้างาน</th>
-                    </tr>
-                    <tr>
-                        <th style="background-color: #fff1f2; color: #9f1239; width: 80px;">อ้า</th>
-                        <th style="background-color: #fff1f2; color: #9f1239; width: 80px;">เบี้ยว</th>
-                        <th style="background-color: #fff1f2; color: #9f1239; width: 80px;">ฟู</th>
-                        <th style="background-color: #fff1f2; color: #9f1239; width: 80px;">ไม่เต็ม</th>
-                    </tr>
-                </thead>
-                <tbody id="tableRowsContainer">
-                </tbody>
-            </table>
+        <div class="bg-slate-800/30 rounded-2xl border border-slate-700/50 overflow-hidden shadow-xl">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-800/80 border-b border-slate-700 text-slate-300 text-sm font-semibold">
+                            <th class="p-4 text-center w-20">รูปภาพ</th>
+                            <th class="p-4 w-32">รหัสนักเรียน</th>
+                            <th class="p-4">ชื่อ-นามสกุล</th>
+                            <th class="p-4 text-center w-72">บันทึกสถานะการเข้าเรียน</th>
+                            <th class="p-4 text-center w-32">เวลาบันทึก</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800 text-sm">
+                        
+                        <tr class="hover:bg-slate-800/20 transition">
+                            <td class="p-4 text-center">
+                                <div class="w-10 h-10 rounded-full bg-slate-700 mx-auto flex items-center justify-center text-slate-400 font-bold border border-slate-600">01</div>
+                            </td>
+                            <td class="p-4 font-mono text-cyan-400">STD-69012</td>
+                            <td class="p-4 font-medium text-slate-200">นายสมชาย รักดี</td>
+                            <td class="p-4">
+                                <div class="grid grid-cols-4 gap-1 max-w-xs mx-auto">
+                                    <button class="py-1.5 px-2 text-xs rounded-md font-medium border border-emerald-500 bg-emerald-500 text-white shadow-lg shadow-emerald-500/20">มา</button>
+                                    <button class="py-1.5 px-2 text-xs rounded-md font-medium border border-slate-700 bg-slate-900 text-slate-400 hover:bg-slate-800">สาย</button>
+                                    <button class="py-1.5 px-2 text-xs rounded-md font-medium border border-slate-700 bg-slate-900 text-slate-400 hover:bg-slate-800">ขาด</button>
+                                    <button class="py-1.5 px-2 text-xs rounded-md font-medium border border-slate-700 bg-slate-900 text-slate-400 hover:bg-slate-800">ลา</button>
+                                </div>
+                            </td>
+                            <td class="p-4 text-center text-xs text-emerald-400 font-mono">08:15 น.</td>
+                        </tr>
+
+                        <tr class="hover:bg-slate-800/20 transition">
+                            <td class="p-4 text-center">
+                                <div class="w-10 h-10 rounded-full bg-slate-700 mx-auto flex items-center justify-center text-slate-400 font-bold border border-slate-600">02</div>
+                            </td>
+                            <td class="p-4 font-mono text-cyan-400">STD-69013</td>
+                            <td class="p-4 font-medium text-slate-200">นางสาวสมศรี เรียนดี</td>
+                            <td class="p-4">
+                                <div class="grid grid-cols-4 gap-1 max-w-xs mx-auto">
+                                    <button class="py-1.5 px-2 text-xs rounded-md font-medium border border-slate-700 bg-slate-900 text-slate-400 hover:bg-slate-800">มา</button>
+                                    <button class="py-1.5 px-2 text-xs rounded-md font-medium border border-amber-500 bg-amber-500 text-slate-900 shadow-lg shadow-amber-500/20">สาย</button>
+                                    <button class="py-1.5 px-2 text-xs rounded-md font-medium border border-slate-700 bg-slate-900 text-slate-400 hover:bg-slate-800">ขาด</button>
+                                    <button class="py-1.5 px-2 text-xs rounded-md font-medium border border-slate-700 bg-slate-900 text-slate-400 hover:bg-slate-800">ลา</button>
+                                </div>
+                            </td>
+                            <td class="p-4 text-center text-xs text-amber-400 font-mono">08:32 น.</td>
+                        </tr>
+
+                        <tr class="hover:bg-slate-800/20 transition">
+                            <td class="p-4 text-center">
+                                <div class="w-10 h-10 rounded-full bg-slate-700 mx-auto flex items-center justify-center text-slate-400 font-bold border border-slate-600">03</div>
+                            </td>
+                            <td class="p-4 font-mono text-cyan-400">STD-69014</td>
+                            <td class="p-4 font-medium text-slate-200">นายธนภัทร มั่นคง</td>
+                            <td class="p-4">
+                                <div class="grid grid-cols-4 gap-1 max-w-xs mx-auto">
+                                    <button class="py-1.5 px-2 text-xs rounded-md font-medium border border-slate-700 bg-slate-900 text-slate-400 hover:border-emerald-500 hover:text-emerald-400 transition">มา</button>
+                                    <button class="py-1.5 px-2 text-xs rounded-md font-medium border border-slate-700 bg-slate-900 text-slate-400 hover:border-amber-500 hover:text-amber-400 transition">สาย</button>
+                                    <button class="py-1.5 px-2 text-xs rounded-md font-medium border border-slate-700 bg-slate-900 text-slate-400 hover:border-rose-500 hover:text-rose-400 transition">ขาด</button>
+                                    <button class="py-1.5 px-2 text-xs rounded-md font-medium border border-slate-700 bg-slate-900 text-slate-400 hover:border-sky-500 hover:text-sky-400 transition">ลา</button>
+                                </div>
+                            </td>
+                            <td class="p-4 text-center text-xs text-slate-500 font-mono">--:--</td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="bg-slate-800/50 p-4 border-t border-slate-700/50 flex justify-between items-center text-xs text-slate-400">
+                <span>กำลังแสดง 1-3 จากทั้งหมด 45 รายชื่อ</span>
+                <div class="flex gap-1">
+                    <button class="px-3 py-1 bg-slate-700 rounded hover:bg-slate-600 disabled:opacity-50" disabled>ก่อนหน้า</button>
+                    <button class="px-3 py-1 bg-slate-700 rounded hover:bg-slate-600">ถัดไป</button>
+                </div>
+            </div>
         </div>
+
     </div>
-</div>
 
-<div class="bottom-action-bar">
-    <button type="button" class="btn-giant-submit" id="submitBtn" onclick="submitFullForm()">
-        <i class="fa-solid fa-cloud-arrow-up"></i> <span>ส่งบันทึกข้อมูลเข้า Google Sheets</span>
-    </button>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script>
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbynrQFBw7aRoBE_SNZViKXRPKdiGuPCR5bqQb_923PNNrY3ZeenVIoA6tPhwhusibHnTQ/exec";
-
-    // 🔴 [ฐานข้อมูล] สามารถแก้ไข/เพิ่ม/ลบ รายชื่อพนักงาน QC ตรงนี้ได้เลยครับ
-    const qcStaffList = [
-        "สมชาย ตั้งใจตรวจ",
-        "สมหญิง รักงานดี",
-        "วิชัย ตรวจละเอียด",
-        "ปิยะพร ตรวจสอบไว"
-    ];
-
-    // 🔴 [ฐานข้อมูล] สามารถแก้ไข/เพิ่ม/ลบ รายชื่อพนักงานกรอ ตรงนี้ได้เลยครับ
-    const operatorStaffList = [
-        "นายสมพงษ์ มือกีต้าร์",
-        "นางสาวสมศรี ขยันขันแข็ง",
-        "นายมานะ ขยันกรอ",
-        "นางสาวชูใจ ใจดี"
-    ];
-
-    const auditQuestions = [
-        "ตรวจสอบความถูกต้องของเบอร์ใยและเช็กปัญหา [ใยปน] (วิธีการตรวจ: ตรวจหลอดใยที่โต๊ะกรออย่างละเอียด)",
-        "ตรวจสอบปัญหาชิ้นงาน [อ้า / ฟู] ขณะทำการผลิตกรอที่โต๊ะกรอ",
-        "ตรวจสอบลักษณะชิ้นงาน [เบี้ยว / ไม่เต็ม] จากเครื่องปั๊มและใบมีดตัด",
-        "ความถูกต้องของสัญลักษณ์อีแปะ (วิธีการตรวจ: ดูแผ่นอีแปะขณะกรอที่โต๊ะกรอ)",
-        "ดูสลับสติกเกอร์อีแปะตรงกับสติกเกอร์หลอดใยไหม (ตรวจสอบเปรียบเทียบทั้งสองจุด)",
-        "ตรวจสอบขนาดของวงและรูในของชิ้นงานอีแปะให้ได้ตามมาตรฐาน",
-        "ตรวจสอบความคมชัดและความลึกของการปั๊มสัญลักษณ์บนตัวชิ้นงาน",
-        "ตรวจสอบความเรียบร้อยของขอบชิ้นงาน (ไม่มีครีบหรือส่วนเกินยื่นออกมา)",
-        "ตรวจสอบความสะอาดรอบชิ้นงาน (ไม่มีคราบน้ำมันปนเปื้อนหลุดรอด)",
-        "ตรวจสอบเนื้อวัสดุอีแปะ (ไม่มีฟองอากาศหรือรอยแตกร้าว)",
-        "ตรวจสอบจำนวนการบรรจุลงกล่อง/ลังแพ็กเกจให้ตรงตามข้อกำหนดล็อต",
-        "ตรวจสอบความถูกต้องของป้าย Tag ประจำกล่องและล็อตการผลิต",
-        "การคัดแยกชิ้นงานเสีย (NG) แยกถังชัดเจนและไม่ปะปนกับงานดีเด็ดขาด",
-        "ความสะอาดปลอดภัยรอบบริเวณเครื่องจักรและพื้นที่โต๊ะปฏิบัติงาน (5ส)"
-    ];
-
-    const shiftRounds = [
-        { round: "รอบที่ 1", time: "08:00 - 09:00" },
-        { round: "รอบที่ 2", time: "09:00 - 10:00" },
-        { round: "รอบที่ 3", time: "11:00 - 12:00" },
-        { round: "รอบที่ 4", time: "13:00 - 14:00" },
-        { round: "รอบที่ 5", time: "15:00 - 16:00" },
-        { round: "รอบที่ 6", time: "17:00 - 18:00" },
-        { round: "รอบที่ 7", time: "19:00 - 20:00" },
-        { round: "รอบที่ 8", time: "21:00 - 22:00" },
-        { round: "รอบที่ 9", time: "23:00 - 24:00" }
-    ];
-
-    const yarnOptions = {
-        "ใยหู ไนล่อน": ["210/2(s,M) 100/95 เกลียวS", "210/2s101. 95", "210/2T05", "210/2ขาวต้ม95", "210/2", "210/2 เขียว+ดำ(ข+ด)", "210/3S101. ต้ม95", "210/3ขาวต้ม95", "210/4ต้ม 80(ใช้แทนต้ม95ได้)", "210/4", "210/4ต้ม 95", "210/6s101. ต้ม95", "210/6ขาวต้ม95", "245/6s208เหลือง", "210/6 S208เหลือง ต้ม 120\"", "210/9 S208เหลือง ต้ม 120\"", "210/9ดำ S101ต้ม95", "210/9ขาวต้ม95'", "210/9", "210/12 S208เหลือง ต้ม 120\"", "210/12 ขาวต้ม 95'", "210/12 ขาวต้ม95", "210/12k91", "210/12ดำ S101ต้ม 90'"],
-        "ใยตัว ไนล่อน": ["110/2", "135/2", "210/1R", "210/2. 100/95", "210/2ดำ +ทำหู", "210/2 140/95. สติ๊กเกอร์เขียว", "210/3. 100/85", "210/3F", "210/3T05", "210/3 140/90 สติ๊กเกอร์เขียว", "210/4F", "210/4. 115/85", "210/6 128/85", "245/6", "210/6T05", "210/9. 128/75", "210/9 ใช้กลิ่นใย(เวียดนาม)ตาข่ายชั้น", "210/12"],
-        "โมโนใยหู NR": ["030 BLM02. (DK920)", "035 M3022", "033M3022", "030M3022", "031M3022หูปะทัง", "036M3022หูปะทัง", "040BLL01", "035 WTM01"],
-        "โมโนใยตัว NR": ["025DK960", "025DK920", "029DK960(0.291)", "028DK960(0.277)", "031WTM01 (030)"]
-    };
-
-    const modelOptions = ["SK6.35*114", "SK6.35*130", "SH7.0*130", "SH8.0*152", "SH8.0*160", "FM7.48*180", "FM9.0*200", "CTAS8.8*230"];
-
-    document.addEventListener("DOMContentLoaded", () => {
-        initQCNamesDropdown();
-        render14Topics();
-        renderTimeRows();
-        loadSavedData();
-    });
-
-    function initQCNamesDropdown() {
-        const dl = document.getElementById('qcNamesList');
-        dl.innerHTML = "";
-        qcStaffList.forEach(name => {
-            dl.innerHTML += `<option value="${name}"></option>`;
-        });
-    }
-
-    function render14Topics() {
-        const auditContainer = document.getElementById('auditTopicsContainer');
-        auditContainer.innerHTML = "";
-        auditQuestions.forEach((q, i) => {
-            const qNum = i + 1;
-            auditContainer.innerHTML += `
-                <tr>
-                    <td>${qNum}</td>
-                    <td style="font-weight:500; color:#334155; font-size:0.95rem; text-align:left;">${q}</td>
-                    <td class="text-center">
-                        <div class="status-btn-group">
-                            <input type="radio" name="topic_${qNum}" id="pass_${qNum}" value="ผ่าน" class="radio-pass" onchange="saveAllToStorage()">
-                            <label for="pass_${qNum}" class="status-label label-pass"><i class="fa-regular fa-circle-check"></i> ผ่าน</label>
-                            
-                            <input type="radio" name="topic_${qNum}" id="fail_${qNum}" value="ไม่ผ่าน" class="radio-fail" onchange="saveAllToStorage()">
-                            <label for="fail_${qNum}" class="status-label label-fail"><i class="fa-regular fa-circle-xmark"></i> ไม่ผ่าน</label>
-                        </div>
-                    </td>
-                    <td>
-                        <input type="text" class="note-input" id="note_${qNum}" placeholder="ระบุรายละเอียด..." oninput="saveAllToStorage()">
-                    </td>
-                </tr>`;
-        });
-    }
-
-    function renderTimeRows() {
-        const tableBody = document.getElementById('tableRowsContainer');
-        tableBody.innerHTML = ""; 
-        shiftRounds.forEach((r, idx) => {
-            let yarnSelectHtml = `<select class="table-select" id="table_${idx}_yarn" onchange="saveAllToStorage()"><option value="">-- เลือกเบอร์ใย --</option>`;
-            for (const [groupName, options] of Object.entries(yarnOptions)) {
-                yarnSelectHtml += `<optgroup label="📦 ${groupName}">`;
-                options.forEach(opt => {
-                    yarnSelectHtml += `<option value="${groupName} | ${opt}">${opt}</option>`;
-                });
-                yarnSelectHtml += `</optgroup>`;
-            }
-            yarnSelectHtml += `</select>`;
-
-            let modelSelectHtml = `<select class="table-select" id="table_${idx}_model" onchange="saveAllToStorage()"><option value="">-- รุ่น --</option>`;
-            modelOptions.forEach(opt => {
-                modelSelectHtml += `<option value="${opt}">${opt}</option>`;
-            });
-            modelSelectHtml += `</select>`;
-
-            // สร้างช่อง Dropdown สำหรับเลือกชื่อพนักงานกรอ
-            let operatorSelectHtml = `<select class="table-select" id="table_${idx}_operator" onchange="saveAllToStorage()"><option value="">-- เลือกชื่อพนักงาน --</option>`;
-            operatorStaffList.forEach(name => {
-                operatorSelectHtml += `<option value="${name}">${name}</option>`;
-            });
-            operatorSelectHtml += `</select>`;
-
-            tableBody.innerHTML += `
-                <tr>
-                    <td style="font-weight:700; background:#f8fafc; color:var(--primary-dark);">${r.round}</td>
-                    <td style="font-size:0.9rem; color:#475569; font-weight:600;">${r.time}</td>
-                    <td><input type="checkbox" class="td-check" id="check_${idx}" onchange="saveAllToStorage()"></td>
-                    <td><input type="text" class="table-input" id="table_${idx}_loom" placeholder="-" oninput="saveAllToStorage()"></td>
-                    <td>${operatorSelectHtml}</td>
-                    <td>${yarnSelectHtml}</td>
-                    <td>${modelSelectHtml}</td>
-                    <td><input type="number" class="table-input" id="table_${idx}_qty" placeholder="0" oninput="saveAllToStorage()"></td>
-                    <td style="background-color: #fffafb;"><input type="text" class="table-input" id="table_${idx}_prob1" placeholder="-" oninput="saveAllToStorage()"></td>
-                    <td style="background-color: #fffafb;"><input type="text" class="table-input" id="table_${idx}_prob2" placeholder="-" oninput="saveAllToStorage()"></td>
-                    <td style="background-color: #fffafb;"><input type="text" class="table-input" id="table_${idx}_prob3" placeholder="-" oninput="saveAllToStorage()"></td>
-                    <td style="background-color: #fffafb;"><input type="text" class="table-input" id="table_${idx}_prob4" placeholder="-" oninput="saveAllToStorage()"></td>
-                </tr>`;
-        });
-    }
-
-    function loadSavedData() {
-        if(localStorage.getItem('pureForm_workerName')) document.getElementById('workerName').value = localStorage.getItem('pureForm_workerName');
-        if(localStorage.getItem('pureForm_auditDate')) {
-            document.getElementById('auditDate').value = localStorage.getItem('pureForm_auditDate');
-        } else {
-            document.getElementById('auditDate').value = new Date().toISOString().split('T')[0];
-        }
-
-        for(let qNum=1; qNum<=14; qNum++) {
-            const savedVal = localStorage.getItem(`pureForm_topic_${qNum}`);
-            if(savedVal === "ผ่าน") document.getElementById(`pass_${qNum}`).checked = true;
-            if(savedVal === "ไม่ผ่าน") document.getElementById(`fail_${qNum}`).checked = true;
-            if(localStorage.getItem(`pureForm_note_${qNum}`)) document.getElementById(`note_${qNum}`).value = localStorage.getItem(`pureForm_note_${qNum}`);
-        }
-
-        if(localStorage.getItem('pureForm_gridData')) {
-            const savedGrid = JSON.parse(localStorage.getItem('pureForm_gridData'));
-            shiftRounds.forEach((r, idx) => {
-                if(savedGrid[idx]) {
-                    document.getElementById(`check_${idx}`).checked = savedGrid[idx].isChecked;
-                    document.getElementById(`table_${idx}_loom`).value = savedGrid[idx].loom;
-                    if(document.getElementById(`table_${idx}_operator`)) {
-                        document.getElementById(`table_${idx}_operator`).value = savedGrid[idx].operatorName || "";
-                    }
-                    document.getElementById(`table_${idx}_yarn`).value = savedGrid[idx].yarn;
-                    document.getElementById(`table_${idx}_model`).value = savedGrid[idx].model;
-                    document.getElementById(`table_${idx}_qty`).value = savedGrid[idx].qty;
-                    document.getElementById(`table_${idx}_prob1`).value = savedGrid[idx].prob1;
-                    document.getElementById(`table_${idx}_prob2`).value = savedGrid[idx].prob2;
-                    document.getElementById(`table_${idx}_prob3`).value = savedGrid[idx].prob3;
-                    document.getElementById(`table_${idx}_prob4`).value = savedGrid[idx].prob4;
-                }
-            });
-        }
-    }
-
-    function saveAllToStorage() {
-        localStorage.setItem('pureForm_workerName', document.getElementById('workerName').value);
-        localStorage.setItem('pureForm_auditDate', document.getElementById('auditDate').value);
-
-        for(let qNum=1; qNum<=14; qNum++) {
-            const passRadio = document.getElementById(`pass_${qNum}`);
-            const failRadio = document.getElementById(`fail_${qNum}`);
-            if(passRadio.checked) localStorage.setItem(`pureForm_topic_${qNum}`, "ผ่าน");
-            else if(failRadio.checked) localStorage.setItem(`pureForm_topic_${qNum}`, "ไม่ผ่าน");
-            else localStorage.removeItem(`pureForm_topic_${qNum}`);
-            localStorage.setItem(`pureForm_note_${qNum}`, document.getElementById(`note_${qNum}`).value);
-        }
-
-        let gridData = [];
-        shiftRounds.forEach((r, idx) => {
-            gridData.push({
-                isChecked: document.getElementById(`check_${idx}`).checked,
-                loom: document.getElementById(`table_${idx}_loom`).value,
-                operatorName: document.getElementById(`table_${idx}_operator`).value,
-                yarn: document.getElementById(`table_${idx}_yarn`).value,
-                model: document.getElementById(`table_${idx}_model`).value,
-                qty: document.getElementById(`table_${idx}_qty`).value,
-                prob1: document.getElementById(`table_${idx}_prob1`).value,
-                prob2: document.getElementById(`table_${idx}_prob2`).value,
-                prob3: document.getElementById(`table_${idx}_prob3`).value,
-                prob4: document.getElementById(`table_${idx}_prob4`).value
-            });
-        });
-        localStorage.setItem('pureForm_gridData', JSON.stringify(gridData));
-    }
-
-    function submitFullForm() {
-        const workerName = document.getElementById('workerName').value.trim();
-        if (!workerName) { 
-            Swal.fire({ icon: 'warning', title: 'กรุณากรอกชื่อผู้ตรวจ', text: 'กรุณากรอกหรือเลือกชื่อผู้ตรวจสอบระบบ (QC) ก่อนคลิกส่งข้อมูลครับ', confirmButtonColor: '#1F4E79' });
-            return; 
-        }
-
-        let auditResults = {};
-        for(let qNum=1; qNum<=14; qNum++) {
-            const passChecked = document.getElementById(`pass_${qNum}`).checked;
-            const failChecked = document.getElementById(`fail_${qNum}`).checked;
-            auditResults[`ข้อที่_${qNum}_ผลตรวจ`] = passChecked ? "ผ่าน" : (failChecked ? "ไม่ผ่าน" : "ยังไม่ได้ตรวจ");
-            auditResults[`ข้อที่_${qNum}_หมายเหตุ`] = document.getElementById(`note_${qNum}`).value.trim() || "-";
-        }
-
-        let gridRecords = [];
-        shiftRounds.forEach((r, idx) => {
-            gridRecords.push({
-                roundName: r.round,
-                timeSlot: r.time,
-                isChecked: document.getElementById(`check_${idx}`).checked ? "✓" : "",
-                loom: document.getElementById(`table_${idx}_loom`).value,
-                operatorName: document.getElementById(`table_${idx}_operator`).value,
-                yarn: document.getElementById(`table_${idx}_yarn`).value, 
-                model: document.getElementById(`table_${idx}_model`).value,
-                qty: document.getElementById(`table_${idx}_qty`).value,
-                prob_a: document.getElementById(`table_${idx}_prob1`).value,
-                prob_b: document.getElementById(`table_${idx}_prob2`).value,
-                prob_f: document.getElementById(`table_${idx}_prob3`).value,
-                prob_nf: document.getElementById(`table_${idx}_prob4`).value
-            });
-        });
-
-        Swal.fire({ title: 'กำลังนำส่งบันทึก...', text: 'กรุณารอสักครู่ ระบบกำลังจัดส่งบันทึกของคุณเข้าสู่ Google Sheets', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
-
-        const formBody = new URLSearchParams();
-        formBody.append("workerName", workerName);
-        formBody.append("auditDate", document.getElementById('auditDate').value);
-        formBody.append("audit14Topics", JSON.stringify(auditResults));
-        formBody.append("gridRecords", JSON.stringify(gridRecords)); 
-
-        fetch(WEB_APP_URL, {
-            method: "POST",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: formBody
-        })
-        .then(res => res.json())
-        .then(response => {
-            if (response.status === "success") clear14TopicsOnly();
-            else throw new Error(response.message);
-        })
-        .catch(() => {
-            clear14TopicsOnly();
-        });
-    }
-
-    function clear14TopicsOnly() {
-        for(let qNum=1; qNum<=14; qNum++) {
-            document.getElementById(`pass_${qNum}`).checked = false;
-            document.getElementById(`fail_${qNum}`).checked = false;
-            document.getElementById(`note_${qNum}`).value = "";
-            localStorage.removeItem(`pureForm_topic_${qNum}`);
-            localStorage.removeItem(`pureForm_note_${qNum}`);
-        }
-        saveAllToStorage();
-        Swal.fire({ 
-            icon: 'success', 
-            title: 'ส่งบันทึกข้อมูลเรียบร้อย!', 
-            text: 'ระบบเคลียร์สถานะประเมิน 14 ข้อหลักให้ใหม่เรียบร้อยแล้ว ส่วนตารางเวลารอบข้างล่างยังคงเก็บข้อมูลพนักงานและผลรอบเวลาไว้ให้คุณบันทึกสะสมได้ต่อเนื่องครับ', 
-            confirmButtonColor: '#1F4E79' 
-        });
-    }
-</script>
 </body>
 </html>
