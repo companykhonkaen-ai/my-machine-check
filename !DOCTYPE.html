@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบสรุปกำลังคน - เวอร์ชันบันทึกถาวรขั้นสูงสุด</title>
+    <title>ระบบสรุปกำลังคน - เวอร์ชันแก้ไขข้อมูลถาวรสมบูรณ์</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -31,12 +31,12 @@
         <header class="flex flex-col lg:flex-row justify-between items-start lg:items-center bg-slate-900/40 backdrop-blur-xl p-6 rounded-3xl border border-slate-800 mb-6 gap-4 shadow-2xl">
             <div>
                 <span class="text-[10px] font-bold text-emerald-400 uppercase tracking-widest bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
-                    <i class="fa-solid fa-lock text-xs mr-1"></i> ระบบล็อกข้อมูลถาวรขั้นสูงสุด (Max-Persistence Active)
+                    <i class="fa-solid fa-database text-xs mr-1"></i> ระบบล็อกฐานข้อมูลเสถียรสูงสุด (Fixed-Database Active)
                 </span>
                 <h1 class="text-2xl md:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-cyan-400 to-indigo-400 mt-1.5">
                     ระบบสรุปกำลังคนและสถิติสะสมโอที
                 </h1>
-                <p class="text-slate-400 text-xs mt-1">ข้อมูลพนักงาน รูปภาพ และประวัติการเช็คชื่อถูกเซฟถาวรลงเครื่องแล้ว ห้ามลบห้ามหายทุกกรณี</p>
+                <p class="text-slate-400 text-xs mt-1">กู้คืนรายชื่อพนักงานเรียบร้อย ข้อมูลและรูปภาพจะฝังแน่นในเครื่อง ไม่หายแม้กดเซฟรายงานรูปภาพ</p>
             </div>
 
             <div class="relative bg-slate-950 border-2 border-slate-800 hover:border-emerald-500/50 px-5 py-3 rounded-2xl flex items-center gap-3 min-w-[240px] shadow-xl transition-all cursor-pointer">
@@ -64,20 +64,20 @@
 
                 <div class="bg-slate-900/20 rounded-2xl border border-slate-800/60 overflow-hidden shadow-xl">
                     <div class="bg-slate-900/80 px-4 py-2.5 border-b border-slate-800 text-[11px] font-bold text-slate-400 flex justify-between items-center">
-                        <span>👇 คลิกที่ปุ่มเพื่อบันทึกสถานะพนักงาน</span>
-                        <span class="text-[10px] text-emerald-400 font-bold"><i class="fa-solid fa-database animate-pulse"></i> ข้อมูลล็อกถาวร</span>
+                        <span>👇 คลิกปุ่มสถานะเพื่อลงชื่อเข้างาน</span>
+                        <span class="text-[10px] text-emerald-400 font-bold"><i class="fa-solid fa-circle-check"></i> บันทึกอัตโนมัติ</span>
                     </div>
                     <table class="w-full text-left border-collapse">
                         <thead>
                             <tr class="bg-slate-950 border-b border-slate-800 text-slate-400 text-[10px] font-black uppercase tracking-wider">
-                                <th class="p-3 text-center w-16">รูป</th>
-                                <th class="p-3">รายชื่อ</th>
-                                <th class="p-3 text-center w-20 bg-slate-900/40">สถานะ</th>
-                                <th class="p-3 text-center w-16 bg-slate-900/60">โอที</th>
+                                <th class="p-3 text-center w-14">รูป</th>
+                                <th class="p-3">รายชื่อพนักงาน</th>
+                                <th class="p-3 text-center w-16 bg-slate-900/40">สถานะ</th>
+                                <th class="p-3 text-center w-14 bg-slate-900/60">โอที</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-900/80" id="employee-rows">
-                        </tbody>
+                            </tbody>
                     </table>
                 </div>
             </div>
@@ -101,13 +101,12 @@
                     </div>
 
                     <div class="overflow-x-auto">
-                        <table class="w-full text-left border-collapse">
+                        <table class="w-full text-left border-collapse table-fixed min-w-[700px]">
                             <thead>
                                 <tr class="bg-slate-900 border-b border-slate-800 text-slate-400 text-[10px] font-black uppercase tracking-wider">
-                                    <th class="p-3 w-[36%] rounded-tl-xl">ข้อมูลพนักงาน</th>
-                                    <th class="p-3 text-center bg-indigo-950/30 text-indigo-300 border-x border-slate-900 w-[22%]">สถานะวันนี้</th>
-                                    <th class="p-3 text-center bg-slate-900/60 border-r border-slate-900 w-[14%]">งวด 1-12</th>
-                                    <th class="p-3 text-center bg-slate-900/60 border-r border-slate-900 w-[14%]">งวด 13-24</th>
+                                    <th class="p-3 w-[42%] rounded-tl-xl">ข้อมูลพนักงาน / แจ้งเตือน</th> <th class="p-3 text-center bg-indigo-950/30 text-indigo-300 border-x border-slate-900 w-[20%]">สถานะวันนี้</th>
+                                    <th class="p-3 text-center bg-slate-900/60 border-r border-slate-900 w-[12%]">งวด 1-12</th>
+                                    <th class="p-3 text-center bg-slate-900/60 border-r border-slate-900 w-[12%]">งวด 13-24</th>
                                     <th class="p-3 text-center bg-emerald-950/30 text-emerald-400 w-[14%] rounded-tr-xl font-bold">รวมทั้งเดือน</th>
                                 </tr>
                             </thead>
@@ -159,7 +158,7 @@
                     <input type="text" id="modal-emp-name" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 focus:outline-none focus:border-emerald-500 font-bold">
                 </div>
             </div>
-            <button onclick="saveModalState()" class="w-full mt-6 py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black rounded-xl text-xs transition shadow-lg">บันทึกข้อมูลและรูปภาพถาวร</button>
+            <button onclick="saveModalState()" class="w-full mt-6 py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black rounded-xl text-xs transition shadow-lg">บันทึกข้อมูลถาวร</button>
         </div>
     </div>
 
@@ -168,8 +167,8 @@
     </div>
 
     <script>
-        // โครงสร้างตั้งต้นหลัก (พี่ลำดวนแยกกลุ่มงานแล้ว และพนักงานปั่นอวนเหลือ 4 คนถ้วน)
-        const employeeDataSeed = [
+        // รายชื่อโครงสร้างฐานข้อมูลหลักขององค์กร (ล็อกชื่อกลุ่มและตำแหน่งเรียบร้อย)
+        const masterSeedData = [
             { id: "0000000", name: "พี่ลำดวน หัวหน้าทีม", department: "หัวหน้าทีม", avatar: "https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?auto=format&fit=crop&q=80&w=200&h=200", attendance: {}, ot: {} },
             { id: "4200467", name: "นส.พนา ซูกลิ่นหอม", department: "พนักงานปั๊มป้าย", avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=200&h=200", attendance: {}, ot: {} },
             { id: "6900051", name: "นส. ZIN MAY HLAING", department: "พนักงานปั๊มป้าย", avatar: "https://images.unsplash.com/photo-1554151228-14d9def656e4?auto=format&fit=crop&q=80&w=200&h=200", attendance: {}, ot: {} },
@@ -188,21 +187,279 @@
         let targetModalId = null;
         let modalImgBuffer = "";
 
-        // ปรับกลไกใหม่ขั้นสูงสุด: ดึงข้อมูลเก่ามาแสดงเสมอ ห้ามเขียนทับด้วย Seed เด็ดขาด
+        // ปรับปรุงฟังก์ชันเชื่อมต่อคีย์ความจำให้เสถียรและรวมกันเป็นหนึ่งเดียว
         function initData() {
-            const savedData = localStorage.getItem('payroll_ultimate_persistence');
-            if (savedData) {
-                employees = JSON.parse(savedData);
+            const unifiedStorage = localStorage.getItem('manpower_fixed_db_v1');
+            if (unifiedStorage) {
+                employees = JSON.parse(unifiedStorage);
             } else {
-                // ครั้งแรกสุดที่เปิดแอป ให้ดึงโครงสร้างพื้นฐานมาเซฟทันที จากนั้นจะไม่เข้าเงื่อนไขนี้อีกเลย
-                employees = JSON.parse(JSON.stringify(employeeDataSeed));
+                // หากไม่มีข้อมูลเดิม ให้ดึงรายชื่อพนักงานกลับเข้ามาทำงานทันที
+                employees = JSON.parse(JSON.stringify(masterSeedData));
                 saveToLocalStorage();
             }
         }
 
         function saveToLocalStorage() {
-            localStorage.setItem('payroll_ultimate_persistence', JSON.stringify(employees));
+            localStorage.setItem('manpower_fixed_db_v1', JSON.stringify(employees));
         }
 
         const attendCycle = ["", "✓", "✅", "สาย", "H", "❌"];
-        function getNextAttend(val) { return attendCycle
+        function getNextAttend(val) { return attendCycle[(attendCycle.indexOf(val) + 1) % attendCycle.length]; }
+
+        function translateStatusToThai(val, hasOT) {
+            let otBadge = hasOT ? `<span class="block text-[9px] bg-amber-500 text-slate-950 font-black px-1.5 py-0.5 mt-1 rounded shadow-sm uppercase tracking-wide">＋OT ⚡</span>` : '';
+            switch(val) {
+                case '✓': return `<div class="flex flex-col items-center"><span class="text-emerald-400 font-extrabold text-[11px] bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">🟢 มา (เช้า)</span>${otBadge}</div>`;
+                case '✅': return `<div class="flex flex-col items-center"><span class="text-cyan-400 font-extrabold text-[11px] bg-cyan-500/10 px-2 py-0.5 rounded border border-cyan-500/20">🔵 มา (ดึก)</span>${otBadge}</div>`;
+                case 'สาย': return `<div class="flex flex-col items-center"><span class="text-amber-400 font-extrabold text-[11px] bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">🟡 มาสาย</span>${otBadge}</div>`;
+                case 'H': return `<span class="text-purple-400 font-bold bg-purple-500/10 px-2 py-0.5 rounded border border-purple-500/20">🟣 วันหยุด</span>`;
+                case '❌': return `<span class="text-rose-400 font-black bg-rose-500/10 px-2 py-0.5 rounded border border-rose-400/40">🔴 ขาดงาน</span>`;
+                default: return `<span class="text-slate-600 font-medium">- ไม่ได้ลงชื่อ -</span>`;
+            }
+        }
+
+        function getAttendStyle(val) {
+            switch(val) {
+                case '✓': return 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40';
+                case '✅': return 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/40';
+                case 'สาย': return 'bg-amber-500/20 text-amber-400 border border-amber-500/40';
+                case 'H': return 'bg-purple-500/20 text-purple-400 border border-purple-500/40';
+                case '❌': return 'bg-rose-500/20 text-rose-400 border border-rose-400/40';
+                default: return 'bg-slate-950 text-slate-500 border border-slate-800 hover:text-slate-300';
+            }
+        }
+
+        function formatThaiFullDate(str) {
+            const mTh = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
+            const p = str.split('-'); if(p.length !== 3) return str;
+            return `${parseInt(p[2])} ${mTh[parseInt(p[1])-1]} ${parseInt(p[0])+543}`;
+        }
+
+        function handleDateChange(v) {
+            if(!v) return;
+            currentDayStr = v;
+            document.getElementById('calendar-display-string').innerText = formatThaiFullDate(v);
+            document.getElementById('master-card-date-sub').innerText = formatThaiFullDate(v);
+            renderTable();
+            renderMasterAllInOneReport();
+        }
+
+        function stepAttendance(id) {
+            const emp = employees.find(e => e.id === id);
+            if(emp) {
+                emp.attendance[currentDayStr] = getNextAttend(emp.attendance[currentDayStr] || "");
+                saveToLocalStorage(); renderTable(); renderMasterAllInOneReport();
+            }
+        }
+
+        function toggleOTField(id) {
+            const emp = employees.find(e => e.id === id);
+            if(emp) {
+                emp.ot[currentDayStr] = !emp.ot[currentDayStr];
+                saveToLocalStorage(); renderTable(); renderMasterAllInOneReport();
+            }
+        }
+
+        function renderTable() {
+            const sQuery = document.getElementById('search-input').value.toLowerCase();
+            const box = document.getElementById('employee-rows');
+            box.innerHTML = '';
+
+            const filtered = employees.filter(e => e.name.toLowerCase().includes(sQuery) || e.id.includes(sQuery));
+
+            filtered.forEach(e => {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-slate-900/40 border-b border-slate-900 text-xs transition';
+                
+                const currentAttend = e.attendance[currentDayStr] || "";
+                const isOTChecked = e.ot[currentDayStr] || false;
+
+                const avatarView = e.avatar ? 
+                    `<img src="${e.avatar}" class="w-9 h-9 rounded-full object-cover border-2 border-slate-800 shadow">` :
+                    `<div class="w-9 h-9 rounded-full bg-slate-800 flex items-center justify-center font-bold text-slate-400 text-[11px]">${e.name.substring(2,4)}</div>`;
+
+                tr.innerHTML = `
+                    <td class="p-2.5 text-center">
+                        <div class="relative inline-block">
+                            ${avatarView}
+                            <button onclick="openProfileModal('${e.id}')" class="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-500 hover:bg-emerald-400 text-slate-950 rounded-full flex items-center justify-center text-[9px] shadow-lg font-bold">
+                                <i class="fa-solid fa-pen"></i>
+                            </button>
+                        </div>
+                    </td>
+                    <td class="p-2.5">
+                        <span class="font-extrabold text-slate-200 text-xs block truncate max-w-[150px]">${e.name}</span>
+                        <span class="text-slate-500 text-[10px] font-mono-tech">${e.id === '0000000' ? 'LEADER' : 'ID: '+e.id}</span>
+                    </td>
+                    <td class="p-1.5 bg-slate-900/10 text-center">
+                        <button onclick="stepAttendance('${e.id}')" class="w-12 h-8 rounded-lg text-[11px] font-black mx-auto transition-all transform active:scale-95 ${getAttendStyle(currentAttend)}">
+                            ${currentAttend || "-"}
+                        </button>
+                    </td>
+                    <td class="p-1.5 bg-slate-900/20 text-center">
+                        <button onclick="toggleOTField('${e.id}')" class="w-10 h-8 rounded-lg text-xs transition-all transform active:scale-95 ${isOTChecked ? 'bg-amber-500/20 text-amber-400 border border-amber-500/50 font-black' : 'bg-slate-950 text-slate-700 border border-slate-900'}">
+                            ${isOTChecked ? '⚡' : '💤'}
+                        </button>
+                    </td>
+                `;
+                box.appendChild(tr);
+            });
+        }
+
+        function renderMasterAllInOneReport() {
+            const pParts = currentDayStr.split('-');
+            const year = parseInt(pParts[0]);
+            const month = parseInt(pParts[1]);
+            const daysInMonth = new Date(year, month, 0).getDate();
+
+            const mTh = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
+            document.getElementById('pres-card-timestamp').innerText = `สรุปยอดสะสมกลุ่มงานรอบเดือน ${mTh[month-1]} ${year+543}`;
+
+            const tbody = document.getElementById('master-summary-rows');
+            tbody.innerHTML = '';
+
+            const departments = ["หัวหน้าทีม", "พนักงานปั๊มป้าย", "พนักงานคลังสินค้า", "พนักงานปั่นอวน", "พนักงานปั่นเพลากะเช้า"];
+            
+            departments.forEach(dept => {
+                const deptEmps = employees.filter(e => e.department === dept);
+                if(deptEmps.length === 0) return;
+
+                const deptRow = document.createElement('tr');
+                deptRow.className = "bg-slate-900/90 font-bold border-y border-slate-800 text-[11px]";
+                deptRow.innerHTML = `<td colspan="5" class="p-2.5 pl-4 text-cyan-400 font-extrabold tracking-wide"><i class="fa-solid fa-layer-group mr-2 text-indigo-400"></i> กลุ่มงาน: ${dept} (${deptEmps.length} คน)</td>`;
+                tbody.appendChild(deptRow);
+
+                deptEmps.forEach(e => {
+                    const dAttend = e.attendance[currentDayStr] || "";
+                    const hasOT = e.ot[currentDayStr] || false;
+                    
+                    let totalAbsentCount = 0;
+                    let totalLateCount = 0;
+
+                    const getStatsForRange = (start, end) => {
+                        let work = 0, ot = 0;
+                        for (let d = start; d <= end; d++) {
+                            const dKey = `${year}-${month < 10 ? '0'+month : month}-${d < 10 ? '0'+d : d}`;
+                            if (e.attendance[dKey] === '✓' || e.attendance[dKey] === '✅' || e.attendance[dKey] === 'สาย') work++;
+                            if (e.ot[dKey]) ot++;
+                            
+                            if (e.attendance[dKey] === '❌') totalAbsentCount++;
+                            if (e.attendance[dKey] === 'สาย') totalLateCount++;
+                        }
+                        return { work, ot };
+                    };
+
+                    const p1 = getStatsForRange(1, 12);
+                    const p2 = getStatsForRange(13, 24);
+                    const pMonth = getStatsForRange(1, daysInMonth);
+
+                    let alertBadgeHtml = "";
+                    if (totalAbsentCount >= 3) {
+                        alertBadgeHtml = `<div class="mt-0.5 text-[9px] bg-rose-500/20 text-rose-400 font-black border border-rose-500/30 px-1.5 py-0.5 rounded-md inline-block">🛑 พ้นสภาพ (ขาด ${totalAbsentCount} วัน)</div>`;
+                    } else if (totalLateCount >= 2) {
+                        alertBadgeHtml = `<div class="mt-0.5 text-[9px] bg-amber-500/20 text-amber-300 font-black border border-amber-500/30 px-1.5 py-0.5 rounded-md inline-block">⚠️ ใบเตือน (สาย ${totalLateCount} ครั้ง)</div>`;
+                    }
+
+                    const tr = document.createElement('tr');
+                    tr.className = "hover:bg-slate-900/30 border-b border-slate-900 text-xs transition";
+
+                    const picHtml = e.avatar ? 
+                        `<img src="${e.avatar}" class="w-8 h-8 rounded-full object-cover border-2 border-slate-800 shadow-md">` :
+                        `<div class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-[10px] font-black text-slate-400">${e.name.substring(2,4)}</div>`;
+
+                    tr.innerHTML = `
+                        <td class="p-3 flex items-center gap-3 overflow-hidden">
+                            <div class="flex-shrink-0">${picHtml}</div>
+                            <div class="min-w-0 flex-1 whitespace-nowrap">
+                                <div class="font-extrabold text-white text-[12.5px] tracking-wide block truncate">${e.name}</div>
+                                <div class="text-[9px] font-mono-tech text-slate-500">${e.id === '0000000' ? 'หัวหน้าทีมควบคุม' : 'ID: '+e.id}</div>
+                                ${alertBadgeHtml}
+                            </div>
+                        </td>
+                        <td class="p-3 text-center bg-indigo-950/10 border-x border-slate-900 font-medium">
+                            ${translateStatusToThai(dAttend, hasOT)}
+                        </td>
+                        <td class="p-3 text-center font-mono-tech text-[11px] text-slate-300 border-r border-slate-900">
+                            <div><span class="text-slate-500 font-bold">งาน:</span> <span class="text-emerald-400 font-black">${p1.work}</span></div>
+                            <div class="mt-0.5"><span class="text-slate-500">โอที:</span> <span class="text-amber-400 font-bold">${p1.ot}</span></div>
+                        </td>
+                        <td class="p-3 text-center font-mono-tech text-[11px] text-slate-300 border-r border-slate-900">
+                            <div><span class="text-slate-500 font-bold">งาน:</span> <span class="text-emerald-400 font-black">${p2.work}</span></div>
+                            <div class="mt-0.5"><span class="text-slate-500">โอที:</span> <span class="text-amber-400 font-bold">${p2.ot}</span></div>
+                        </td>
+                        <td class="p-3 text-center bg-emerald-950/10 font-mono-tech text-[12px]">
+                            <div class="text-emerald-400 font-black bg-emerald-500/5 py-0.5 rounded border border-emerald-500/10">งาน: ${pMonth.work}</div>
+                            <div class="text-amber-400 font-black bg-amber-500/5 py-0.5 rounded border border-amber-500/10 mt-1">โอที: ${pMonth.ot}</div>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            });
+        }
+
+        function openProfileModal(id) {
+            const emp = employees.find(e => e.id === id); if(!emp) return;
+            targetModalId = id; modalImgBuffer = emp.avatar;
+            document.getElementById('modal-emp-name').value = emp.name;
+            paintModalAvatar();
+            document.getElementById('profile-modal').classList.remove('hidden');
+        }
+        function paintModalAvatar() {
+            const b = document.getElementById('modal-avatar-preview');
+            b.innerHTML = modalImgBuffer ? `<img src="${modalImgBuffer}" class="w-full h-full object-cover">` : `<i class="fa-solid fa-user text-slate-600"></i>`;
+        }
+        function handlePhotoStream(ev) {
+            const f = ev.target.files[0];
+            if(f) {
+                const rd = new FileReader();
+                rd.onload = (e) => { modalImgBuffer = e.target.result; paintModalAvatar(); };
+                rd.readAsDataURL(f);
+            }
+        }
+        function deletePhotoNode() { modalImgBuffer = ""; paintModalAvatar(); }
+        
+        function saveModalState() {
+            const emp = employees.find(e => e.id === targetModalId);
+            if(emp) {
+                emp.name = document.getElementById('modal-emp-name').value;
+                emp.avatar = modalImgBuffer; 
+                saveToLocalStorage();
+                renderTable(); 
+                renderMasterAllInOneReport(); 
+                closeProfileModal();
+                showToast("🔒 บันทึกรูปภาพพนักงานถาวรแล้ว");
+            }
+        }
+        function closeProfileModal() { document.getElementById('profile-modal').classList.add('hidden'); }
+
+        function exportMasterReportImage() {
+            const target = document.getElementById('presentation-card');
+            showToast("📸 กำลังประมวลผลรูปภาพความละเอียดสูง...");
+            html2canvas(target, { 
+                backgroundColor: "#030712", 
+                scale: 3, 
+                useCORS: true 
+            }).then(cv => {
+                const a = document.createElement('a');
+                a.download = `รายงานกำลังคน_กลุ่มงาน_${currentDayStr}.png`;
+                a.href = cv.toDataURL('image/png'); a.click();
+                showToast("✨ เซฟรูปภาพสำเร็จ (ฐานข้อมูลในเว็บถูกล็อกไว้ถาวรไม่หาย)");
+            });
+        }
+
+        function showToast(m) {
+            const box = document.getElementById('toast-box'); document.getElementById('toast-txt').innerText = m;
+            box.classList.remove('translate-y-20', 'opacity-0'); box.classList.add('translate-y-0', 'opacity-100');
+            setTimeout(() => { box.classList.remove('translate-y-0', 'opacity-100'); box.classList.add('translate-y-20', 'opacity-0'); }, 3000);
+        }
+
+        document.getElementById('search-input').addEventListener('input', renderTable);
+        
+        window.onload = () => { 
+            initData(); // โหลดข้อมูลพนักงานกลับคืนมาเสมอ
+            document.getElementById('main-date-picker').value = currentDayStr;
+            handleDateChange(currentDayStr);
+        }
+    </script>
+</body>
+</html>
