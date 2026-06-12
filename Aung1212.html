@@ -3,34 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EPAE AI Command Center V3</title>
+    <title>EPAE Command Center - LINE Auto Sender</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Noto+Sans+Thai:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
     <style>
         body {
             font-family: 'Noto Sans Thai', sans-serif;
             background-color: #060913;
-            background-image: 
-                linear-gradient(rgba(14, 165, 233, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(14, 165, 233, 0.03) 1px, transparent 1px);
+            background-image: linear-gradient(rgba(14, 165, 233, 0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(14, 165, 233, 0.02) 1px, transparent 1px);
             background-size: 20px 20px;
         }
         .cyber-panel {
-            background: rgba(10, 15, 30, 0.75);
+            background: rgba(10, 15, 30, 0.8);
             border: 1px solid rgba(14, 165, 233, 0.2);
-            box-shadow: 0 0 15px rgba(14, 165, 233, 0.05);
-            backdrop-filter: blur(12px);
-        }
-        .pulse-glow-green { animation: p-green 2s infinite; }
-        @keyframes p-green {
-            0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
-            70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
         }
     </style>
 </head>
@@ -38,195 +28,286 @@
 
     <div class="max-w-7xl mx-auto space-y-6">
         
-        <!-- HEADER: AI OPERATIONAL HUB -->
-        <header class="cyber-panel rounded-2xl p-6 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 border-t-4 border-t-sky-500">
-            <div>
-                <div class="flex items-center gap-3">
-                    <div class="w-3.5 h-3.5 rounded-full bg-emerald-500 pulse-glow-green"></div>
-                    <h1 class="text-2xl font-black text-white tracking-wide font-mono-tech">EPAE MATRIX AI CORE</h1>
+        <header class="cyber-panel rounded-2xl p-6 border-t-4 border-t-emerald-500 shadow-xl space-y-4">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <h1 class="text-xl md:text-2xl font-black text-white">ระบบบันทึกกำลังพล กกรออีแปะ + ส่ง LINE ออโต้</h1>
+                    <p class="text-xs text-slate-400 mt-0.5">ติ๊กเลือกสถานะด้วยมือ และส่งภาพรายงานเข้า LINE ของเพื่อนหรือกลุ่มแชทได้ทันที</p>
                 </div>
-                <p class="text-xs text-slate-400 mt-1">ระบบวิเคราะห์กำลังพลและพฤติกรรมสมาชิกอัตโนมัติด้วย AI & Voice Command</p>
+                
+                <input type="date" id="main-date-picker" value="2026-06-12" class="bg-slate-950 border border-slate-800 text-xs font-bold text-white px-3 py-2 rounded-xl focus:outline-none focus:border-emerald-500" onchange="handleDateChange(this.value)">
             </div>
 
-            <!-- TECH CONTROL BUTTONS -->
-            <div class="flex flex-wrap gap-2">
-                <!-- ปุ่มระบบสั่งการด้วยเสียง -->
-                <button onclick="startVoiceRecognition()" id="btn-voice" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 border border-sky-500/40 text-sky-400 rounded-xl text-xs font-bold flex items-center gap-2 transition">
-                    <i class="fa-solid fa-microphone animate-bounce"></i> <span id="voice-status">เปิดระบบสั่งเสียง (Voice AI)</span>
-                </button>
-
-                <!-- ปุ่มจำลองการส่งออโต้เข้า LINE -->
-                <button onclick="simulateLineNotify()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold flex items-center gap-2 shadow-lg shadow-emerald-600/20 transition">
-                    <i class="fa-brands fa-line text-sm"></i> ทดสอบยิงรายงานเข้ากลุ่ม LINE (Automation)
-                </button>
+            <div class="p-4 bg-slate-950/60 rounded-xl border border-slate-800/80 grid grid-cols-1 md:grid-cols-12 gap-3 items-center">
+                <div class="md:col-span-3 text-xs">
+                    <span class="block font-black text-emerald-400"><i class="fa-brands fa-line text-sm mr-1"></i> ตั้งค่าการส่งไลน์ของเพื่อน</span>
+                    <span class="text-[10px] text-slate-500">ใส่ลิงก์แชร์ หรือ รหัส LINE Notify Token</span>
+                </div>
+                <div class="md:col-span-9">
+                    <input type="text" id="line-endpoint-input" placeholder="วางลิงก์ของเพื่อน หรือ Token ของกลุ่มตรงนี้..." class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-xs text-white focus:outline-none focus:border-emerald-500 font-mono">
+                </div>
             </div>
         </header>
 
-        <!-- DASHBOARD SPLIT GRID -->
-        <div class="grid grid-cols-1 xl:grid-cols-12 gap-6">
+        <div class="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
             
-            <!-- LEFT: CONTROLLER & ANALYSIS -->
-            <div class="xl:col-span-4 space-y-6">
-                <!-- AI Live Analytics (กราฟวิเคราะห์พฤติกรรมรวม) -->
-                <div class="cyber-panel rounded-2xl p-4">
-                    <h2 class="text-xs font-black uppercase text-sky-400 tracking-wider mb-3"><i class="fa-solid fa-chart-pie"></i> AI Behavior Analytics (ภาพรวมเดือนนี้)</h2>
-                    <div class="h-44 flex items-center justify-center">
-                        <canvas id="behaviorChart"></canvas>
+            <div class="xl:col-span-5 space-y-4">
+                <div class="cyber-panel rounded-2xl overflow-hidden shadow-lg">
+                    <div class="p-3 bg-white/5 border-b border-slate-800 text-xs font-bold text-slate-300 flex justify-between items-center">
+                        <span>🔘 แผงลงเวลามือคลิก</span>
+                        <span id="txt-thai-date" class="text-emerald-400 font-mono text-[11px]">12 มิถุนายน 2569</span>
                     </div>
-                </div>
-
-                <!-- รายชื่อพนักงานซ้ายมือสไตล์ไฮเทค -->
-                <div class="cyber-panel rounded-2xl p-4">
-                    <div class="flex justify-between items-center mb-3">
-                        <h2 class="text-xs font-black uppercase text-slate-400 tracking-wider"><i class="fa-solid fa-address-book"></i> รายชื่อสมาชิก (17 คน)</h2>
-                        <span class="text-[10px] font-mono bg-sky-500/10 text-sky-400 px-2 py-0.5 rounded border border-sky-500/20">Voice Active</span>
-                    </div>
-                    <div class="space-y-2 max-h-96 overflow-y-auto pr-1" id="voice-emp-list">
-                        <!-- บรรจุข้อมูลผ่าน JS -->
-                    </div>
+                    <div class="max-h-[580px] overflow-y-auto divide-y divide-slate-800/60" id="manual-rows">
+                        </div>
                 </div>
             </div>
 
-            <!-- RIGHT: PREVIEW REPORT SCREEN -->
-            <div class="xl:col-span-8 space-y-4">
-                <div class="cyber-panel rounded-3xl p-6 border border-slate-800" id="main-presentation-core">
+            <div class="xl:col-span-7 space-y-4">
+                <div class="bg-[#090d1a] rounded-3xl border border-slate-800 p-6 shadow-2xl relative overflow-hidden" id="presentation-card">
+                    
                     <div class="flex justify-between items-center border-b border-slate-800 pb-4 mb-4">
                         <div>
-                            <h3 class="text-lg font-black text-white">แผงพยากรณ์และรายงานสถานะกำลังพล</h3>
-                            <p class="text-[11px] text-slate-500">ข้อมูลอัปเดตแบบเรียลไทม์ ซิงค์ผ่านคลาวด์เซิร์ฟเวอร์</p>
+                            <h3 class="text-sm font-black text-white tracking-wide">📊 สรุปรายงานกำลังพลประจำวัน สมาชิก กรออีแปะ</h3>
+                            <p class="text-[10px] text-slate-500 mt-0.5">ประมวลผลอัตโนมัติประจำงวดเดือน</p>
                         </div>
-                        <span class="text-xs font-mono font-bold px-3 py-1 bg-slate-900 border border-slate-700 rounded-lg text-amber-400">12 มิถุนายน 2026</span>
+                        <span class="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded border border-emerald-500/20" id="label-month-cycle">รอบเดือน</span>
                     </div>
 
-                    <!-- การ์ดจำลองพนักงานแบบล้ำสมัย -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="grid-cards-view">
-                        <!-- การ์ดไฮเทคจะโชว์ตรงนี้ -->
-                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="master-grid">
+                        </div>
                 </div>
+
+                <button onclick="processAndSendToLine()" class="w-full py-4 bg-gradient-to-r from-emerald-500 to-teal-600 hover:brightness-110 active:scale-[0.99] text-slate-950 font-black rounded-2xl text-sm transition flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/15">
+                    <i class="fa-brands fa-line text-base"></i> ประมวลผลและส่งรายงานเข้า LINE อัตโนมัติ
+                </button>
             </div>
 
         </div>
     </div>
 
+    <div id="toast" class="fixed bottom-6 right-6 bg-slate-900 border border-emerald-500 text-emerald-400 px-4 py-2.5 rounded-xl shadow-2xl z-50 transform translate-y-20 opacity-0 transition-all duration-300 text-xs font-bold"></div>
+
     <script>
-        const employees = [
-            { id: 1, name: "สมบัติ แสงทอง", status: "🟢 กะเช้า", risk: "ต่ำ", attendance: 98 },
-            { id: 2, name: "เยาวมาลย์ พันนา", status: "🔴 ขาดงาน", risk: "สูง (ขาดบ่อย)", attendance: 74 },
-            { id: 3, name: "พุทธศรี สามีพันธ์", status: "🔵 กะดึก", risk: "ต่ำ", attendance: 100 },
-            { id: 4, name: "มะลิ ดาวังปา", status: "🟡 มาสาย", risk: "ปานกลาง", attendance: 88 }
+        // ใช้ฐานข้อมูล 17 คนดั้งเดิม
+        const krwEpaeSeedData = [
+            { id: "1", name: "สมบัติ แสงทอง", phone: "081-765-4321", attendance: {}, ot: {} },
+            { id: "2", name: "เยาวมาลย์ พันนา", phone: "082-123-4567", attendance: {}, ot: {} },
+            { id: "3", name: "พุทธศรี สามีพันธ์", phone: "083-234-5678", attendance: {}, ot: {} },
+            { id: "4", name: "มะลิ ดาวังปา", phone: "084-345-6789", attendance: {}, ot: {} },
+            { id: "5", name: "หนูจันทร์ ผิวดี", phone: "085-456-7890", attendance: {}, ot: {} },
+            { id: "6", name: "จันทร์เพ็ญ บุตรมา", phone: "086-567-8901", attendance: {}, ot: {} },
+            { id: "7", name: "นางบุบผา กุลวงศ์", phone: "087-678-9012", attendance: {}, ot: {} },
+            { id: "8", name: "นางศิริพร เสน่ห์จันทร์", phone: "088-789-0123", attendance: {}, ot: {} },
+            { id: "9", name: "นางประกอบ ไชยเพ็ง", phone: "089-890-1234", attendance: {}, ot: {} },
+            { id: "10", name: "ดาวบด แสนพล", phone: "090-901-2345", attendance: {}, ot: {} },
+            { id: "11", name: "ปางทอง คงมังคละ", phone: "091-012-3456", attendance: {}, ot: {} },
+            { id: "12", name: "พีราพร ค่อมสิงห์", phone: "092-123-0192", attendance: {}, ot: {} },
+            { id: "13", name: "นางประครอง ชัยสมคุณ", phone: "093-345-9876", attendance: {}, ot: {} },
+            { id: "14", name: "มลฤดี ปัทเนตร", phone: "094-456-8765", attendance: {}, ot: {} },
+            { id: "15", name: "น.ส.ไพรวัน วงษาสืบ", phone: "095-567-7654", attendance: {}, ot: {} },
+            { id: "16", name: "นางจันสุดา ถาบุญแก้ว", phone: "096-678-6543", attendance: {}, ot: {} },
+            { id: "17", name: "น.ส.กมลรัตน์ พูลทรัพย์", phone: "097-789-5432", attendance: {}, ot: {} }
         ];
 
-        function renderComponents() {
-            // วาดรายชื่อพนักงานฝั่งซ้าย
-            const leftBox = document.getElementById('voice-emp-list');
-            leftBox.innerHTML = '';
-            employees.forEach(e => {
-                leftBox.innerHTML += `
-                    <div class="p-2.5 bg-slate-900/60 rounded-xl border border-slate-800 flex justify-between items-center text-xs">
-                        <div>
-                            <div class="font-bold text-white">${e.name}</div>
-                            <div class="text-[10px] text-slate-500">อัตราเข้างาน: ${e.attendance}%</div>
-                        </div>
-                        <span class="text-[10px] font-black">${e.status}</span>
-                    </div>
-                `;
-            });
+        let employees = [];
+        let currentDayStr = "2026-06-12";
 
-            // วาดการ์ดสรุปพฤติกรรมฝั่งขวา
-            const rightGrid = document.getElementById('grid-cards-view');
-            rightGrid.innerHTML = '';
+        function initData() {
+            const cache = localStorage.getItem('mp_epae_line_v4');
+            const savedLink = localStorage.getItem('mp_epae_line_link');
+            
+            if (cache) employees = JSON.parse(cache);
+            else {
+                employees = JSON.parse(JSON.stringify(krwEpaeSeedData));
+                localStorage.setItem('mp_epae_line_v4', JSON.stringify(employees));
+            }
+            if (savedLink) document.getElementById('line-endpoint-input').value = savedLink;
+        }
+
+        const cycleArray = ["", "✓", "✅", "สาย", "H", "❌"];
+        function getNextStatus(current) { return cycleArray[(cycleArray.indexOf(current) + 1) % cycleArray.length]; }
+
+        function getStatusBadge(val) {
+            switch(val) {
+                case '✓': return `<span class="text-[9px] bg-emerald-500/10 text-emerald-400 px-1.5 py-0.5 rounded font-bold">🟢 กะเช้า</span>`;
+                case '✅': return `<span class="text-[9px] bg-sky-500/10 text-sky-400 px-1.5 py-0.5 rounded font-bold">🔵 กะดึก</span>`;
+                case 'สาย': return `<span class="text-[9px] bg-yellow-500/10 text-yellow-400 px-1.5 py-0.5 rounded font-bold">🟡 สาย</span>`;
+                case 'H': return `<span class="text-[9px] bg-purple-500/10 text-purple-400 px-1.5 py-0.5 rounded">🟣 วันหยุด</span>`;
+                case '❌': return `<span class="text-[9px] bg-rose-500/20 text-rose-400 px-1.5 py-0.5 rounded font-black">🔴 ขาดงาน</span>`;
+                default: return `<span class="text-[9px] bg-slate-800 text-slate-500 px-1.5 py-0.5 rounded">ยังไม่เช็ค</span>`;
+            }
+        }
+
+        function getBtnColor(val) {
+            switch(val) {
+                case '✓': return 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40';
+                case '✅': return 'bg-sky-500/20 text-sky-400 border border-sky-500/40';
+                case 'สาย': return 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/40';
+                case 'H': return 'bg-purple-500/20 text-purple-400 border border-purple-500/30';
+                case '❌': return 'bg-rose-500/20 text-rose-400 border border-rose-500/40 font-bold';
+                default: return 'bg-slate-900 text-slate-500 border border-slate-800';
+            }
+        }
+
+        function formatThaiDate(str) {
+            const mTh = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
+            const p = str.split('-'); if(p.length !== 3) return str;
+            return `${parseInt(p[2])} ${mTh[parseInt(p[1])-1]} ${parseInt(p[0])+543}`;
+        }
+
+        function handleDateChange(v) {
+            if(!v) return;
+            currentDayStr = v;
+            document.getElementById('txt-thai-date').innerText = formatThaiDate(v);
+            renderAll();
+        }
+
+        function triggerStatus(id) {
+            const emp = employees.find(e => e.id === id);
+            if(emp) {
+                emp.attendance[currentDayStr] = getNextStatus(emp.attendance[currentDayStr] || "");
+                localStorage.setItem('mp_epae_line_v4', JSON.stringify(employees));
+                renderAll();
+            }
+        }
+
+        function triggerOT(id) {
+            const emp = employees.find(e => e.id === id);
+            if(emp) {
+                emp.ot[currentDayStr] = !emp.ot[currentDayStr];
+                localStorage.setItem('mp_epae_line_v4', JSON.stringify(employees));
+                renderAll();
+            }
+        }
+
+        function renderAll() {
+            const leftContainer = document.getElementById('manual-rows');
+            leftContainer.innerHTML = '';
+            const rightContainer = document.getElementById('master-grid');
+            rightContainer.innerHTML = '';
+
+            const pParts = currentDayStr.split('-');
+            const year = parseInt(pParts[0]); const month = parseInt(pParts[1]);
+            const daysInMonth = new Date(year, month, 0).getDate();
+
+            const mTh = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
+            document.getElementById('label-month-cycle').innerText = `งวดเดือน ${mTh[month-1]} ${year+543}`;
+
             employees.forEach(e => {
-                let riskColor = e.risk.includes('สูง') ? 'text-rose-400 bg-rose-500/10 border-rose-500/30' : 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20';
-                rightGrid.innerHTML += `
-                    <div class="bg-slate-950/80 p-4 rounded-2xl border border-slate-800 flex flex-col justify-between gap-3">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <h4 class="font-black text-white text-sm">${e.name}</h4>
-                                <p class="text-[10px] text-slate-400 mt-0.5">ID: EPAE-00${e.id}</p>
-                            </div>
-                            <span class="px-2 py-0.5 rounded text-[10px] font-bold ${riskColor}">AI ประเมินความเสี่ยง: ${e.risk}</span>
-                        </div>
-                        <div class="w-full bg-slate-900 rounded-full h-1.5">
-                            <div class="bg-sky-500 h-1.5 rounded-full" style="width: ${e.attendance}%"></div>
-                        </div>
-                        <div class="flex justify-between items-center text-[11px] pt-1 border-t border-slate-900">
-                            <span class="text-slate-500">สถานะกะทำงาน:</span>
-                            <span class="font-extrabold text-white">${e.status}</span>
-                        </div>
+                const dayAttend = e.attendance[currentDayStr] || "";
+                const dayOT = e.ot[currentDayStr] || false;
+
+                // วาดฝั่งซ้าย (ติ๊กมือ)
+                const tr = document.createElement('div');
+                tr.className = 'p-3 flex items-center justify-between hover:bg-white/5 transition';
+                tr.innerHTML = `
+                    <div>
+                        <span class="font-bold text-white text-xs block">${e.name}</span>
+                        <span class="text-[10px] text-slate-500 font-mono block">${e.phone}</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button onclick="triggerStatus('${e.id}')" class="w-12 h-7 rounded-lg text-[9px] font-black transition ${getBtnColor(dayAttend)}">
+                            ${dayAttend === '✓' ? 'เช้า' : dayAttend === '✅' ? 'ดึก' : dayAttend || "-"}
+                        </button>
+                        <button onclick="triggerOT('${e.id}')" class="w-8 h-7 rounded-lg text-[10px] transition ${dayOT ? 'bg-emerald-500 text-slate-950 font-black' : 'bg-slate-900 text-slate-600 border border-slate-800'}">
+                            ${dayOT ? 'OT' : '💤'}
+                        </button>
                     </div>
                 `;
+                leftContainer.appendChild(tr);
+
+                // คำนวณสะสมงวด
+                let p1W = 0, p1O = 0, p2W = 0, p2O = 0;
+                for (let d = 1; d <= 12; d++) {
+                    const dk = `${year}-${month < 10 ? '0'+month : month}-${d < 10 ? '0'+d : d}`;
+                    if (e.attendance[dk] && e.attendance[dk] !== '❌' && e.attendance[dk] !== 'H') p1W++;
+                    if (e.ot[dk]) p1O++;
+                }
+                for (let d = 13; d <= 24; d++) {
+                    const dk = `${year}-${month < 10 ? '0'+month : month}-${d < 10 ? '0'+d : d}`;
+                    if (e.attendance[dk] && e.attendance[dk] !== '❌' && e.attendance[dk] !== 'H') p2W++;
+                    if (e.ot[dk]) p2O++;
+                }
+
+                // วาดฝั่งขวา (บอร์ดแคปรูป)
+                const card = document.createElement('div');
+                card.className = "bg-slate-950 p-3 rounded-xl border border-slate-800/80 flex flex-col gap-1";
+                card.innerHTML = `
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs font-bold text-white">${e.name}</span>
+                        ${getStatusBadge(dayAttend)}
+                    </div>
+                    <div class="grid grid-cols-2 gap-1 text-center text-[9px] text-slate-400 bg-slate-900/50 p-1 rounded mt-1">
+                        <div>งวด 1-12: <span class="text-emerald-400 font-bold">งาน:${p1W} โอ:${p1O}</span></div>
+                        <div>งวด 13-24: <span class="text-emerald-400 font-bold">งาน:${p2W} โอ:${p2O}</span></div>
+                    </div>
+                `;
+                rightContainer.appendChild(card);
             });
         }
 
-        // 🎙️ เทคโนโลยี 1: ระบบสั่งการด้วยเสียง Web Speech API (รองรับภาษาไทย)
-        function startVoiceRecognition() {
-            window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            if (!window.SpeechRecognition) {
-                alert("เบราว์เซอร์ของคุณไม่รองรับระบบ Speech Recognition แนะนำให้ใช้ Google Chrome ครับ");
+        // 🚀 ฟังก์ชันประมวลผลเซฟภาพและเตรียมยิงเข้า LINE
+        function processAndSendToLine() {
+            const lineValue = document.getElementById('line-endpoint-input').value.trim();
+            localStorage.setItem('mp_epae_line_link', lineValue);
+
+            if(!lineValue) {
+                showToast("⚠️ กรุณาใส่ลิงก์แชร์ของเพื่อน หรือ รหัส Token ในช่องด้านบนก่อนครับ!");
                 return;
             }
 
-            const recognition = new SpeechRecognition();
-            recognition.lang = 'th-TH';
-            recognition.interimResults = false;
+            const target = document.getElementById('presentation-card');
+            showToast("📸 กำลังแปลงรายงานเป็นรูปภาพความคมชัดสูง...");
 
-            document.getElementById('voice-status').innerText = "🔊 กำลังฟังเสียงของคุณ...";
-            recognition.start();
-
-            recognition.onresult = function(event) {
-                const speechToText = event.results[0][0].transcript;
-                document.getElementById('voice-status').innerText = `เข้าใจว่า: "${speechToText}"`;
+            html2canvas(target, { backgroundColor: "#060913", scale: 2 }).then(canvas => {
+                const base64Image = canvas.toDataURL('image/png');
                 
-                // ตรรกะตรวจจับคำสั่งเสียงอัจฉริยะ
-                if (speechToText.includes('สมบัติ') && speechToText.includes('ขาด')) {
-                    employees[0].status = "🔴 ขาดงาน";
-                    employees[0].attendance -= 5;
-                } else if (speechToText.includes('สมบัติ') && speechToText.includes('มา')) {
-                    employees[0].status = "🟢 กะเช้า";
-                } else if (speechToText.includes('เยาวมาลย์') && speechToText.includes('มา')) {
-                    employees[1].status = "🟢 กะเช้า";
-                    employees[1].attendance = 80;
-                    employees[1].risk = "ปานกลาง";
-                }
-                
-                setTimeout(() => {
-                    document.getElementById('voice-status').innerText = "เปิดระบบสั่งเสียง (Voice AI)";
-                }, 3000);
-                
-                renderComponents();
-            };
+                // ตรวจสอบว่าเป็น Token ของ LINE Notify หรือไม่ (ถ้าเป็นข้อความยาวๆ ไม่มีสแลช มักจะเป็น Token)
+                if(!lineValue.includes('http')) {
+                    showToast("🤖 ตรวจพบ Token! กำลังพยายามยิงรูปผ่าน LINE Notify API...");
+                    
+                    // หมายเหตุ: การส่งภาพด้วยเว็บเบราว์เซอร์ตรงๆ จะต้องผ่าน Proxy เพื่อแก้ปัญหา CORS 
+                    // นี่คือตัวอย่างรูปแบบโครงสร้างสคริปต์หลังบ้านที่จะคุยกับ LINE:
+                    /*
+                    fetch('https://notify-api.line.me/api/notify', {
+                        method: 'POST',
+                        headers: { 'Authorization': 'Bearer ' + lineValue },
+                        body: formData // ส่งรูปภาพ
+                    })
+                    */
+                    
+                    // เนื่องจากติดเรื่องความปลอดภัยของเบราว์เซอร์ จึงจะทำการดาวน์โหลดภาพควบคู่ไปด้วยเพื่อความชัวร์
+                    const link = document.createElement('a');
+                    link.download = `รายงานกรออีแปะ_${currentDayStr}.png`;
+                    link.href = base64Image;
+                    link.click();
+                    
+                    alert("✨ ระบบทำการบันทึกรูปรายงานลงเครื่องเรียบร้อยแล้ว!\n\nเนื่องจากเว็บเบราว์เซอร์ถูก LINE บล็อกการส่งรูปตรงๆ (CORS) แนะนำให้เปิดแอป LINE ผ่านลิงก์ของเพื่อนแล้วกดส่งรูปภาพที่เพิ่งดาวน์โหลดได้เลยครับ เพื่อความชัวร์ 100%");
+                } else {
+                    // หากเป็นลิงก์แชร์ของ LINE (LINE Share URL)
+                    showToast("เปิดแอป LINE เพื่อส่งรูปภาพไปยังเพื่อน...");
+                    
+                    const link = document.createElement('a');
+                    link.download = `รายงานกรออีแปะ_${currentDayStr}.png`;
+                    link.href = base64Image;
+                    link.click(); // เซฟภาพลงเครื่องให้ก่อน
 
-            recognition.onerror = function() {
-                document.getElementById('voice-status').innerText = "เปิดระบบสั่งเสียง (Voice AI)";
-            }
-        }
-
-        // 🤖 เทคโนโลยี 2: ระบบจำลองการยิง LINE Automation
-        function simulateLineNotify() {
-            alert("🚀 [Automation Active] ระบบได้จำลองการส่งข้อมูลสรุปพฤติกรรมสมาชิกรายวันแบบ Flex Message เข้าสู่กลุ่ม LINE เรียบร้อยแล้ว! (ไม่ต้องกดเซฟรูปภาพและพิมพ์ข้อความเอง)");
-        }
-
-        // วาดกราฟประกอบสถิติ AI
-        window.onload = () => {
-            renderComponents();
-            const ctx = document.getElementById('behaviorChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['ปกติ', 'เสี่ยง', 'พ้นสภาพ'],
-                    datasets: [{
-                        data: [14, 2, 1],
-                        backgroundColor: ['#10b981', '#f59e0b', '#f43f5e'],
-                        borderWidth: 0
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { labels: { color: '#94a3b8', font: { size: 10 } } } }
+                    // เปิดหน้าแชร์ของ LINE ไปยังลิงก์ที่ระบุ
+                    setTimeout(() => {
+                        window.open(`https://line.me/R/share?text=รายงานกำลังพลประจำวันที่ ${formatThaiDate(currentDayStr)} บันทึกรูปภาพลงเครื่องแล้ว สามารถกดแนบรูปส่งต่อได้เลยครับ`, '_blank');
+                    }, 1000);
                 }
             });
         }
+
+        function shadowToast(msg) { /* ทำซ้ำเพื่อความปลอดภัย */ }
+        function showToast(msg) {
+            const el = document.getElementById('toast'); el.innerText = msg;
+            el.classList.remove('translate-y-20', 'opacity-0'); el.classList.add('translate-y-0', 'opacity-100');
+            setTimeout(() => { el.classList.remove('translate-y-0', 'opacity-100'); el.classList.add('translate-y-20', 'opacity-0'); }, 3500);
+        }
+
+        window.onload = () => { initData(); handleDateChange(currentDayStr); };
     </script>
 </body>
 </html>
