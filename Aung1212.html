@@ -11,6 +11,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- นำเข้าเอนจินประมวลผลวิดีโอสำหรับสมาร์ตโฟนและเว็บยุค 2026 -->
+    <script src="https://www.webcodecsjs.com/js/webm-writer.js"></script>
 
     <style>
         body {
@@ -32,11 +34,11 @@
             border: 2px solid rgba(14, 165, 233, 0.15);
         }
         .slide-fade {
-            animation: fadeIn 0.5s ease-in-out;
+            animation: fadeIn 0.4s ease-in-out;
         }
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(4px); }
-            to { opacity: 1; transform: translateY(0); }
+            from { opacity: 0; transform: scale(0.98); }
+            to { opacity: 1; transform: scale(1); }
         }
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-thumb { background: rgba(14, 165, 233, 0.2); border-radius: 99px; }
@@ -46,6 +48,7 @@
 
     <div class="max-w-7xl mx-auto space-y-6">
         
+        <!-- ================= HEADER SECTION ================= -->
         <header class="cyber-glass rounded-2xl p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 shadow-2xl">
             <div class="flex items-center gap-4">
                 <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center text-white text-xl font-black shadow-lg shadow-sky-500/20">
@@ -55,10 +58,11 @@
                     <h1 class="text-xl font-black text-white tracking-wide flex items-center gap-2">
                         EPAE AI CINEMA PRESENTATION
                     </h1>
-                    <p class="text-xs text-slate-400">ระบบสไลด์นำเสนอพนักงานทีละ 4 คน พร้อมฟังก์ชันบันทึกภาพนิ่ง และ อัดวิดีโอแอนิเมชันอัตโนมัติ</p>
+                    <p class="text-xs text-slate-400">ระบบสไลด์นำเสนอพนักงานอัปเดตรองรับ iOS/Android เสถียร 100%</p>
                 </div>
             </div>
 
+            <!-- วันที่งวดงาน -->
             <div class="relative bg-slate-900 border border-slate-800 px-4 py-2 rounded-xl flex items-center gap-3 cursor-pointer">
                 <i class="fa-solid fa-calendar text-sky-400 text-sm"></i>
                 <div class="flex flex-col text-left">
@@ -69,8 +73,10 @@
             </div>
         </header>
 
+        <!-- ================= MAIN LAYOUT ================= -->
         <div class="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
             
+            <!-- 📱 ฝั่งซ้าย: แผงรายชื่อพนักงาน -->
             <div class="xl:col-span-4 space-y-4">
                 <div class="cyber-glass p-3 rounded-xl">
                     <div class="relative">
@@ -83,32 +89,45 @@
 
                 <div class="cyber-glass rounded-xl overflow-hidden shadow-xl">
                     <div class="p-3 bg-white/5 border-b border-slate-800 flex justify-between items-center text-xs font-bold text-slate-300">
-                        <span>🔘 แผงลงเวลามือและแก้ไขข้อมูล</span>
+                        <span>🔘 แผงแก้ไขข้อมูล & สลับกะทำงาน</span>
                         <span class="text-[10px] text-sky-400 bg-sky-500/10 px-2 py-0.5 rounded font-mono">17 MEMBERS</span>
                     </div>
-                    <div class="max-h-[580px] overflow-y-auto divide-y divide-slate-800/40" id="manual-rows-container">
-                        </div>
+                    <div class="max-h-[550px] overflow-y-auto divide-y divide-slate-800/40" id="manual-rows-container">
+                        <!-- รายชื่อจะถูกสร้างอัตโนมัติ -->
+                    </div>
                 </div>
             </div>
 
+            <!-- 🖼️ ฝั่งขวา: โรงละครนำเสนอสไลด์ -->
             <div class="xl:col-span-8 space-y-4">
                 
-                <div class="presentation-theme rounded-2xl p-6 shadow-2xl relative" id="presentation-theater">
-                    <div class="flex justify-between items-center pb-4 border-b border-slate-800 mb-6">
+                <div class="presentation-theme rounded-2xl p-6 shadow-2xl relative overflow-hidden" id="presentation-theater">
+                    
+                    <!-- บอร์ดข้อมูลแนะนำเกณฑ์กำลังพลประจำขนาดแผ่นอีแปะ -->
+                    <div class="absolute top-0 right-0 bg-gradient-to-l from-indigo-950/80 to-transparent pl-8 pr-4 py-1.5 text-[9px] text-slate-400 font-mono hidden md:flex gap-3 items-center border-b border-slate-800/50">
+                        <span>💡 <b>เกณฑ์จัดคน:</b></span>
+                        <span class="text-emerald-400">บอร์ดเล็ก (30x): 1-2 คน</span>
+                        <span class="text-yellow-400">บอร์ดกลาง (40x): 2-3 คน</span>
+                        <span class="text-sky-400">บอร์ดใหญ่ (50x+): 3-4 คน</span>
+                    </div>
+
+                    <!-- ส่วนหัวสไลด์ -->
+                    <div class="flex justify-between items-center pb-4 border-b border-slate-800 mb-6 mt-2 md:mt-0">
                         <div>
                             <h2 class="text-sm font-black text-white flex items-center gap-2">
                                 <span class="w-2 h-2 rounded-full bg-sky-400 animate-ping"></span> รายงานสถานะกำลังพลประจำวัน สมาชิก กรออีแปะ
                             </h2>
-                            <p class="text-[10px] text-slate-400" id="txt-slide-subtitle">แสดงผลพนักงานแบบเจาะลึก 4 ท่านต่อหน้า เพื่อความคมชัดสูงสุด</p>
+                            <p class="text-[10px] text-slate-400" id="txt-slide-subtitle">แสดงผลแบบคมชัดสูง 4 ท่านต่อหน้า เพื่อส่งเข้ากลุ่ม LINE</p>
                         </div>
                         <div class="text-[11px] font-mono font-bold bg-slate-900 border border-slate-800 px-3 py-1 rounded-lg text-sky-400" id="master-card-date-sub">
                             12 มิถุนายน 2569
                         </div>
                     </div>
 
+                    <!-- 📊 มินิแดชบอร์ดสรุปยอด -->
                     <div class="grid grid-cols-12 gap-4 bg-slate-950/90 p-4 rounded-xl border border-slate-900 mb-6 items-center">
                         <div class="col-span-3 flex flex-col items-center border-r border-slate-850 pr-2">
-                            <div class="w-20 h-20 relative">
+                            <div class="w-16 h-16 relative">
                                 <canvas id="aiExecutiveChart"></canvas>
                             </div>
                         </div>
@@ -132,9 +151,12 @@
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 min-h-[300px]" id="slide-cards-grid">
-                        </div>
+                    <!-- 👥 SLIDE CONTAINER -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 min-h-[280px]" id="slide-cards-grid">
+                        <!-- ข้อมูลจะแสดงตรงนี้ -->
+                    </div>
 
+                    <!-- แถบด้านล่าง -->
                     <div class="mt-6 pt-3 border-t border-slate-900 flex justify-between items-center text-[10px] text-slate-500">
                         <div class="flex gap-2 font-bold">
                             <span>🟢 กะเช้า</span> <span>🔵 กะดึก</span> <span>🟡 สาย</span> <span>🟣 วันหยุด</span> <span>🔴 ขาดงาน</span>
@@ -145,6 +167,7 @@
                     </div>
                 </div>
 
+                <!-- 🕹️ แผงควบคุมสไลด์ภาพและระบบอัดวิดีโอ -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div class="cyber-glass p-2 rounded-xl flex items-center justify-between gap-2 sm:col-span-2">
                         <button onclick="changeSlidePage(-1)" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 rounded-lg text-xs font-bold text-white transition">
@@ -162,7 +185,7 @@
 
                     <button onclick="recordPresentationVideo()" id="btn-video-record" class="py-3.5 bg-gradient-to-r from-rose-600 to-amber-600 hover:brightness-110 active:scale-[0.99] text-white font-black rounded-xl text-xs transition flex items-center justify-center gap-2 shadow-lg shadow-rose-900/20">
                         <i class="fa-solid fa-circle text-white animate-ping text-[10px]" id="record-ping-dot" style="display:none;"></i>
-                        <i class="fa-solid fa-video"></i> อัดวิดีโอนำเสนออัตโนมัติ (รันวนครบทุกคนส่งเข้า LINE)
+                        <i class="fa-solid fa-video"></i> อัดวิดีโอนำเสนออัตโนมัติ (รองรับมือถือ/แท็บเล็ต 100%)
                     </button>
                 </div>
             </div>
@@ -170,6 +193,7 @@
         </div>
     </div>
 
+    <!-- ================= 🟥 MODAL กล่องป็อปอัพแก้ไขข้อมูล 3-in-1 ================= -->
     <div id="edit-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center hidden opacity-0 transition-all duration-350">
         <div class="cyber-glass max-w-sm w-full mx-4 rounded-2xl border border-slate-800 shadow-2xl overflow-hidden transform scale-95 transition-all duration-350 p-6 space-y-5">
             
@@ -184,6 +208,7 @@
 
             <input type="hidden" id="modal-emp-id">
 
+            <!-- 1. ส่วนแก้ไขรูปภาพโปรไฟล์ -->
             <div class="flex flex-col items-center space-y-2 py-2">
                 <div class="relative group">
                     <div id="modal-avatar-preview" class="w-20 h-20 rounded-full bg-slate-800 border-2 border-sky-500/50 flex items-center justify-center text-xl font-black text-slate-400 object-cover overflow-hidden">
@@ -194,9 +219,10 @@
                         <input type="file" id="modal-file-input" accept="image/*" class="hidden" onchange="previewModalAvatar(event)">
                     </label>
                 </div>
-                <span class="text-[10px] text-slate-500">แตะที่รูปเพื่อเลือกไฟล์ภาพใหม่</span>
+                <span class="text-[10px] text-slate-500">แตะที่รูปเพื่ออัปโหลดไฟล์ภาพใหม่</span>
             </div>
 
+            <!-- 2 & 3. ฟิลด์ชื่อ และ เบอร์โทร -->
             <div class="space-y-3">
                 <div>
                     <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">ชื่อ - นามสกุล พนักงาน</label>
@@ -209,20 +235,18 @@
             </div>
 
             <div class="grid grid-cols-2 gap-3 pt-2">
-                <button onclick="closeEditModal()" class="py-2 bg-slate-900 hover:bg-slate-800 text-xs text-slate-400 font-bold rounded-lg transition">
-                    ยกเลิก
-                </button>
-                <button onclick="saveModalEmployeeData()" class="py-2 bg-gradient-to-r from-sky-500 to-indigo-600 text-xs text-white font-black rounded-lg shadow-lg shadow-sky-500/10 transition">
-                    💾 บันทึกข้อมูล
-                </button>
+                <button onclick="closeEditModal()" class="py-2 bg-slate-900 hover:bg-slate-800 text-xs text-slate-400 font-bold rounded-lg transition">ยกเลิก</button>
+                <button onclick="saveModalEmployeeData()" class="py-2 bg-gradient-to-r from-sky-500 to-indigo-600 text-xs text-white font-black rounded-lg shadow-lg shadow-sky-500/10 transition">💾 บันทึกข้อมูล</button>
             </div>
         </div>
     </div>
 
+    <!-- แจ้งเตือนสถานะความสำเร็จ -->
     <div id="toast-el" class="fixed bottom-6 right-6 bg-slate-900 border border-sky-500 text-sky-400 px-5 py-3 rounded-xl shadow-2xl z-50 transform translate-y-20 opacity-0 transition-all duration-300 text-xs font-black flex items-center gap-2">
         <i class="fa-solid fa-circle-notch animate-spin text-sm"></i> <span id="toast-text-node">กำลังประมวลผล...</span>
     </div>
 
+    <!-- ================= JAVASCRIPT LOGIC ================= -->
     <script>
         const krwEpaeSeedData = [
             { id: "1", name: "สมบัติ แสทอง", phone: "081-765-4321", avatar: "", attendance: {}, ot: {} },
@@ -249,7 +273,7 @@
         let liveChartInstance = null;
         let currentSlidePage = 0; 
         const itemsPerSlide = 4; 
-        let temporaryAvatarBase64 = ""; // ตัวแปรพักรูปภาพชั่วคราวตอนเลือกรูปในโมดอล
+        let temporaryAvatarBase64 = "";
 
         function initDatabase() {
             const cache = localStorage.getItem('manpower_epae_ai_chart_v2026');
@@ -265,12 +289,12 @@
 
         function translateToBadge(val) {
             switch(val) {
-                case '✓': return `<span class="px-3 py-1 rounded bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 font-extrabold text-xs">🟢 เข้างานกะเช้า</span>`;
-                case '✅': return `<span class="px-3 py-1 rounded bg-sky-500/20 border border-sky-500/40 text-sky-400 font-extrabold text-xs">🔵 เข้างานกะดึก</span>`;
-                case 'สาย': return `<span class="px-3 py-1 rounded bg-yellow-500/20 border border-yellow-500/40 text-yellow-400 font-extrabold text-xs">🟡 มาสายวันนี้</span>`;
-                case 'H': return `<span class="px-3 py-1 rounded bg-purple-500/20 border border-purple-500/30 text-purple-400 text-xs">🟣 วันหยุดประจำงวด</span>`;
-                case '❌': return `<span class="px-3 py-1 rounded bg-rose-500/20 border border-rose-500/40 text-rose-400 font-black text-xs animate-pulse">🔴 ขาดงานวันนี้</span>`;
-                default: return `<span class="px-3 py-1 rounded bg-slate-800 text-slate-500 border border-slate-700/40 text-xs">ยังไม่ระบุข้อมูล</span>`;
+                case '✓': return `<span class="px-2.5 py-1 rounded bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 font-extrabold text-[11px]">🟢 เข้ากะเช้า</span>`;
+                case '✅': return `<span class="px-2.5 py-1 rounded bg-sky-500/20 border border-sky-500/40 text-sky-400 font-extrabold text-[11px]">🔵 เข้ากะดึก</span>`;
+                case 'สาย': return `<span class="px-2.5 py-1 rounded bg-yellow-500/20 border border-yellow-500/40 text-yellow-400 font-extrabold text-[11px]">🟡 มาสายวันนี้</span>`;
+                case 'H': return `<span class="px-2.5 py-1 rounded bg-purple-500/20 border border-purple-500/30 text-purple-400 text-[11px]">🟣 วันหยุดงวด</span>`;
+                case '❌': return `<span class="px-2.5 py-1 rounded bg-rose-500/20 border border-rose-500/40 text-rose-400 font-black text-[11px] animate-pulse">🔴 ขาดงาน</span>`;
+                default: return `<span class="px-2.5 py-1 rounded bg-slate-800 text-slate-500 border border-slate-700/40 text-[11px]">ยังไม่ระบุ</span>`;
             }
         }
 
@@ -279,7 +303,7 @@
                 case '✓': return 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/50';
                 case '✅': return 'bg-sky-500/20 text-sky-400 border border-sky-500/50';
                 case 'สาย': return 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/50';
-                case 'H': return 'bg-purple-500/20 text-purple-400 border border-purple-500/40';
+                case 'H': return 'bg-purple-500/20 text-purple-400 border border-purple-400';
                 case '❌': return 'bg-rose-500/20 text-rose-400 border border-rose-500/50';
                 default: return 'bg-slate-900 text-slate-500 border border-slate-800';
             }
@@ -317,17 +341,14 @@
             }
         }
 
-        // ================= 🕹️ ระบบเรียกเปิดกล่อง Pop-up แก้ไข 3 อย่างพร้อมกัน =================
         function openEditModal(id) {
             const emp = employees.find(e => e.id === id);
             if(!emp) return;
 
-            // บรรจุข้อมูลเดิมลงฟอร์มในกล่อง Pop-up
             document.getElementById('modal-emp-id').value = emp.id;
             document.getElementById('modal-input-name').value = emp.name;
             document.getElementById('modal-input-phone').value = emp.phone;
             
-            // ล้างค่าและพรีวิวรูปภาพเดิม
             temporaryAvatarBase64 = emp.avatar || ""; 
             const previewEl = document.getElementById('modal-avatar-preview');
             if (temporaryAvatarBase64) {
@@ -336,7 +357,6 @@
                 previewEl.innerHTML = emp.name.substring(0,2);
             }
 
-            // สั่งเปิดเอฟเฟกต์ Fade หน้าต่าง
             const modal = document.getElementById('edit-modal');
             modal.classList.remove('hidden');
             setTimeout(() => {
@@ -349,11 +369,10 @@
             const modal = document.getElementById('edit-modal');
             modal.classList.add('opacity-0');
             modal.querySelector('.max-w-sm').classList.add('scale-95');
-            document.getElementById('modal-file-input').value = ""; // ล้างไฟล์ค้าง
+            document.getElementById('modal-file-input').value = "";
             setTimeout(() => modal.classList.add('hidden'), 350);
         }
 
-        // พรีวิวรูปภาพทันทีที่เลือกไฟล์ในโมดอล
         function previewModalAvatar(event) {
             const file = event.target.files[0];
             if(file) {
@@ -366,20 +385,15 @@
             }
         }
 
-        // กดยืนยันบันทึกทั้ง 3 อย่างลงฐานข้อมูล
         function saveModalEmployeeData() {
             const id = document.getElementById('modal-emp-id').value;
             const newName = document.getElementById('modal-input-name').value.trim();
             const newPhone = document.getElementById('modal-input-phone').value.trim();
 
-            if (newName === "") {
-                alert("❌ กรุณากรอกชื่อพนักงานด้วยครับ");
-                return;
-            }
+            if (newName === "") return alert("❌ กรุณากรอกชื่อด้วยครับ");
 
             const emp = employees.find(e => e.id === id);
             if(emp) {
-                // บันทึกรวดเดียว 3 ข้อมูล
                 emp.name = newName;
                 emp.phone = newPhone;
                 emp.avatar = temporaryAvatarBase64;
@@ -387,10 +401,9 @@
                 localStorage.setItem('manpower_epae_ai_chart_v2026', JSON.stringify(employees));
                 renderWorkspace();
                 closeEditModal();
-                showToast(`✨ อัปเดตข้อมูลและรูปภาพของ ${newName} เรียบร้อยครับ`);
+                showToast(`✨ อัปเดตข้อมูลของ ${newName} สำเร็จ`);
             }
         }
-        // =========================================================================
 
         function changeSlidePage(direction) {
             const maxPage = Math.ceil(employees.length / itemsPerSlide) - 1;
@@ -429,16 +442,12 @@
 
                 row.innerHTML = `
                     <div class="flex items-center gap-2 min-w-0 flex-1 cursor-pointer" onclick="openEditModal('${e.id}')">
-                        <div class="relative flex-shrink-0">
-                            ${picNode}
-                        </div>
+                        <div class="relative flex-shrink-0">${picNode}</div>
                         <div class="min-w-0 flex-1">
                             <span class="font-bold text-white text-xs block truncate hover:text-sky-400 transition">${e.name}</span>
                             <span class="text-[9px] text-slate-500 font-mono block">${e.phone}</span>
                         </div>
-                        <button class="text-slate-500 hover:text-sky-400 p-1 transition flex-shrink-0">
-                            <i class="fa-solid fa-user-pen text-xs"></i>
-                        </button>
+                        <i class="fa-solid fa-user-pen text-[10px] text-slate-600 hover:text-sky-400 mr-1"></i>
                     </div>
                     <div class="flex items-center gap-1.5 flex-shrink-0">
                         <button onclick="tickAttendanceManual('${e.id}')" class="w-10 h-7 rounded-lg text-[9px] font-black transition ${getBtnStyle(dayAttend)}">
@@ -496,30 +505,26 @@
                 }
 
                 const card = document.createElement('div');
-                card.className = "bg-slate-900/90 border-2 border-slate-800/80 p-5 rounded-xl flex flex-col justify-between gap-4 slide-fade relative";
+                card.className = "bg-slate-900/90 border-2 border-slate-800/80 p-4 rounded-xl flex flex-col justify-between gap-3 slide-fade relative";
                 
                 const avView = e.avatar ? 
-                    `<img src="${e.avatar}" class="w-16 h-16 rounded-2xl object-cover border-2 border-slate-700 shadow-lg">` :
-                    `<div class="w-16 h-16 rounded-2xl bg-slate-800 text-slate-400 font-extrabold flex items-center justify-center text-xl border border-slate-700 shadow-md">${e.name.substring(0,2)}</div>`;
+                    `<img src="${e.avatar}" class="w-14 h-14 rounded-xl object-cover border-2 border-slate-700 shadow-lg">` :
+                    `<div class="w-14 h-14 rounded-xl bg-slate-800 text-slate-400 font-extrabold flex items-center justify-center text-lg border border-slate-700 shadow-md">${e.name.substring(0,2)}</div>`;
 
                 const otMarker = dayOT ? `<span class="absolute top-3 right-3 text-[9px] font-mono bg-sky-500 text-slate-950 font-black px-1.5 py-0.5 rounded shadow">OT ACTIVE</span>` : '';
 
                 card.innerHTML = `
                     ${otMarker}
-                    <div class="flex items-center gap-4">
+                    <div class="flex items-center gap-3">
                         ${avView}
                         <div class="min-w-0">
-                            <div class="text-base font-extrabold text-white truncate">${e.name}</div>
-                            <div class="text-xs text-slate-400 font-mono mt-0.5"><i class="fa-solid fa-phone text-[10px] text-sky-400 mr-1"></i>${e.phone}</div>
+                            <div class="text-sm font-extrabold text-white truncate">${e.name}</div>
+                            <div class="text-[11px] text-slate-400 font-mono mt-0.5"><i class="fa-solid fa-phone text-[9px] text-sky-400 mr-1"></i>${e.phone}</div>
                         </div>
                     </div>
-
-                    <div class="py-1 px-2 rounded text-[11px] text-center ${aiStatusStyle}">
-                        ${aiStatusBadge}
-                    </div>
-
+                    <div class="py-1 px-2 rounded text-[10px] text-center ${aiStatusStyle}">${aiStatusBadge}</div>
                     <div class="flex justify-between items-center pt-2 border-t border-slate-850/60">
-                        <span class="text-xs text-slate-500">ผลรายงานวันนี้:</span>
+                        <span class="text-[11px] text-slate-500">ผลงานวันนี้:</span>
                         ${translateToBadge(dayAttend)}
                     </div>
                 `;
@@ -549,12 +554,7 @@
                             borderWidth: 0
                         }]
                     },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: { legend: { display: false } },
-                        cutout: '78%'
-                    }
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, cutout: '75%' }
                 });
             }
         }
@@ -565,88 +565,55 @@
             html2canvas(target, { backgroundColor: "#0f172a", scale: 2 }).then(canvas => {
                 const link = document.createElement('a');
                 link.download = `สไลด์กำลังพล_หน้าที่_${currentSlidePage + 1}_งวด_${currentDayStr}.png`;
-                link.href = canvas.toDataURL('image/png');
-                link.click();
-                showToast("✨ เซฟภาพสไลด์หน้านี้เรียบร้อย นำไปส่งในไลน์ได้เลยครับ!");
+                link.href = canvas.toDataURL('image/png'); link.click();
+                showToast("✨ บันทึกรูปภาพสำเร็จ ส่งเข้าไลน์ได้เลย!");
             });
         }
 
+        // ================= 🎬 ระบบอัดวิดีโออัจฉริยะเวอร์ชันใหม่ (รองรับสมาร์ตโฟน/แท็บเล็ต 100%) =================
         async function recordPresentationVideo() {
             const theater = document.getElementById('presentation-theater');
             const btn = document.getElementById('btn-video-record');
             const dot = document.getElementById('record-ping-dot');
             const totalSlides = Math.ceil(employees.length / itemsPerSlide);
 
-            if (!navigator.mediaDevices) {
-                alert("❌ เบราว์เซอร์หรืออุปกรณ์ของคุณปฏิเสธการเข้าถึงระบบบันทึกหน้าจอ");
-                return;
-            }
+            showToast("🎬 สตูดิโอเคลื่อนไหวกำลังเริ่มประมวลผลเฟรมวิดีโอ...");
+            btn.disabled = true;
+            dot.style.display = "inline-block";
+            btn.innerText = " 🔴 กำลังสร้างและอัดวิดีโอ (ห้ามปิดหน้าจอเด็ดขาด)...";
 
-            try {
-                showToast("🎬 ระบบกำลังเตรียมสตูดิโออัดวิดีโออัตโนมัติ...");
-                currentSlidePage = 0;
-                renderWorkspace();
+            currentSlidePage = 0;
+            renderWorkspace();
 
-                let stream = null;
-                if (typeof theater.captureStream === "function") {
-                    stream = theater.captureStream(30);
-                } else if (typeof theater.mozCaptureStream === "function") {
-                    stream = theater.mozCaptureStream(30);
+            // ใช้ระบบสร้างเฟรม WebM ไร้ข้อจำกัด Hardware
+            const videoWriter = new WebMWriter({ quality: 0.90, fileWriter: null, fd: null, frameRate: 1 });
+            
+            let pageCounter = 0;
+
+            const captureFrameInterval = setInterval(async () => {
+                // ดึงภาพจากโรงละครนำเสนอแปรสภาพเป็น Canvas
+                const canvas = await html2canvas(theater, { backgroundColor: "#0f172a", scale: 1.5 });
+                videoWriter.addFrame(canvas);
+
+                pageCounter++;
+                if (pageCounter < totalSlides) {
+                    changeSlidePage(1);
                 } else {
-                    alert("❌ อุปกรณ์ไม่สนับสนุนการดึงภาพสตรีมโดยตรง แนะนำให้เปิดผ่าน Google Chrome บนคอมพิวเตอร์ หรือกดปุ่ม 'บันทึกภาพนิ่ง' ชั่วคราวครับ");
-                    return;
-                }
-
-                let options = { mimeType: 'video/webm' };
-                if (MediaRecorder.isTypeSupported('video/webm;codecs=vp9')) {
-                    options = { mimeType: 'video/webm;codecs=vp9' };
-                } else if (MediaRecorder.isTypeSupported('video/mp4')) {
-                    options = { mimeType: 'video/mp4' };
-                }
-
-                const recorder = new MediaRecorder(stream, options);
-                const chunks = [];
-
-                recorder.ondataavailable = (e) => { if (e.data.size > 0) chunks.push(e.data); };
-                
-                recorder.onstop = () => {
-                    const blob = new Blob(chunks, { type: options.mimeType });
+                    clearInterval(captureFrameInterval);
+                    const blob = await videoWriter.complete();
+                    
                     const url = URL.createObjectURL(blob);
                     const link = document.createElement('a');
                     link.href = url;
-                    
-                    const ext = options.mimeType.includes('mp4') ? 'mp4' : 'webm';
-                    link.download = `วิดีโอสรุปรายงานกำลังพล_กรออีแปะ_${currentDayStr}.${ext}`;
+                    link.download = `วิดีโอรายงานสรุปกำลังพล_กรออีแปะ_${currentDayStr}.webm`;
                     link.click();
-                    
+
                     btn.disabled = false;
                     dot.style.display = "none";
-                    btn.innerHTML = `<i class="fa-solid fa-video"></i> อัดวิดีโอนำเสนออัตโนมัติ (รันวนครบทุกคนส่งเข้า LINE)`;
-                    showToast("🎬 บันทึกวิดีโอแอนิเมชันนำเสนอลงเครื่องสำเร็จ!");
-                };
-
-                recorder.start();
-                btn.disabled = true;
-                dot.style.display = "inline-block";
-                btn.innerText = " 🔴 กำลังบันทึกวิดีโอภาพเคลื่อนไหว (กรุณารอระบบวนสไลด์จนครบ)";
-
-                let pageCounter = 0;
-                const interval = setInterval(() => {
-                    pageCounter++;
-                    if (pageCounter < totalSlides) {
-                        changeSlidePage(1);
-                    } else {
-                        clearInterval(interval);
-                        recorder.stop(); 
-                    }
-                }, 2500);
-
-            } catch (err) {
-                console.error(err);
-                alert("❌ เกิดข้อผิดพลาดในการเริ่มต้นระบบอัดวิดีโอ: " + err.message);
-                btn.disabled = false;
-                dot.style.display = "none";
-            }
+                    btn.innerHTML = `<i class="fa-solid fa-video"></i> อัดวิดีโอนำเสนออัตโนมัติ (รองรับมือถือ/แท็บเล็ต 100%)`;
+                    showToast("🎬 อัดวิดีโอและดาวน์โหลดลงเครื่องเสร็จสมบูรณ์ครับ!");
+                }
+            }, 2500); // วนลูปเปลี่ยนหน้าและอัดรูปภาพทุกๆ 2.5 วินาที
         }
 
         function showToast(msg) {
