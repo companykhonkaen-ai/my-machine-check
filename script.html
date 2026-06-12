@@ -1,0 +1,47 @@
+<script>
+// 1. ฟังก์ชันเชื่อมต่อ Google แปลภาษาออโต้ (รองรับคำศัพท์เป็นแสนเป็นล้านคำ)
+async function autoTranslateToMyanmar(text) {
+    if (!text || text.trim() === "") return text;
+    
+    let textClean = text.trim();
+    
+    # ถ้าเป็นตัวเลขล้วน, สัญลักษณ์, หรือภาษาพม่าอยู่แล้ว ไม่ต้องส่งไปแปล
+    if (!isNaN(textClean) || textClean.match(/[က-ဥဏ-ဿဝ-၏၀-၉]/)) {
+        return text;
+    }
+
+    try {
+        // ดึงคำแปลสดๆ จาก Google Translate API
+        const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=th&tl=my&dt=t&q=${encodeURIComponent(textClean)}`;
+        const response = await fetch(url);
+        const result = await response.json();
+        
+        if (result && result[0] && result[0][0]) {
+            const myanmarText = result[0][0][0];
+            // ส่งกลับไปในรูปแบบ "ภาษาไทย (ภาษาพม่า)" ตามที่คุณต้องการ
+            return `${textClean} (${myanmarText})`;
+        }
+    } catch (error) {
+        console.error("ระบบแปลภาษาขัดข้อง:", error);
+    }
+    return text; // หากระบบเน็ตหลุด ให้แสดงภาษาไทยเดิมเพื่อป้องกันข้อมูลหาย
+}
+
+// 2. สั่งให้ระบบวิ่งไปเปลี่ยนคำศัพท์ในตารางทั้งหมดทันทีที่หน้าเว็บโหลดเสร็จ
+window.addEventListener('DOMContentLoaded', async () => {
+    console.log("⏳ ระบบแปลภาษาอัตโนมัติกำลังทำงาน...");
+    
+    // ค้นหาตำแหน่งข้อความทั้งหมดในตาราง (รวมหัวตาราง th และช่องข้อมูล td)
+    const tableCells = document.querySelectorAll('th, td, label, span');
+    
+    for (let cell of tableCells) {
+        // แปลเฉพาะช่องที่มีข้อความตัวหนังสือ และไม่มีปุ่มหรือตารางซ้อนอยู่ข้างใน
+        if (cell.children.length === 0 && cell.innerText.trim() !== "") {
+            const originalText = cell.innerText;
+            const newText = await autoTranslateToMyanmar(originalText);
+            cell.innerText = newText;
+        }
+    }
+    console.log("✅ เปลี่ยนใบออเดอร์เป็น 2 ภาษา (ไทย-พม่า) เรียบร้อยแล้ว!");
+});
+</script>
