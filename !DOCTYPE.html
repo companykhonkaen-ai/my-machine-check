@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบสรุปยอดพนักงานและโอที - Premium HD Edition</title>
+    <title>ระบบสรุปยอดพนักงานและโอที - กลุ่มงานเสร็จสมบูรณ์</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -31,12 +31,12 @@
         <header class="flex flex-col lg:flex-row justify-between items-start lg:items-center bg-slate-900/40 backdrop-blur-xl p-6 rounded-3xl border border-slate-800 mb-6 gap-4 shadow-2xl">
             <div>
                 <span class="text-[10px] font-bold text-emerald-400 uppercase tracking-widest bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
-                    <i class="fa-solid fa-database text-xs mr-1"></i> Local Storage Database Connected
+                    <i class="fa-solid fa-rotate text-xs mr-1 animate-spin"></i> ระบบล้างข้อมูลเป็น 0 เริ่มต้นใหม่วันนี้เรียบร้อย
                 </span>
                 <h1 class="text-2xl md:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-cyan-400 to-indigo-400 mt-1.5">
-                    ระบบสรุปกำลังคนและยอดสะสมโอที
+                    ระบบสรุปกำลังคนแยกตามกลุ่มงาน
                 </h1>
-                <p class="text-slate-400 text-xs mt-1">ข้อมูลจะอัปเดตแบบเรียลไทม์ฝั่งขวาทันทีเมื่อมีการคลิกเปลี่ยนสถานะ</p>
+                <p class="text-slate-400 text-xs mt-1">แยกโครงสร้างหัวหน้าทีม และปรับยอดสะสมเริ่มต้นจากสถานะวันนี้เป็นหลัก</p>
             </div>
 
             <div class="relative bg-slate-950 border-2 border-slate-800 hover:border-emerald-500/50 px-5 py-3 rounded-2xl flex items-center gap-3 min-w-[240px] shadow-xl transition-all cursor-pointer">
@@ -64,7 +64,7 @@
 
                 <div class="bg-slate-900/20 rounded-2xl border border-slate-800/60 overflow-hidden shadow-xl">
                     <div class="bg-slate-900/80 px-4 py-2.5 border-b border-slate-800 text-[11px] font-bold text-slate-400 flex justify-between items-center">
-                        <span>👇 คลิกที่ปุ่มเพื่อเปลี่ยนสถานะ</span>
+                        <span>👇 คลิกปุ่มเพื่อบันทึกงานวันนี้</span>
                         <span class="text-[10px] text-emerald-400 font-normal">บันทึกอัตโนมัติ</span>
                     </div>
                     <table class="w-full text-left border-collapse">
@@ -92,7 +92,7 @@
                             <h3 class="text-xl font-black text-white tracking-tight flex items-center gap-2 justify-center sm:justify-start">
                                 <i class="fa-solid fa-clipboard-user text-emerald-400"></i> สรุปกำลังคน ปั่นอวน ปั้มป้าย คลังใย
                             </h3>
-                            <p class="text-xs text-slate-400 mt-1">ตารางสรุปสถานะรายวัน และรายงานยอดสถิติสะสมทั้งเดือน</p>
+                            <p class="text-xs text-slate-400 mt-1">ตารางสรุปสถานะรายวัน และรายงานยอดสถิติสะสมแยกตามกลุ่มงาน</p>
                         </div>
                         <div class="bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-bold px-4 py-2 rounded-xl text-center min-w-[160px]">
                             <div class="text-[9px] uppercase tracking-wider text-emerald-500/70 font-black">ประจำวันที่</div>
@@ -124,7 +124,7 @@
                             <span class="bg-slate-900 px-2 py-1 rounded border border-slate-800"><b>วันหยุด:</b> 🟣 วันหยุด</span>
                             <span class="bg-slate-900 px-2 py-1 rounded border border-slate-800"><b>ขาดงาน:</b> 🔴 ขาดงาน</span>
                         </div>
-                        <span id="pres-card-timestamp" class="font-mono-tech font-bold text-slate-400 bg-slate-900/60 px-3 py-1 rounded-lg border border-slate-800ภาพ"></span>
+                        <span id="pres-card-timestamp" class="font-mono-tech font-bold text-slate-400 bg-slate-900/60 px-3 py-1 rounded-lg border border-slate-800"></span>
                     </div>
                 </div>
 
@@ -168,8 +168,9 @@
     </div>
 
     <script>
-        // ข้อมูลตั้งต้นพนักงานพรีเมียม
+        // ข้อมูลตั้งต้นพนักงานพรีเมียม (แยกกลุ่มงานพี่ลำดวนแล้ว และพนักงานปั่นอวนเหลือ 4 คน)
         const employeeDataSeed = [
+            { id: "0000000", name: "พี่ลำดวน หัวหน้าทีม", department: "หัวหน้าทีม", avatar: "https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?auto=format&fit=crop&q=80&w=200&h=200", attendance: {}, ot: {} },
             { id: "4200467", name: "นส.พนา ซูกลิ่นหอม", department: "พนักงานปั๊มป้าย", avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=200&h=200", attendance: {}, ot: {} },
             { id: "6900051", name: "นส. ZIN MAY HLAING", department: "พนักงานปั๊มป้าย", avatar: "https://images.unsplash.com/photo-1554151228-14d9def656e4?auto=format&fit=crop&q=80&w=200&h=200", attendance: {}, ot: {} },
             { id: "6900292", name: "นายจิรานุวัฒน์ สิงหวิชา", department: "พนักงานคลังสินค้า", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200&h=200", attendance: {}, ot: {} },
@@ -178,7 +179,6 @@
             { id: "6800607", name: "นาย MYO KHAUNG OO", department: "พนักงานปั่นอวน", avatar: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=200&h=200", attendance: {}, ot: {} },
             { id: "6700662", name: "นาย AUNG KYAW THAT", department: "พนักงานปั่นอวน", avatar: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=200&h=200", attendance: {}, ot: {} },
             { id: "6900047", name: "นาย CHIT YIN HTOO", department: "พนักงานปั่นอวน", avatar: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&q=80&w=200&h=200", attendance: {}, ot: {} },
-            { id: "0000000", name: "พี่ลำดวน หัวหน้าทีม", department: "พนักงานปั่นอวน", avatar: "https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?auto=format&fit=crop&q=80&w=200&h=200", attendance: {}, ot: {} },
             { id: "6900414", name: "นาย SOE PYAE KYAW", department: "พนักงานปั่นเพลากะเช้า", avatar: "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?auto=format&fit=crop&q=80&w=200&h=200", attendance: {}, ot: {} },
             { id: "6900401", name: "นาย THAN HTIKE", department: "พนักงานปั่นเพลากะเช้า", avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200&h=200", attendance: {}, ot: {} }
         ];
@@ -188,47 +188,21 @@
         let targetModalId = null;
         let modalImgBuffer = "";
 
-        // ฟังก์ชันสร้างข้อมูลจำลองการเข้างานอัตโนมัติ (Mock Data) ประจำเดือนมิถุนายน เพื่อให้เห็นยอดสรุปฝั่งขวาทันที
+        // บังคับล้างฐานข้อมูลประวัติทั้งหมดให้เริ่มนับใหม่ตั้งแต่วันนี้ (12 มิ.ย.) ตามคำสั่ง
         function initData() {
-            const saved = localStorage.getItem('payroll_premium_v3');
-            if (saved) {
-                employees = JSON.parse(saved);
-            } else {
-                employees = JSON.parse(JSON.stringify(employeeDataSeed));
-                
-                // จำลองข้อมูลวันที่ 1 ถึง 11 มิถุนายน 2569 ย้อนหลังให้ทุกคน
-                employees.forEach((emp, index) => {
-                    for (let d = 1; d <= 11; d++) {
-                        const dateKey = `2026-06-${d < 10 ? '0' + d : d}`;
-                        
-                        // สุ่มการเข้างาน: ส่วนใหญ่มาเช้า (✓) หรือดึก (✅), นานๆ ขาดหรือสายทีหนึ่ง
-                        let rand = Math.random();
-                        if (rand > 0.92) {
-                            emp.attendance[dateKey] = "❌"; // ขาดงาน
-                        } else if (rand > 0.85) {
-                            emp.attendance[dateKey] = "สาย"; // สาย
-                        } else if (index % 3 === 0) {
-                            emp.attendance[dateKey] = "✅"; // กะดึก
-                        } else {
-                            emp.attendance[dateKey] = "✓"; // กะเช้า
-                        }
-
-                        // จำลองสุ่มโอทีเฉพาะบางวัน
-                        if (Math.random() > 0.5) {
-                            emp.ot[dateKey] = true;
-                        }
-                    }
-
-                    // บันทึกค่าเริ่มต้นของวันปัจจุบัน (วันที่ 12) ไว้ล่วงหน้าด้วย
-                    emp.attendance["2026-06-12"] = (index % 2 === 0) ? "✓" : "✅";
-                    emp.ot["2026-06-12"] = true;
-                });
-                saveToLocalStorage();
-            }
+            // ทำการบันทึกทับใหม่เพื่อเคลียร์ประวัติเก่าทิ้งเป็น 0 ทั้งหมด
+            employees = JSON.parse(JSON.stringify(employeeDataSeed));
+            
+            // ตั้งค่าเริ่มต้นของวันนี้ให้ทุกคนมาทำงานกะเช้าพร้อมโอที เพื่อให้เห็นฟอร์มตารางเปิดขึ้นมาไม่โล่ง
+            employees.forEach((emp) => {
+                emp.attendance["2026-06-12"] = "✓"; 
+                emp.ot["2026-06-12"] = true;
+            });
+            saveToLocalStorage();
         }
 
         function saveToLocalStorage() {
-            localStorage.setItem('payroll_premium_v3', JSON.stringify(employees));
+            localStorage.setItem('payroll_premium_v4_clean', JSON.stringify(employees));
         }
 
         const attendCycle = ["", "✓", "✅", "สาย", "H", "❌"];
@@ -241,7 +215,7 @@
                 case '✅': return `<div class="flex flex-col items-center"><span class="text-cyan-400 font-extrabold text-[11px] bg-cyan-500/10 px-2 py-0.5 rounded border border-cyan-500/20">🔵 มา (ดึก)</span>${otBadge}</div>`;
                 case 'สาย': return `<div class="flex flex-col items-center"><span class="text-amber-400 font-extrabold text-[11px] bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">🟡 มาสาย</span>${otBadge}</div>`;
                 case 'H': return `<span class="text-purple-400 font-bold bg-purple-500/10 px-2 py-0.5 rounded border border-purple-500/20">🟣 วันหยุด</span>`;
-                case '❌': return `<span class="text-rose-400 font-black bg-rose-500/10 px-2 py-0.5 rounded border border-rose-500/20">🔴 ขาดงาน</span>`;
+                case '❌': return `<span class="text-rose-400 font-black bg-rose-500/10 px-2 py-0.5 rounded border border-rose-400/40">🔴 ขาดงาน</span>`;
                 default: return `<span class="text-slate-600 font-medium">- ไม่ได้ลงชื่อ -</span>`;
             }
         }
@@ -288,7 +262,6 @@
             }
         }
 
-        // วาดตารางฝั่งซ้าย (แผงควบคุม)
         function renderTable() {
             const sQuery = document.getElementById('search-input').value.toLowerCase();
             const box = document.getElementById('employee-rows');
@@ -318,7 +291,7 @@
                     </td>
                     <td class="p-3">
                         <span class="font-extrabold text-slate-200 text-xs block">${e.name}</span>
-                        <span class="text-slate-500 text-[10px] font-mono-tech">${e.id === '0000000' ? 'SPECIAL' : 'ID: '+e.id}</span>
+                        <span class="text-slate-500 text-[10px] font-mono-tech">${e.id === '0000000' ? 'LEADER' : 'ID: '+e.id}</span>
                     </td>
                     <td class="p-2 bg-slate-900/10 text-center">
                         <button onclick="stepAttendance('${e.id}')" class="w-14 h-9 rounded-xl text-xs font-black mx-auto transition-all transform active:scale-95 ${getAttendStyle(currentAttend)}">
@@ -335,7 +308,6 @@
             });
         }
 
-        // วาดตารางฝั่งขวา (รายงานและยอดสะสมสรุป)
         function renderMasterAllInOneReport() {
             const pParts = currentDayStr.split('-');
             const year = parseInt(pParts[0]);
@@ -343,21 +315,22 @@
             const daysInMonth = new Date(year, month, 0).getDate();
 
             const mTh = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
-            document.getElementById('pres-card-timestamp').innerText = `สรุปยอดสะสมรอบเดือน ${mTh[month-1]} ${year+543}`;
+            document.getElementById('pres-card-timestamp').innerText = `สรุปยอดสะสมกลุ่มงานรอบเดือน ${mTh[month-1]} ${year+543}`;
 
             const tbody = document.getElementById('master-summary-rows');
             tbody.innerHTML = '';
 
-            const departments = ["พนักงานปั๊มป้าย", "พนักงานคลังสินค้า", "พนักงานปั่นอวน", "พนักงานปั่นเพลากะเช้า"];
+            // รายการกลุ่มงานที่อัปเดตใหม่ (พี่ลำดวนแยกเป็นหัวหน้าทีมเดี่ยว)
+            const departments = ["หัวหน้าทีม", "พนักงานปั๊มป้าย", "พนักงานคลังสินค้า", "พนักงานปั่นอวน", "พนักงานปั่นเพลากะเช้า"];
             
             departments.forEach(dept => {
                 const deptEmps = employees.filter(e => e.department === dept);
                 if(deptEmps.length === 0) return;
 
-                // หัวข้อชื่อแผนก
+                // หัวข้อแยกตามคำว่า "กลุ่มงาน"
                 const deptRow = document.createElement('tr');
                 deptRow.className = "bg-slate-900/90 font-bold border-y border-slate-800 text-[11px]";
-                deptRow.innerHTML = `<td colspan="5" class="p-2.5 pl-4 text-cyan-400 font-extrabold tracking-wide"><i class="fa-solid fa-layer-group mr-2 text-indigo-400"></i> แผนก: ${dept} (${deptEmps.length} คน)</td>`;
+                deptRow.innerHTML = `<td colspan="5" class="p-2.5 pl-4 text-cyan-400 font-extrabold tracking-wide"><i class="fa-solid fa-layer-group mr-2 text-indigo-400"></i> กลุ่มงาน: ${dept} (${deptEmps.length} คน)</td>`;
                 tbody.appendChild(deptRow);
 
                 deptEmps.forEach(e => {
@@ -367,7 +340,7 @@
                     let totalAbsentCount = 0;
                     let totalLateCount = 0;
 
-                    // ฟังก์ชันวนลูปคำนวณวันทำงานและโอทีตามช่วงที่กำหนด
+                    // ฟังก์ชันคำนวณสถิติตามช่วงวันที่ (เริ่มนับใหม่จากศูนย์จริง ข้อมูลเก่าไม่มีแล้ว)
                     const getStatsForRange = (start, end) => {
                         let work = 0, ot = 0;
                         for (let d = start; d <= end; d++) {
@@ -375,7 +348,6 @@
                             if (e.attendance[dKey] === '✓' || e.attendance[dKey] === '✅' || e.attendance[dKey] === 'สาย') work++;
                             if (e.ot[dKey]) ot++;
                             
-                            // นับยอดสายและขาดสะสมทั้งเดือนเพื่อนำมาออกกล่องแจ้งเตือน
                             if (e.attendance[dKey] === '❌') totalAbsentCount++;
                             if (e.attendance[dKey] === 'สาย') totalLateCount++;
                         }
@@ -386,7 +358,6 @@
                     const p2 = getStatsForRange(13, 24);
                     const pMonth = getStatsForRange(1, daysInMonth);
 
-                    // เงื่อนไขกล่องแจ้งเตือนความพฤติพนักงาน
                     let alertBadgeHtml = "";
                     if (totalAbsentCount >= 3) {
                         alertBadgeHtml = `<div class="mt-1 text-[9px] bg-rose-500/20 text-rose-400 font-black border border-rose-500/30 px-2 py-0.5 rounded-md inline-block">🛑 พ้นสภาพ (ขาด ${totalAbsentCount} วัน)</div>`;
@@ -406,7 +377,7 @@
                             <div class="flex-shrink-0">${picHtml}</div>
                             <div class="min-w-0 flex-1">
                                 <div class="font-extrabold text-white text-[12px] tracking-wide">${e.name}</div>
-                                <div class="text-[9px] font-mono-tech text-slate-500">${e.id === '0000000' ? 'ตำแหน่งพิเศษ' : 'ID: '+e.id}</div>
+                                <div class="text-[9px] font-mono-tech text-slate-500">${e.id === '0000000' ? 'หัวหน้าทีมควบคุม' : 'ID: '+e.id}</div>
                                 ${alertBadgeHtml}
                             </div>
                         </td>
@@ -463,7 +434,7 @@
         }
         function closeProfileModal() { document.getElementById('profile-modal').classList.add('hidden'); }
 
-        // ถ่ายภาพหน้าจอความละเอียดสูงส่ง LINE
+        // ถ่ายภาพหน้าจอส่ง LINE
         function exportMasterReportImage() {
             const target = document.getElementById('presentation-card');
             showToast("📸 กำลังประมวลผลรูปภาพความละเอียดสูง...");
@@ -473,7 +444,7 @@
                 useCORS: true 
             }).then(cv => {
                 const a = document.createElement('a');
-                a.download = `รายงานกำลังคน_และยอดโอที_${currentDayStr}.png`;
+                a.download = `รายงานกำลังคน_กลุ่มงาน_${currentDayStr}.png`;
                 a.href = cv.toDataURL('image/png'); a.click();
                 showToast("✨ บันทึกภาพลงอุปกรณ์สำเร็จ! ตัวหนังสือคมกริบ");
             });
