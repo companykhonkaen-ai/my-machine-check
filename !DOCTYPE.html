@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบสรุปกำลังคน - เวอร์ชันแก้ไขข้อมูลถาวรสมบูรณ์</title>
+    <title>ระบบสรุปกำลังคน - เวอร์ชันดีไซน์พรีเมียมโปร่งแสง</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,121 +14,149 @@
     <style>
         body {
             font-family: 'Noto Sans Thai', sans-serif;
-            background-color: #030712;
+            background-color: #0f172a; /* เปลี่ยนเป็นสีน้ำเงินเข้มสว่างขึ้น ไม่มืดดำ */
+            background-image: radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
+                              radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.1) 0px, transparent 50%);
         }
         .font-mono-tech {
             font-family: 'JetBrains Mono', monospace;
         }
-        .premium-gradient-border {
-            background: linear-gradient(135deg, #10b981 0%, #06b6d4 50%, #6366f1 100%);
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .glass-card {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
     </style>
 </head>
-<body class="text-slate-100 min-h-screen pb-12">
+<body class="text-slate-200 min-h-screen pb-12">
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
         
-        <header class="flex flex-col lg:flex-row justify-between items-start lg:items-center bg-slate-900/40 backdrop-blur-xl p-6 rounded-3xl border border-slate-800 mb-6 gap-4 shadow-2xl">
+        <header class="flex flex-col lg:flex-row justify-between items-start lg:items-center glass-panel p-6 rounded-3xl mb-6 gap-4 shadow-xl">
             <div>
                 <span class="text-[10px] font-bold text-emerald-400 uppercase tracking-widest bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
-                    <i class="fa-solid fa-database text-xs mr-1"></i> ระบบล็อกฐานข้อมูลเสถียรสูงสุด (Fixed-Database Active)
+                    <i class="fa-solid fa-wand-magic-sparkles mr-1"></i> Premium Glassmorphic Edition v6
                 </span>
-                <h1 class="text-2xl md:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-cyan-400 to-indigo-400 mt-1.5">
+                <h1 class="text-2xl md:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-200 to-slate-400 mt-1.5">
                     ระบบสรุปกำลังคนและสถิติสะสมโอที
                 </h1>
-                <p class="text-slate-400 text-xs mt-1">กู้คืนรายชื่อพนักงานเรียบร้อย ข้อมูลและรูปภาพจะฝังแน่นในเครื่อง ไม่หายแม้กดเซฟรายงานรูปภาพ</p>
+                <p class="text-slate-400 text-xs mt-1">ปรับปรุงดีไซน์ให้อ่านง่าย สว่างใส ไม่มืดทึบ และล็อกข้อมูลถาวรในเครื่อง 100%</p>
             </div>
 
-            <div class="relative bg-slate-950 border-2 border-slate-800 hover:border-emerald-500/50 px-5 py-3 rounded-2xl flex items-center gap-3 min-w-[240px] shadow-xl transition-all cursor-pointer">
+            <div class="relative bg-slate-900/90 border border-slate-700 hover:border-emerald-500/50 px-5 py-3 rounded-2xl flex items-center gap-3 min-w-[240px] shadow-lg transition-all cursor-pointer">
                 <i class="fa-solid fa-calendar-days text-emerald-400 text-xl"></i>
                 <div class="flex flex-col text-left">
-                    <span class="text-[9px] text-slate-500 font-black uppercase tracking-wider">เลือกวันที่ลงเวลา/ดูย้อนหลัง</span>
-                    <span id="calendar-display-string" class="text-xs font-bold text-slate-200">12 มิถุนายน 2569</span>
+                    <span class="text-[9px] text-slate-400 font-bold uppercase tracking-wider">เลือกวันที่บันทึก/ดูย้อนหลัง</span>
+                    <span id="calendar-display-string" class="text-xs font-black text-white">12 มิถุนายน 2569</span>
                 </div>
                 <input type="date" id="main-date-picker" value="2026-06-12" class="absolute inset-0 opacity-0 cursor-pointer" onchange="handleDateChange(this.value)">
-                <i class="fa-solid fa-chevron-down text-slate-500 text-xs ml-auto"></i>
+                <i class="fa-solid fa-chevron-down text-slate-400 text-xs ml-auto"></i>
             </div>
         </header>
 
         <div class="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
             
             <div class="xl:col-span-4 space-y-4">
-                <div class="bg-slate-900/40 p-4 rounded-2xl border border-slate-800/80 flex items-center gap-2 backdrop-blur-md">
+                <div class="glass-panel p-4 rounded-2xl flex items-center gap-2">
                     <div class="relative w-full">
-                        <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-500">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
                             <i class="fa-solid fa-magnifying-glass text-xs"></i>
                         </span>
-                        <input type="text" id="search-input" placeholder="ค้นหาชื่อพนักงาน..." class="w-full pl-10 pr-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl focus:outline-none focus:border-emerald-500 text-xs text-slate-200 transition">
+                        <input type="text" id="search-input" placeholder="ค้นหาชื่อพนักงาน..." class="w-full pl-10 pr-4 py-2.5 bg-slate-900/80 border border-slate-700 rounded-xl focus:outline-none focus:border-emerald-500 text-xs text-white transition">
                     </div>
                 </div>
 
-                <div class="bg-slate-900/20 rounded-2xl border border-slate-800/60 overflow-hidden shadow-xl">
-                    <div class="bg-slate-900/80 px-4 py-2.5 border-b border-slate-800 text-[11px] font-bold text-slate-400 flex justify-between items-center">
-                        <span>👇 คลิกปุ่มสถานะเพื่อลงชื่อเข้างาน</span>
-                        <span class="text-[10px] text-emerald-400 font-bold"><i class="fa-solid fa-circle-check"></i> บันทึกอัตโนมัติ</span>
+                <div class="glass-panel rounded-2xl overflow-hidden shadow-lg">
+                    <div class="bg-white/5 px-4 py-3 border-b border-white/5 text-[11px] font-bold text-slate-300 flex justify-between items-center">
+                        <span>👇 คลิกปุ่มเพื่อสลับสถานะเข้างาน</span>
+                        <span class="text-[10px] text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">Auto Save</span>
                     </div>
                     <table class="w-full text-left border-collapse">
                         <thead>
-                            <tr class="bg-slate-950 border-b border-slate-800 text-slate-400 text-[10px] font-black uppercase tracking-wider">
+                            <tr class="bg-slate-900/60 border-b border-slate-800 text-slate-300 text-[10px] font-black uppercase tracking-wider">
                                 <th class="p-3 text-center w-14">รูป</th>
                                 <th class="p-3">รายชื่อพนักงาน</th>
-                                <th class="p-3 text-center w-16 bg-slate-900/40">สถานะ</th>
-                                <th class="p-3 text-center w-14 bg-slate-900/60">โอที</th>
+                                <th class="p-3 text-center w-16">สถานะ</th>
+                                <th class="p-3 text-center w-14">โอที</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-slate-900/80" id="employee-rows">
-                            </tbody>
+                        <tbody class="divide-y divide-white/5" id="employee-rows">
+                        </tbody>
                     </table>
                 </div>
             </div>
 
             <div class="xl:col-span-8 space-y-4">
                 
-                <div class="bg-slate-950 rounded-3xl border-2 border-slate-800 p-6 shadow-2xl relative overflow-hidden" id="presentation-card">
-                    <div class="absolute top-0 left-0 right-0 h-[3px] premium-gradient-border"></div>
+                <div class="bg-slate-900 rounded-3xl border border-slate-700/70 p-6 shadow-2xl relative overflow-hidden" id="presentation-card">
+                    
+                    <div class="absolute top-0 left-0 right-0 h-[4px] bg-gradient-to-r from-emerald-400 via-cyan-400 to-indigo-500"></div>
 
-                    <div class="flex flex-col sm:flex-row justify-between items-center pb-5 border-b border-slate-900 mb-5 gap-4">
+                    <div class="flex flex-col sm:flex-row justify-between items-center pb-5 border-b border-slate-800 mb-5 gap-4">
                         <div class="text-center sm:text-left">
-                            <h3 class="text-xl font-black text-white tracking-tight flex items-center gap-2 justify-center sm:justify-start">
-                                <i class="fa-solid fa-clipboard-user text-emerald-400"></i> สรุปกำลังคน ปั่นอวน ปั้มป้าย คลังใย
+                            <h3 class="text-xl font-extrabold text-white tracking-tight flex items-center gap-2 justify-center sm:justify-start">
+                                <i class="fa-solid fa-chart-pie text-emerald-400"></i> สรุปกำลังคน ปั่นอวน ปั้มป้าย คลังใย
                             </h3>
-                            <p class="text-xs text-slate-400 mt-1">รายงานสรุปผลประจำวันและยอดสะสมแยกตามกลุ่มงานจริง</p>
+                            <p class="text-xs text-slate-400 mt-1">รายงานสรุปผลประจำวันและสถิติยอดสะสมเพื่อส่งรายงานผู้บริหาร</p>
                         </div>
-                        <div class="bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-bold px-4 py-2 rounded-xl text-center min-w-[160px]">
-                            <div class="text-[9px] uppercase tracking-wider text-emerald-500/70 font-black">ข้อมูลประจำวันที่</div>
-                            <div class="text-xs font-extrabold mt-0.5" id="master-card-date-sub">12 มิถุนายน 2569</div>
+                        <div class="bg-gradient-to-br from-slate-800 to-slate-800/40 border border-slate-700 text-slate-200 font-bold px-4 py-2 rounded-xl text-center min-w-[160px] shadow-md">
+                            <div class="text-[9px] uppercase tracking-wider text-slate-400 font-bold">ข้อมูลประจำวันที่</div>
+                            <div class="text-xs font-black text-emerald-400 mt-0.5" id="master-card-date-sub">12 มิถุนายน 2569</div>
                         </div>
                     </div>
 
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left border-collapse table-fixed min-w-[700px]">
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5 text-center">
+                        <div class="bg-slate-800/50 p-2.5 rounded-xl border border-slate-700/50">
+                            <div class="text-[10px] text-slate-400 font-medium">พนักงานทั้งหมด</div>
+                            <div class="text-lg font-black text-white mt-0.5" id="count-total">11 คน</div>
+                        </div>
+                        <div class="bg-emerald-500/10 p-2.5 rounded-xl border border-emerald-500/20">
+                            <div class="text-[10px] text-emerald-400 font-medium">มาทำงานวันนี้</div>
+                            <div class="text-lg font-black text-emerald-400 mt-0.5" id="count-present">0 คน</div>
+                        </div>
+                        <div class="bg-amber-500/10 p-2.5 rounded-xl border border-amber-500/20">
+                            <div class="text-[10px] text-amber-400 font-medium">ทำโอทีสะสม (⚡)</div>
+                            <div class="text-lg font-black text-amber-400 mt-0.5" id="count-ot">0 คน</div>
+                        </div>
+                        <div class="bg-rose-500/10 p-2.5 rounded-xl border border-rose-500/20">
+                            <div class="text-[10px] text-rose-400 font-medium">ขาดงาน/หยุด</div>
+                            <div class="text-lg font-black text-rose-400 mt-0.5" id="count-absent">0 คน</div>
+                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto rounded-xl border border-slate-800 bg-slate-950/40">
+                        <table class="w-full text-left border-collapse table-fixed min-w-[720px]">
                             <thead>
-                                <tr class="bg-slate-900 border-b border-slate-800 text-slate-400 text-[10px] font-black uppercase tracking-wider">
-                                    <th class="p-3 w-[42%] rounded-tl-xl">ข้อมูลพนักงาน / แจ้งเตือน</th> <th class="p-3 text-center bg-indigo-950/30 text-indigo-300 border-x border-slate-900 w-[20%]">สถานะวันนี้</th>
-                                    <th class="p-3 text-center bg-slate-900/60 border-r border-slate-900 w-[12%]">งวด 1-12</th>
-                                    <th class="p-3 text-center bg-slate-900/60 border-r border-slate-900 w-[12%]">งวด 13-24</th>
-                                    <th class="p-3 text-center bg-emerald-950/30 text-emerald-400 w-[14%] rounded-tr-xl font-bold">รวมทั้งเดือน</th>
+                                <tr class="bg-slate-800/80 text-slate-300 text-[10px] font-black uppercase tracking-wider border-b border-slate-700">
+                                    <th class="p-3.5 w-[42%]">ข้อมูลพนักงานรายบุคคล</th> <th class="p-3.5 text-center bg-indigo-950/20 text-indigo-300 w-[20%] border-x border-slate-800">สถานะวันนี้</th>
+                                    <th class="p-3.5 text-center w-[12%] border-r border-slate-800">งวด 1-12</th>
+                                    <th class="p-3.5 text-center w-[12%] border-r border-slate-800">งวด 13-24</th>
+                                    <th class="p-3.5 text-center bg-emerald-950/20 text-emerald-400 w-[14%] font-bold">รวมทั้งเดือน</th>
                                 </tr>
                             </thead>
-                            <tbody class="text-xs divide-y divide-slate-900" id="master-summary-rows">
+                            <tbody class="text-xs divide-y divide-slate-800/60" id="master-summary-rows">
                             </tbody>
                         </table>
                     </div>
 
-                    <div class="mt-6 pt-4 border-t border-slate-900 flex flex-col md:flex-row justify-between items-center text-[10px] text-slate-500 font-medium gap-3">
-                        <div class="flex flex-wrap gap-2 justify-center md:justify-start">
-                            <span class="bg-slate-900 px-2 py-1 rounded border border-slate-800"><b>กะเช้า:</b> 🟢 มา (เช้า)</span>
-                            <span class="bg-slate-900 px-2 py-1 rounded border border-slate-800"><b>กะดึก:</b> 🔵 มา (ดึก)</span>
-                            <span class="bg-slate-900 px-2 py-1 rounded border border-slate-800"><b>มาสาย:</b> 🟡 มาสาย</span>
-                            <span class="bg-slate-900 px-2 py-1 rounded border border-slate-800"><b>วันหยุด:</b> 🟣 วันหยุด</span>
-                            <span class="bg-slate-900 px-2 py-1 rounded border border-slate-800"><b>ขาดงาน:</b> 🔴 ขาดงาน</span>
+                    <div class="mt-5 pt-4 border-t border-slate-800 flex flex-col md:flex-row justify-between items-center text-[10px] text-slate-400 font-medium gap-3">
+                        <div class="flex flex-wrap gap-1.5 justify-center md:justify-start">
+                            <span class="bg-slate-800 px-2 py-1 rounded-md border border-slate-700">🟢 มาเช้า</span>
+                            <span class="bg-slate-800 px-2 py-1 rounded-md border border-slate-700">🔵 มาดึก</span>
+                            <span class="bg-slate-800 px-2 py-1 rounded-md border border-slate-700">🟡 สาย</span>
+                            <span class="bg-slate-800 px-2 py-1 rounded-md border border-slate-700">🟣 วันหยุด</span>
+                            <span class="bg-slate-800 px-2 py-1 rounded-md border border-slate-700">🔴 ขาด</span>
                         </div>
-                        <span id="pres-card-timestamp" class="font-mono-tech font-bold text-slate-400 bg-slate-900/60 px-3 py-1 rounded-lg border border-slate-800"></span>
+                        <span id="pres-card-timestamp" class="font-mono-tech font-bold text-slate-400 bg-slate-800 px-3 py-1 rounded-lg border border-slate-700 shadow-sm"></span>
                     </div>
                 </div>
 
-                <button onclick="exportMasterReportImage()" class="w-full py-4 bg-gradient-to-r from-emerald-500 via-teal-500 to-indigo-500 hover:brightness-110 active:scale-[0.99] text-slate-950 font-black rounded-2xl text-sm transition flex items-center justify-center gap-2.5 shadow-xl">
-                    <i class="fa-solid fa-camera-retro text-lg"></i> 📸 บันทึกรูปภาพแดชบอร์ดความละเอียดสูง (ส่งเข้ากลุ่ม LINE)
+                <button onclick="exportMasterReportImage()" class="w-full py-4 bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 hover:brightness-110 active:scale-[0.99] text-slate-950 font-black rounded-2xl text-sm transition flex items-center justify-center gap-2.5 shadow-xl">
+                    <i class="fa-solid fa-paper-plane text-base"></i> 📸 บันทึกรูปภาพแดชบอร์ดความละเอียดสูง (ส่งเข้ากลุ่ม LINE)
                 </button>
             </div>
 
@@ -136,17 +164,17 @@
     </div>
 
     <div id="profile-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-md w-full p-6 shadow-2xl relative">
-            <button onclick="closeProfileModal()" class="absolute top-4 right-4 w-7 h-7 bg-slate-950 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-200 border border-slate-800">
+        <div class="bg-slate-900 border border-slate-700 rounded-3xl max-w-md w-full p-6 shadow-2xl relative text-slate-200">
+            <button onclick="closeProfileModal()" class="absolute top-4 right-4 w-7 h-7 bg-slate-800 rounded-full flex items-center justify-center text-slate-400 hover:text-white border border-slate-700">
                 <i class="fa-solid fa-xmark text-xs"></i>
             </button>
-            <h3 class="text-sm font-black text-slate-200 mb-5 flex items-center gap-2">
+            <h3 class="text-sm font-black text-white mb-5 flex items-center gap-2">
                 <i class="fa-solid fa-user-gear text-emerald-400"></i> แก้ไขข้อมูลและรูปภาพพนักงาน
             </h3>
-            <div class="flex flex-col items-center p-4 bg-slate-950 rounded-2xl border border-slate-850 mb-4">
-                <div id="modal-avatar-preview" class="w-24 h-24 rounded-full border-4 border-slate-800 overflow-hidden flex items-center justify-center bg-slate-800 text-3xl font-bold shadow-inner"></div>
+            <div class="flex flex-col items-center p-4 bg-slate-950 rounded-2xl border border-slate-800 mb-4">
+                <div id="modal-avatar-preview" class="w-24 h-24 rounded-full border-4 border-slate-700 overflow-hidden flex items-center justify-center bg-slate-800 text-3xl font-bold text-slate-400 shadow-inner"></div>
                 <div class="flex gap-2 mt-4">
-                    <label class="px-3 py-2 bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-bold rounded-xl text-xs cursor-pointer transition">
+                    <label class="px-3 py-2 bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-black rounded-xl text-xs cursor-pointer transition">
                         เปลี่ยนรูปภาพ <input type="file" accept="image/*" class="hidden" onchange="handlePhotoStream(event)">
                     </label>
                     <button onclick="deletePhotoNode()" class="px-3 py-2 bg-rose-950/60 text-rose-400 border border-rose-900/40 rounded-xl text-xs font-bold transition hover:bg-rose-900/60">ลบรูป</button>
@@ -155,19 +183,19 @@
             <div class="space-y-3 text-xs">
                 <div>
                     <label class="block font-bold text-slate-400 mb-1.5">ชื่อพนักงาน</label>
-                    <input type="text" id="modal-emp-name" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 focus:outline-none focus:border-emerald-500 font-bold">
+                    <input type="text" id="modal-emp-name" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-emerald-500 font-bold">
                 </div>
             </div>
-            <button onclick="saveModalState()" class="w-full mt-6 py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black rounded-xl text-xs transition shadow-lg">บันทึกข้อมูลถาวร</button>
+            <button onclick="saveModalState()" class="w-full mt-6 py-3 bg-emerald-400 hover:bg-emerald-300 text-slate-950 font-black rounded-xl text-xs transition shadow-lg">บันทึกข้อมูลถาวร</button>
         </div>
     </div>
 
-    <div id="toast-box" class="fixed bottom-6 right-6 bg-slate-900 border-2 border-emerald-500/80 text-emerald-400 px-6 py-3.5 rounded-2xl shadow-2xl flex items-center gap-3 z-[100] transform translate-y-20 opacity-0 transition-all duration-300 text-xs font-black">
+    <div id="toast-box" class="fixed bottom-6 right-6 bg-slate-900 border-2 border-emerald-500 text-emerald-400 px-6 py-3.5 rounded-2xl shadow-2xl flex items-center gap-3 z-[100] transform translate-y-20 opacity-0 transition-all duration-300 text-xs font-black">
         <i class="fa-solid fa-circle-check text-base"></i> <span id="toast-txt">ดำเนินการเรียบร้อย</span>
     </div>
 
     <script>
-        // รายชื่อโครงสร้างฐานข้อมูลหลักขององค์กร (ล็อกชื่อกลุ่มและตำแหน่งเรียบร้อย)
+        // โครงสร้างฐานข้อมูลพนักงานแยกกลุ่มงานชัดเจนและจัดตำแหน่งพี่ลำดวนแล้ว
         const masterSeedData = [
             { id: "0000000", name: "พี่ลำดวน หัวหน้าทีม", department: "หัวหน้าทีม", avatar: "https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?auto=format&fit=crop&q=80&w=200&h=200", attendance: {}, ot: {} },
             { id: "4200467", name: "นส.พนา ซูกลิ่นหอม", department: "พนักงานปั๊มป้าย", avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=200&h=200", attendance: {}, ot: {} },
@@ -187,13 +215,11 @@
         let targetModalId = null;
         let modalImgBuffer = "";
 
-        // ปรับปรุงฟังก์ชันเชื่อมต่อคีย์ความจำให้เสถียรและรวมกันเป็นหนึ่งเดียว
         function initData() {
             const unifiedStorage = localStorage.getItem('manpower_fixed_db_v1');
             if (unifiedStorage) {
                 employees = JSON.parse(unifiedStorage);
             } else {
-                // หากไม่มีข้อมูลเดิม ให้ดึงรายชื่อพนักงานกลับเข้ามาทำงานทันที
                 employees = JSON.parse(JSON.stringify(masterSeedData));
                 saveToLocalStorage();
             }
@@ -207,14 +233,14 @@
         function getNextAttend(val) { return attendCycle[(attendCycle.indexOf(val) + 1) % attendCycle.length]; }
 
         function translateStatusToThai(val, hasOT) {
-            let otBadge = hasOT ? `<span class="block text-[9px] bg-amber-500 text-slate-950 font-black px-1.5 py-0.5 mt-1 rounded shadow-sm uppercase tracking-wide">＋OT ⚡</span>` : '';
+            let otBadge = hasOT ? `<span class="block text-[9px] bg-amber-400 text-slate-950 font-black px-1.5 py-0.5 mt-1 rounded-md shadow-sm tracking-wide">＋OT ⚡</span>` : '';
             switch(val) {
-                case '✓': return `<div class="flex flex-col items-center"><span class="text-emerald-400 font-extrabold text-[11px] bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">🟢 มา (เช้า)</span>${otBadge}</div>`;
-                case '✅': return `<div class="flex flex-col items-center"><span class="text-cyan-400 font-extrabold text-[11px] bg-cyan-500/10 px-2 py-0.5 rounded border border-cyan-500/20">🔵 มา (ดึก)</span>${otBadge}</div>`;
-                case 'สาย': return `<div class="flex flex-col items-center"><span class="text-amber-400 font-extrabold text-[11px] bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">🟡 มาสาย</span>${otBadge}</div>`;
-                case 'H': return `<span class="text-purple-400 font-bold bg-purple-500/10 px-2 py-0.5 rounded border border-purple-500/20">🟣 วันหยุด</span>`;
-                case '❌': return `<span class="text-rose-400 font-black bg-rose-500/10 px-2 py-0.5 rounded border border-rose-400/40">🔴 ขาดงาน</span>`;
-                default: return `<span class="text-slate-600 font-medium">- ไม่ได้ลงชื่อ -</span>`;
+                case '✓': return `<div class="flex flex-col items-center"><span class="text-emerald-400 font-extrabold text-[11px] bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/20">🟢 มา (เช้า)</span>${otBadge}</div>`;
+                case '✅': return `<div class="flex flex-col items-center"><span class="text-cyan-400 font-extrabold text-[11px] bg-cyan-500/10 px-2 py-0.5 rounded-md border border-cyan-500/20">🔵 มา (ดึก)</span>${otBadge}</div>`;
+                case 'สาย': return `<div class="flex flex-col items-center"><span class="text-amber-400 font-extrabold text-[11px] bg-amber-500/10 px-2 py-0.5 rounded-md border border-amber-500/20">🟡 มาสาย</span>${otBadge}</div>`;
+                case 'H': return `<span class="text-purple-400 font-bold bg-purple-500/10 px-2 py-0.5 rounded-md border border-purple-500/20">🟣 วันหยุด</span>`;
+                case '❌': return `<span class="text-rose-400 font-black bg-rose-500/10 px-2 py-0.5 rounded-md border border-rose-400/30">🔴 ขาดงาน</span>`;
+                default: return `<span class="text-slate-500 font-medium bg-slate-800/40 px-2 py-0.5 rounded border border-slate-700/50">- ไม่ได้ลงชื่อ -</span>`;
             }
         }
 
@@ -225,7 +251,7 @@
                 case 'สาย': return 'bg-amber-500/20 text-amber-400 border border-amber-500/40';
                 case 'H': return 'bg-purple-500/20 text-purple-400 border border-purple-500/40';
                 case '❌': return 'bg-rose-500/20 text-rose-400 border border-rose-400/40';
-                default: return 'bg-slate-950 text-slate-500 border border-slate-800 hover:text-slate-300';
+                default: return 'bg-slate-900 text-slate-400 border border-slate-700 hover:text-slate-200';
             }
         }
 
@@ -269,35 +295,35 @@
 
             filtered.forEach(e => {
                 const tr = document.createElement('tr');
-                tr.className = 'hover:bg-slate-900/40 border-b border-slate-900 text-xs transition';
+                tr.className = 'hover:bg-white/5 border-b border-white/5 text-xs transition';
                 
                 const currentAttend = e.attendance[currentDayStr] || "";
                 const isOTChecked = e.ot[currentDayStr] || false;
 
                 const avatarView = e.avatar ? 
-                    `<img src="${e.avatar}" class="w-9 h-9 rounded-full object-cover border-2 border-slate-800 shadow">` :
+                    `<img src="${e.avatar}" class="w-9 h-9 rounded-full object-cover border border-slate-600 shadow">` :
                     `<div class="w-9 h-9 rounded-full bg-slate-800 flex items-center justify-center font-bold text-slate-400 text-[11px]">${e.name.substring(2,4)}</div>`;
 
                 tr.innerHTML = `
                     <td class="p-2.5 text-center">
                         <div class="relative inline-block">
                             ${avatarView}
-                            <button onclick="openProfileModal('${e.id}')" class="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-500 hover:bg-emerald-400 text-slate-950 rounded-full flex items-center justify-center text-[9px] shadow-lg font-bold">
+                            <button onclick="openProfileModal('${e.id}')" class="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-400 hover:bg-emerald-300 text-slate-950 rounded-full flex items-center justify-center text-[9px] shadow-lg font-bold">
                                 <i class="fa-solid fa-pen"></i>
                             </button>
                         </div>
                     </td>
                     <td class="p-2.5">
-                        <span class="font-extrabold text-slate-200 text-xs block truncate max-w-[150px]">${e.name}</span>
-                        <span class="text-slate-500 text-[10px] font-mono-tech">${e.id === '0000000' ? 'LEADER' : 'ID: '+e.id}</span>
+                        <span class="font-bold text-white text-xs block truncate max-w-[150px]">${e.name}</span>
+                        <span class="text-slate-400 text-[10px] font-mono-tech">${e.id === '0000000' ? 'LEADER' : 'ID: '+e.id}</span>
                     </td>
-                    <td class="p-1.5 bg-slate-900/10 text-center">
+                    <td class="p-1.5 text-center">
                         <button onclick="stepAttendance('${e.id}')" class="w-12 h-8 rounded-lg text-[11px] font-black mx-auto transition-all transform active:scale-95 ${getAttendStyle(currentAttend)}">
                             ${currentAttend || "-"}
                         </button>
                     </td>
-                    <td class="p-1.5 bg-slate-900/20 text-center">
-                        <button onclick="toggleOTField('${e.id}')" class="w-10 h-8 rounded-lg text-xs transition-all transform active:scale-95 ${isOTChecked ? 'bg-amber-500/20 text-amber-400 border border-amber-500/50 font-black' : 'bg-slate-950 text-slate-700 border border-slate-900'}">
+                    <td class="p-1.5 text-center">
+                        <button onclick="toggleOTField('${e.id}')" class="w-10 h-8 rounded-lg text-xs transition-all transform active:scale-95 ${isOTChecked ? 'bg-amber-400 text-slate-950 font-black shadow' : 'bg-slate-900 text-slate-500 border border-slate-700'}">
                             ${isOTChecked ? '⚡' : '💤'}
                         </button>
                     </td>
@@ -313,26 +339,36 @@
             const daysInMonth = new Date(year, month, 0).getDate();
 
             const mTh = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
-            document.getElementById('pres-card-timestamp').innerText = `สรุปยอดสะสมกลุ่มงานรอบเดือน ${mTh[month-1]} ${year+543}`;
+            document.getElementById('pres-card-timestamp').innerText = `รอบประจำเดือน ${mTh[month-1]} ${year+543}`;
 
             const tbody = document.getElementById('master-summary-rows');
             tbody.innerHTML = '';
 
             const departments = ["หัวหน้าทีม", "พนักงานปั๊มป้าย", "พนักงานคลังสินค้า", "พนักงานปั่นอวน", "พนักงานปั่นเพลากะเช้า"];
             
+            // ตัวนับสถิติด้านบนแดชบอร์ด
+            let totalPresent = 0;
+            let totalOT = 0;
+            let totalAbsent = 0;
+
             departments.forEach(dept => {
                 const deptEmps = employees.filter(e => e.department === dept);
                 if(deptEmps.length === 0) return;
 
                 const deptRow = document.createElement('tr');
-                deptRow.className = "bg-slate-900/90 font-bold border-y border-slate-800 text-[11px]";
-                deptRow.innerHTML = `<td colspan="5" class="p-2.5 pl-4 text-cyan-400 font-extrabold tracking-wide"><i class="fa-solid fa-layer-group mr-2 text-indigo-400"></i> กลุ่มงาน: ${dept} (${deptEmps.length} คน)</td>`;
+                deptRow.className = "bg-slate-800/60 font-bold border-y border-slate-700 text-[11px] text-slate-300 shadow-inner";
+                deptRow.innerHTML = `<td colspan="5" class="p-3 pl-4 text-cyan-300 font-extrabold tracking-wide"><i class="fa-solid fa-folder-open mr-2 text-indigo-400"></i> กลุ่มงาน: ${dept} (${deptEmps.length} คน)</td>`;
                 tbody.appendChild(deptRow);
 
                 deptEmps.forEach(e => {
                     const dAttend = e.attendance[currentDayStr] || "";
                     const hasOT = e.ot[currentDayStr] || false;
                     
+                    // เพิ่มยอดตัวนับสด
+                    if (dAttend === '✓' || dAttend === '✅' || dAttend === 'สาย') totalPresent++;
+                    if (hasOT) totalOT++;
+                    if (dAttend === '❌' || dAttend === 'H') totalAbsent++;
+
                     let totalAbsentCount = 0;
                     let totalLateCount = 0;
 
@@ -361,40 +397,45 @@
                     }
 
                     const tr = document.createElement('tr');
-                    tr.className = "hover:bg-slate-900/30 border-b border-slate-900 text-xs transition";
+                    tr.className = "hover:bg-slate-800/40 border-b border-slate-800 text-xs text-slate-300 transition";
 
                     const picHtml = e.avatar ? 
-                        `<img src="${e.avatar}" class="w-8 h-8 rounded-full object-cover border-2 border-slate-800 shadow-md">` :
+                        `<img src="${e.avatar}" class="w-8 h-8 rounded-full object-cover border border-slate-600 shadow-md">` :
                         `<div class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-[10px] font-black text-slate-400">${e.name.substring(2,4)}</div>`;
 
                     tr.innerHTML = `
                         <td class="p-3 flex items-center gap-3 overflow-hidden">
                             <div class="flex-shrink-0">${picHtml}</div>
-                            <div class="min-w-0 flex-1 whitespace-nowrap">
-                                <div class="font-extrabold text-white text-[12.5px] tracking-wide block truncate">${e.name}</div>
-                                <div class="text-[9px] font-mono-tech text-slate-500">${e.id === '0000000' ? 'หัวหน้าทีมควบคุม' : 'ID: '+e.id}</div>
+                            <div class="min-w-0 flex-1">
+                                <div class="font-extrabold text-white text-[13px] tracking-wide block truncate">${e.name}</div>
+                                <div class="text-[9px] font-mono-tech text-slate-400">${e.id === '0000000' ? 'หัวหน้าควบคุมดูแลทีม' : 'ID: '+e.id}</div>
                                 ${alertBadgeHtml}
                             </div>
                         </td>
-                        <td class="p-3 text-center bg-indigo-950/10 border-x border-slate-900 font-medium">
+                        <td class="p-3 text-center bg-indigo-950/10 border-x border-slate-800 font-medium">
                             ${translateStatusToThai(dAttend, hasOT)}
                         </td>
-                        <td class="p-3 text-center font-mono-tech text-[11px] text-slate-300 border-r border-slate-900">
-                            <div><span class="text-slate-500 font-bold">งาน:</span> <span class="text-emerald-400 font-black">${p1.work}</span></div>
-                            <div class="mt-0.5"><span class="text-slate-500">โอที:</span> <span class="text-amber-400 font-bold">${p1.ot}</span></div>
+                        <td class="p-3 text-center font-mono-tech text-[11px] border-r border-slate-800 text-slate-300">
+                            <div><span class="text-slate-400 font-medium">งาน:</span> <span class="text-emerald-400 font-bold">${p1.work}</span></div>
+                            <div class="mt-0.5"><span class="text-slate-400">โอที:</span> <span class="text-amber-400 font-medium">${p1.ot}</span></div>
                         </td>
-                        <td class="p-3 text-center font-mono-tech text-[11px] text-slate-300 border-r border-slate-900">
-                            <div><span class="text-slate-500 font-bold">งาน:</span> <span class="text-emerald-400 font-black">${p2.work}</span></div>
-                            <div class="mt-0.5"><span class="text-slate-500">โอที:</span> <span class="text-amber-400 font-bold">${p2.ot}</span></div>
+                        <td class="p-3 text-center font-mono-tech text-[11px] border-r border-slate-800 text-slate-300">
+                            <div><span class="text-slate-400 font-medium">งาน:</span> <span class="text-emerald-400 font-bold">${p2.work}</span></div>
+                            <div class="mt-0.5"><span class="text-slate-400">โอที:</span> <span class="text-amber-400 font-medium">${p2.ot}</span></div>
                         </td>
                         <td class="p-3 text-center bg-emerald-950/10 font-mono-tech text-[12px]">
-                            <div class="text-emerald-400 font-black bg-emerald-500/5 py-0.5 rounded border border-emerald-500/10">งาน: ${pMonth.work}</div>
-                            <div class="text-amber-400 font-black bg-amber-500/5 py-0.5 rounded border border-amber-500/10 mt-1">โอที: ${pMonth.ot}</div>
+                            <div class="text-emerald-400 font-extrabold bg-emerald-500/5 py-0.5 rounded border border-emerald-500/10">งาน: ${pMonth.work}</div>
+                            <div class="text-amber-400 font-extrabold bg-amber-500/5 py-0.5 rounded border border-amber-500/10 mt-1">โอที: ${pMonth.ot}</div>
                         </td>
                     `;
                     tbody.appendChild(tr);
                 });
             });
+
+            // อัปเดตตัวเลขแผงสรุปด้านบน
+            document.getElementById('count-present').innerText = `${totalPresent} คน`;
+            document.getElementById('count-ot').innerText = `${totalOT} คน`;
+            document.getElementById('count-absent').innerText = `${totalAbsent} คน`;
         }
 
         function openProfileModal(id) {
@@ -406,7 +447,7 @@
         }
         function paintModalAvatar() {
             const b = document.getElementById('modal-avatar-preview');
-            b.innerHTML = modalImgBuffer ? `<img src="${modalImgBuffer}" class="w-full h-full object-cover">` : `<i class="fa-solid fa-user text-slate-600"></i>`;
+            b.innerHTML = modalImgBuffer ? `<img src="${modalImgBuffer}" class="w-full h-full object-cover">` : `<i class="fa-solid fa-user text-slate-500"></i>`;
         }
         function handlePhotoStream(ev) {
             const f = ev.target.files[0];
@@ -427,23 +468,23 @@
                 renderTable(); 
                 renderMasterAllInOneReport(); 
                 closeProfileModal();
-                showToast("🔒 บันทึกรูปภาพพนักงานถาวรแล้ว");
+                showToast("🔒 ล็อกรูปภาพพนักงานเสร็จสิ้น");
             }
         }
         function closeProfileModal() { document.getElementById('profile-modal').classList.add('hidden'); }
 
         function exportMasterReportImage() {
             const target = document.getElementById('presentation-card');
-            showToast("📸 กำลังประมวลผลรูปภาพความละเอียดสูง...");
+            showToast("📸 กำลังเซฟรายงานรูปภาพดีไซน์หรูหรา...");
             html2canvas(target, { 
-                backgroundColor: "#030712", 
+                backgroundColor: "#0f172a", 
                 scale: 3, 
                 useCORS: true 
             }).then(cv => {
                 const a = document.createElement('a');
-                a.download = `รายงานกำลังคน_กลุ่มงาน_${currentDayStr}.png`;
+                a.download = `รายงานกำลังคน_พรีเมียม_${currentDayStr}.png`;
                 a.href = cv.toDataURL('image/png'); a.click();
-                showToast("✨ เซฟรูปภาพสำเร็จ (ฐานข้อมูลในเว็บถูกล็อกไว้ถาวรไม่หาย)");
+                showToast("✨ เซฟรูปภาพสำเร็จ! นำไปส่งในกลุ่ม LINE ได้เลยครับ");
             });
         }
 
@@ -456,7 +497,7 @@
         document.getElementById('search-input').addEventListener('input', renderTable);
         
         window.onload = () => { 
-            initData(); // โหลดข้อมูลพนักงานกลับคืนมาเสมอ
+            initData();
             document.getElementById('main-date-picker').value = currentDayStr;
             handleDateChange(currentDayStr);
         }
