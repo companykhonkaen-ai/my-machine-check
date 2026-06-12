@@ -2,132 +2,238 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>โปรแกรมแปลใบสั่งทอ PDF อัตโนมัติ (ไทย -> พม่า)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>โปรแกรมแปลภาษาใบสั่งทอภาษาไทย-พม่า แผนกทอ E</title>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600&family=Padauk:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600&family=Padauk:wght@400;700&display=swap" rel="stylesheet">
     
     <style>
+        * { box-sizing: border-box; }
         body {
-            font-family: 'Sarabun', 'Padauk', sans-serif;
-            background-color: #f0f4f8;
+            font-family: 'Sarabun', 'Padauk', -apple-system, BlinkMacSystemFont, sans-serif;
+            /* พื้นหลังสไตล์เทคโนโลยีล้ำสมัย ไล่เฉดสีน้ำเงินเข้ม-ดำประกายไซเบอร์ */
+            background: radial-gradient(circle at top, #1a2035 0%, #0a0c16 100%);
+            background-attachment: fixed;
             margin: 0;
-            padding: 20px;
+            padding: 15px;
             display: flex;
             flex-direction: column;
             align-items: center;
+            min-height: 100vh;
+            -webkit-tap-highlight-color: transparent;
         }
+        
         .container {
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            max-width: 600px;
+            /* หน้าต่างกระจกโปร่งแสงสุดหรู (Glassmorphic Tech Style) */
+            background: rgba(20, 25, 45, 0.85);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 30px 25px;
+            border-radius: 16px;
+            border: 1px solid rgba(0, 180, 216, 0.25);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5), 0 0 15px 0 rgba(0, 180, 216, 0.1);
+            max-width: 550px;
             width: 100%;
             text-align: center;
-            margin-bottom: 20px;
+            margin-top: 20px;
+            margin-bottom: 25px;
         }
-        h2 { color: #1a365d; margin-top: 0; }
-        p { color: #555; font-size: 14px; }
-        .file-input-wrapper {
-            margin: 20px 0;
+        
+        h2 { 
+            color: #00f0ff; /* สีฟ้านีออนเทคโนโลยี */
+            text-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+            margin-top: 0; 
+            font-size: 1.4rem; 
+            font-weight: 600; 
+            line-height: 1.4;
         }
-        input[type="file"] {
-            display: none;
-        }
-        .custom-file-upload {
-            border: 2px dashed #2b6cb0;
-            display: inline-block;
-            padding: 15px 30px;
-            cursor: pointer;
-            border-radius: 8px;
-            color: #2b6cb0;
-            font-weight: bold;
-            background: #ebf8ff;
-            transition: all 0.3s;
-        }
-        .custom-file-upload:hover {
-            background: #bee3f8;
-        }
-        button {
-            background-color: #2b6cb0;
-            color: white;
-            border: none;
-            padding: 12px 30px;
-            font-size: 16px;
-            font-weight: bold;
+        
+        .instruction-box {
+            background: rgba(255, 255, 255, 0.05);
+            border-left: 4px solid #00f0ff;
+            padding: 12px;
             border-radius: 6px;
+            margin: 15px 0;
+            text-align: left;
+        }
+        
+        p { 
+            color: #b4c6ef; 
+            font-size: 13.5px; 
+            line-height: 1.6; 
+            margin: 0;
+        }
+        
+        .file-input-wrapper { margin: 25px 0 15px 0; }
+        input[type="file"] { display: none; }
+        
+        .custom-file-upload {
+            border: 2px dashed #00b4d8;
+            display: block;
+            padding: 22px 15px;
+            cursor: pointer;
+            border-radius: 10px;
+            color: #00f0ff;
+            font-weight: bold;
+            background: rgba(0, 180, 216, 0.05);
+            transition: all 0.3s ease;
+            font-size: 15px;
+            box-shadow: inset 0 0 10px rgba(0, 180, 216, 0.1);
+        }
+        .custom-file-upload:hover, .custom-file-upload:active { 
+            background: rgba(0, 180, 216, 0.15); 
+            border-color: #00f0ff;
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
+        }
+        
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 20px;
+        }
+        
+        button {
+            padding: 15px 20px;
+            font-size: 15px;
+            font-weight: bold;
+            border-radius: 8px;
             cursor: pointer;
             width: 100%;
-            transition: background 0.2s;
+            border: none;
+            display: block;
+            outline: none;
+            transition: all 0.2s ease;
         }
-        button:hover { background-color: #2c5282; }
-        button:disabled { background-color: #cbd5e0; cursor: not-allowed; }
+        
+        #process-btn { 
+            background: linear-gradient(135deg, #0077b6 0%, #00b4d8 100%);
+            color: white; 
+            box-shadow: 0 4px 15px rgba(0, 180, 216, 0.4);
+        }
+        #process-btn:hover:not(:disabled) {
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.6);
+        }
+        #process-btn:disabled { 
+            background: #252d3d; 
+            color: #5c6b84; 
+            border: 1px solid #1a2233;
+            box-shadow: none;
+            cursor: not-allowed; 
+        }
+        
+        #download-btn { 
+            background: linear-gradient(135deg, #0f9b0f 0%, #28a745 100%); 
+            color: white; 
+            display: none; 
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); box-shadow: 0 0 20px rgba(40, 167, 69, 0.6); }
+            100% { transform: scale(1); }
+        }
+
         #status {
             margin-top: 15px;
             font-weight: bold;
-            color: #2b6cb0;
+            font-size: 14px;
+            color: #00f0ff;
+            text-shadow: 0 0 5px rgba(0, 240, 255, 0.3);
         }
-        /* ซ่อนส่วนจัดการระบบเวลาสั่งพิมพ์ */
-        @media print {
-            .container, #status { display: none; }
-            #print-area { display: block !important; }
+        
+        #preview-container {
+            width: 100%;
+            max-width: 830px;
+            overflow-x: auto;
+            background: #101424;
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid #1a2233;
+            display: none;
+            margin-top: 10px;
         }
-        #print-area { display: none; width: 100%; max-width: 800px; background: white; padding: 20px; }
+        
+        #print-area { 
+            background: white; 
+            width: 800px; 
+            margin: 0 auto;
+        }
+        
+        .pdf-page {
+            position: relative;
+            background: white;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            margin-bottom: 20px;
+            page-break-after: always;
+        }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h2>⚙️ ระบบแปลงใบสั่งทอ E52 เป็นภาษาพม่า</h2>
-        <p>วิธีใช้: เลือกไฟล์ PDF ใบสั่งผลิตสินค้า (ขายต่างประเทศ) ของโรงงานคุณ จากนั้นกดปุ่มประมวลผล ระบบจะแปลคำศัพท์และเด้งหน้าต่างพร้อมสั่งพิมพ์ให้ทันที</p>
+        <h2>⚙️ โปรแกรมแปลภาษาใบสั่งทอภาษาไทย-พม่า<br>แผนกทอ E</h2>
+        
+        <div class="instruction-box">
+            <p><strong>วิธีใช้:</strong> กดเลือกไฟล์ PDF ใบสั่งทอจากนั้นกดปุ่มประมวลผล แล้วรอสักครู่ข้อมูลกำลังประมวลผลแปลคำศัพท์และเด้งหน้าต่างดาวโหลดไฟล์</p>
+        </div>
         
         <div class="file-input-wrapper">
             <label class="custom-file-upload">
                 <input type="file" id="pdf-file" accept=".pdf">
                 📁 เลือกไฟล์ PDF ใบสั่งทอ
             </label>
-            <div id="file-name" style="margin-top: 10px; font-size: 13px; color: #4a5568;">ยังไม่ได้เลือกไฟล์</div>
+            <div id="file-name" style="margin-top: 10px; font-size: 12px; color: #8fa0c4; word-break: break-all;">ยังไม่ได้เลือกไฟล์</div>
         </div>
 
-        <button id="process-btn" disabled>🚀 เริ่มประมวลผลและเด้งหน้าต่างสั่งพิมพ์</button>
+        <div class="btn-group">
+            <button id="process-btn" disabled>🚀 เริ่มประมวลผลแปลภาษา</button>
+            <button id="download-btn">📥 ดาวน์โหลดไฟล์ PDF ภาษาพม่าสำเร็จ</button>
+        </div>
         <div id="status"></div>
     </div>
 
-    <div id="print-area"></div>
+    <div id="preview-container">
+        <div style="color: #00f0ff; font-size: 13px; margin-bottom: 10px; text-align: center; font-weight: bold;">📊 เอกสารจำลองเวอร์ชันภาษาพม่า (รูปแบบเดิม)</div>
+        <div id="print-area"></div>
+    </div>
 
 <script>
-    // ตั้งค่าตัวอ่านไฟล์ PDF ของ Google
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
 
     const fileInput = document.getElementById('pdf-file');
     const fileNameDiv = document.getElementById('file-name');
     const processBtn = document.getElementById('process-btn');
+    const downloadBtn = document.getElementById('download-btn');
     const statusDiv = document.getElementById('status');
+    const previewContainer = document.getElementById('preview-container');
     const printArea = document.getElementById('print-area');
 
-    let pdfData = null;
+    let rawFileData = null;
 
     fileInput.addEventListener('change', function(e) {
         if (e.target.files.length > 0) {
             const file = e.target.files[0];
-            fileNameDiv.innerText = "ไฟล์ที่เลือก: " + file.name;
+            fileNameDiv.innerText = "📁 ไฟล์ที่พร้อมประมวลผล: " + file.name;
             processBtn.disabled = false;
+            downloadBtn.style.display = "none";
+            previewContainer.style.display = "none";
             
             const reader = new FileReader();
             reader.onload = function(evt) {
-                pdfData = new Uint8Array(evt.target.result);
+                rawFileData = evt.target.result;
             };
             reader.readAsArrayBuffer(file);
         }
     });
 
-    // ระบบเชื่อมต่อ Google Translate เพื่อแปลข้อความสดแสนคำล้านคำ
     async function translateToMyanmar(text) {
         if (!text || text.trim() === "" || !isNaN(text) || text.trim().length < 2) return text;
-        
-        // ข้ามคำที่เป็นรหัสเฉพาะ ภาษาอังกฤษ หรือสัญลักษณ์โรงงาน
         if (/^[A-Za-z0-9\-\/\s\*\.\:\,]+$/.test(text.trim())) return text;
 
         try {
@@ -135,44 +241,38 @@
             const response = await fetch(url);
             const data = await response.json();
             if (data && data[0] && data[0][0]) {
-                return data[0][0][0]; // คืนค่าคำแปลภาษาพม่า
+                return data[0][0][0];
             }
         } catch (error) {
-            console.error("แปลขัดข้อง:", error);
+            console.error("การแปลระบบขัดข้อง:", error);
         }
         return text;
     }
 
     processBtn.addEventListener('click', async function() {
-        if (!pdfData) return;
+        if (!rawFileData) return;
         
         processBtn.disabled = true;
-        statusDiv.innerText = "⏳ ระบบกำลังแกะพิกัดตารางและอ่านข้อความ...";
-        printArea.innerHTML = ""; // ล้างหน้าจอเก่า
+        statusDiv.innerText = "⏳ กำลังประมวลผลแปลคำศัพท์...";
+        printArea.innerHTML = ""; 
 
         try {
-            const loadingTask = pdfjsLib.getDocument({data: pdfData});
+            const bufferCopy = rawFileData.slice(0);
+            const loadingTask = pdfjsLib.getDocument({data: bufferCopy});
             const pdf = await loadingTask.promise;
             
-            // อ่านทีละหน้า (รองรับใบสั่งผลิตที่มีหลายหน้า)
             for (let i = 1; i <= pdf.numPages; i++) {
-                statusDiv.innerText = `⏳ กำลังประมวลผลคำศัพท์หน้าคอมพิวเตอร์ หน้าที่ ${i}/${pdf.numPages}...`;
+                statusDiv.innerText = `⏳ ข้อมูลกำลังประมวลผลแปลคำศัพท์ หน้าที่ ${i}/${pdf.numPages}...`;
                 const page = await pdf.getPage(i);
                 
-                // ดึงพิกัดตำแหน่งตัวอักษรเดิมมาทั้งหมดเพื่อรักษารูปแบบ 100%
                 const textContent = await page.getTextContent();
-                const viewport = page.getViewport({scale: 1.3}); // ปรับขนาดให้พอดีหน้ากระดาษพิมพ์
+                const viewport = page.getViewport({scale: 1.3});
                 
-                // สร้างหน้ากระดาษจำลองขึ้นมาในเว็บ
                 const pageDiv = document.createElement('div');
-                pageDiv.style.position = 'relative';
+                pageDiv.className = 'pdf-page';
                 pageDiv.style.width = viewport.width + 'px';
                 pageDiv.style.height = viewport.height + 'px';
-                pageDiv.style.background = 'white';
-                pageDiv.style.marginBottom = '30px';
-                pageDiv.style.pageBreakAfter = 'always';
                 
-                // วิ่งไล่แปลตัวอักษรทีละบล็อกตามตำแหน่งพิกัดเดิมเป๊ะๆ
                 for (let item of textContent.items) {
                     const tx = pdfjsLib.Util.transform(viewport.transform, item.transform);
                     
@@ -184,31 +284,53 @@
                     textSpan.style.fontFamily = "'Padauk', 'Sarabun', sans-serif";
                     textSpan.style.whiteSpace = 'nowrap';
                     textSpan.style.color = '#000';
+                    textSpan.style.lineHeight = '1';
                     
-                    // สั่งแปลภาษาไทยตรงจุดนั้นให้กลายเป็นพม่า
                     const translatedText = await translateToMyanmar(item.str);
                     textSpan.innerText = translatedText;
                     
                     pageDiv.appendChild(textSpan);
                 }
-                
                 printArea.appendChild(pageDiv);
             }
 
-            statusDiv.innerText = "✅ แปลงภาษาเสร็จสมบูรณ์! ระบบกำลังเปิดหน้าต่างสั่งพิมพ์...";
-            
-            // สั่งให้ระบบ "เด้ง" หน้าต่างพิมพ์เอกสาร (Print Dialogue) ของคอมพิวเตอร์ขึ้นมาทันทีอัตโนมัติ
-            setTimeout(() => {
-                window.print();
-                processBtn.disabled = false;
-            }, 1000);
+            statusDiv.innerText = "✅ ประมวลผลเสร็จสิ้น! หน้าต่างดาวน์โหลดไฟล์พร้อมใช้งานแล้ว";
+            processBtn.disabled = false;
+            downloadBtn.style.display = "block";
+            previewContainer.style.display = "block";
+
+            // สั่งทริกเกอร์ดาวน์โหลดอัตโนมัติทันทีตามที่คำสั่งต้องการ
+            triggerDownload();
 
         } catch (error) {
-            alert("เกิดข้อผิดพลาดในการอ่านไฟล์ PDF: " + error.message);
+            alert("ระบบขัดข้อง: " + error.message);
             processBtn.disabled = false;
             statusDiv.innerText = "";
         }
     });
+
+    downloadBtn.addEventListener('click', function() {
+        triggerDownload();
+    });
+
+    function triggerDownload() {
+        statusDiv.innerText = "📥 กำลังเด้งหน้าต่างดาวน์โหลดเซฟไฟล์ลงเครื่อง...";
+        
+        const opt = {
+            margin:       0,
+            filename:     'ใบสั่งทอ_แผนกทอE_พม่า.pdf',
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 2, useCORS: true, letterRendering: true },
+            jsPDF:        { unit: 'pt', format: 'a4', orientation: 'portrait' }
+        };
+        
+        html2pdf().set(opt).from(printArea).save().then(() => {
+            statusDiv.innerText = "✅ ดาวน์โหลดสำเร็จเรียบร้อย!";
+        }).catch(err => {
+            alert("การเซฟไฟล์ขัดข้อง: " + err.message);
+            statusDiv.innerText = "";
+        });
+    }
 </script>
 
 </body>
