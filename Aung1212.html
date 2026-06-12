@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบเช็คชื่อการทำงาน - หน่วยงาน กรออีแปะ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Noto+Sans+Thai:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        amber: {
+                            450: '#fb923c',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Noto Sans Thai', sans-serif;
+            background-color: #0f1319; /* โทนเทาคาร์บอนเข้ม ไม่มืดทึบ */
+            background-image: radial-gradient(at 0% 0%, rgba(245, 158, 11, 0.12) 0px, transparent 50%),
+                              radial-gradient(at 100% 100%, rgba(249, 115, 22, 0.08) 0px, transparent 50%);
+        }
+        .font-mono-tech {
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .glass-panel {
+            background: rgba(24, 32, 44, 0.75);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(245, 158, 11, 0.15);
+        }
+        .neon-border {
+            box-shadow: 0 0 15px rgba(245, 158, 11, 0.1);
+        }
+    </style>
+</head>
+<body class="text-slate-200 min-h-screen pb-12">
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
+        
+        <!-- ส่วนหัวเว็บ (Header) สีส้มอำพันหรูหรา -->
+        <header class="flex flex-col lg:flex-row justify-between items-start lg:items-center glass-panel p-6 rounded-3xl mb-6 gap-4 shadow-xl neon-border">
+            <div>
+                <span class="text-[10px] font-bold text-amber-400 uppercase tracking-widest bg-amber-500/10 px-3 py-1 rounded-full border border-amber-500/20">
+                    <i class="fa-solid fa-microchip mr-1"></i> ระบบลงเวลาเทคโนโลยีเสถียรสูงสุด (กักเก็บฐานข้อมูลถาวร)
+                </span>
+                <h1 class="text-2xl md:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-amber-300 to-orange-400 mt-1.5">
+                    ระบบบันทึกกำลังคนสมาชิก — หน่วยงาน กรออีแปะ
+                </h1>
+                <p class="text-slate-400 text-xs mt-1">ระบบคำนวณสถิติขาด/สายเพื่อประเมินความเสี่ยงและพ้นสภาพสมาชิกอัตโนมัติ</p>
+            </div>
+
+            <!-- ตัวเลือกปฏิทินย้อนหลังถาวร -->
+            <div class="relative bg-slate-900 border border-slate-700 hover:border-amber-500/50 px-5 py-3 rounded-2xl flex items-center gap-3 min-w-[250px] shadow-lg transition-all cursor-pointer">
+                <i class="fa-solid fa-calendar-check text-amber-400 text-xl"></i>
+                <div class="flex flex-col text-left">
+                    <span class="text-[9px] text-slate-400 font-bold uppercase tracking-wider">เลือกวันที่บันทึกงานย้อนหลัง</span>
+                    <span id="calendar-display-string" class="text-xs font-black text-white">12 มิถุนายน 2569</span>
+                </div>
+                <input type="date" id="main-date-picker" value="2026-06-12" class="absolute inset-0 opacity-0 cursor-pointer" onchange="handleDateChange(this.value)">
+                <i class="fa-solid fa-chevron-down text-slate-400 text-xs ml-auto"></i>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
+            
+            <!-- ตารางฝั่งซ้าย: แผงควบคุมเช็คชื่อรายวัน (บันทึกออโต้) -->
+            <div class="xl:col-span-4 space-y-4">
+                <div class="glass-panel p-4 rounded-2xl flex items-center gap-2">
+                    <div class="relative w-full">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
+                            <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                        </span>
+                        <input type="text" id="search-input" placeholder="ค้นหาชื่อพนักงาน หรือ เบอร์โทร..." class="w-full pl-10 pr-4 py-2.5 bg-slate-900 border border-slate-700 rounded-xl focus:outline-none focus:border-amber-500 text-xs text-white transition">
+                    </div>
+                </div>
+
+                <div class="glass-panel rounded-2xl overflow-hidden shadow-lg">
+                    <div class="bg-white/5 px-4 py-3 border-b border-white/5 text-[11px] font-bold text-slate-300 flex justify-between items-center">
+                        <span>👇 คลิกปุ่มสถานะเพื่อลงบันทึกเวลา</span>
+                        <span class="text-[10px] text-amber-400 font-bold bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20"><i class="fa-solid fa-cloud-arrow-up"></i> ล็อกถาวร</span>
+                    </div>
+                    <div class="max-h-[650px] overflow-y-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-slate-900 text-slate-300 text-[10px] font-black uppercase tracking-wider border-b border-slate-800 sticky top-0 z-10">
+                                    <th class="p-3 text-center w-14">รูป</th>
+                                    <th class="p-3">รายชื่อสมาชิก</th>
+                                    <th class="p-3 text-center w-16">สถานะ</th>
+                                    <th class="p-3 text-center w-14">โอที</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-white/5" id="employee-rows">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ตารางฝั่งขวา: แดชบอร์ดแสดงผลความละเอียดสูง (สีกรอบอำพันพรีเมียม ส่งเข้าไลน์ได้สวยงาม) -->
+            <div class="xl:col-span-8 space-y-4">
+                
+                <div class="bg-slate-900 rounded-3xl border border-amber-500/30 p-6 shadow-2xl relative overflow-hidden" id="presentation-card">
+                    <!-- แถบกรอบส้มอำพันหรูหราด้านบน -->
+                    <div class="absolute top-0 left-0 right-0 h-[4px] bg-gradient-to-r from-amber-400 via-orange-500 to-yellow-300"></div>
+
+                    <!-- หัวข้อรายงานบนรูปภาพ -->
+                    <div class="flex flex-col sm:flex-row justify-between items-center pb-5 border-b border-slate-800 mb-5 gap-4">
+                        <div class="text-center sm:text-left">
+                            <h3 class="text-xl font-extrabold text-white tracking-tight flex items-center gap-2 justify-center sm:justify-start">
+                                <i class="fa-solid fa-users-viewfinder text-amber-400"></i> บันทึกผลการทำงานและสถานะ หน่วยงาน กรออีแปะ
+                            </h3>
+                            <p class="text-xs text-slate-400 mt-1">สรุปข้อมูลสะสมประเมินพฤติกรรมการเข้างานรายบุคคลประจำเดือน</p>
+                        </div>
+                        <div class="bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700 text-slate-200 font-bold px-4 py-2 rounded-xl text-center min-w-[160px] shadow-md">
+                            <div class="text-[9px] uppercase tracking-wider text-amber-400 font-bold">ข้อมูลประจำวันที่</div>
+                            <div class="text-xs font-black text-white mt-0.5" id="master-card-date-sub">12 มิถุนายน 2569</div>
+                        </div>
+                    </div>
+
+                    <!-- มินิเคาน์เตอร์สรุปด่วน 4 ช่องด้านบนตาราง -->
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5 text-center">
+                        <div class="bg-slate-800/60 p-2.5 rounded-xl border border-slate-700">
+                            <div class="text-[10px] text-slate-400 font-medium">สมาชิกทั้งหมด</div>
+                            <div class="text-lg font-black text-white mt-0.5" id="count-total">17 คน</div>
+                        </div>
+                        <div class="bg-emerald-500/10 p-2.5 rounded-xl border border-emerald-500/20">
+                            <div class="text-[10px] text-emerald-400 font-medium">มาทำงานวันนี้</div>
+                            <div class="text-lg font-black text-emerald-400 mt-0.5" id="count-present">0 คน</div>
+                        </div>
+                        <div class="bg-amber-500/10 p-2.5 rounded-xl border border-amber-500/20">
+                            <div class="text-[10px] text-amber-400 font-medium">ผู้ทำโอทีสะสม</div>
+                            <div class="text-lg font-black text-amber-400 mt-0.5" id="count-ot">0 คน</div>
+                        </div>
+                        <div class="bg-rose-500/10 p-2.5 rounded-xl border border-rose-500/20">
+                            <div class="text-[10px] text-rose-400 font-medium">ขาดงาน/พ้นสภาพ</div>
+                            <div class="text-lg font-black text-rose-400 mt-0.5" id="count-absent">0 คน</div>
+                        </div>
+                    </div>
+
+                    <!-- ตารางแสดงรายงานรายชื่อพนักงานทั้งหมด (ไม่ตัดคำกว้างเต็มเฟรม) -->
+                    <div class="overflow-x-auto rounded-xl border border-slate-800 bg-slate-950/40">
+                        <table class="w-full text-left border-collapse table-fixed min-w-[750px]">
+                            <thead>
+                                <tr class="bg-slate-800 text-slate-300 text-[10px] font-black uppercase tracking-wider border-b border-slate-700">
+                                    <th class="p-3.5 w-[42%]">ข้อมูลสมาชิก & เบอร์โทรติดต่อ</th>
+                                    <th class="p-3.5 text-center bg-slate-900/40 w-[20%] border-x border-slate-800">สถานะวันนี้</th>
+                                    <th class="p-3.5 text-center w-[12%] border-r border-slate-800">งวด 1-12</th>
+                                    <th class="p-3.5 text-center w-[12%] border-r border-slate-800">งวด 13-24</th>
+                                    <th class="p-3.5 text-center bg-amber-500/5 text-amber-400 w-[14%] font-bold">สรุปรวมเดือน</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-xs divide-y divide-slate-800/80" id="master-summary-rows">
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- ด้านล่างสุด: สัญลักษณ์สี และแสตมป์รอบเดือน -->
+                    <div class="mt-5 pt-4 border-t border-slate-800 flex flex-col md:flex-row justify-between items-center text-[10px] text-slate-400 font-medium gap-3">
+                        <div class="flex flex-wrap gap-1.5 justify-center md:justify-start">
+                            <span class="bg-slate-800 px-2 py-1 rounded-md border border-slate-700">🟢 มาเช้า</span>
+                            <span class="bg-slate-800 px-2 py-1 rounded-md border border-slate-700">🔵 มาดึก</span>
+                            <span class="bg-slate-800 px-2 py-1 rounded-md border border-slate-700">🟡 สาย</span>
+                            <span class="bg-slate-800 px-2 py-1 rounded-md border border-slate-700">🟣 วันหยุด</span>
+                            <span class="bg-slate-800 px-2 py-1 rounded-md border border-slate-700">🔴 ขาด</span>
+                        </div>
+                        <span id="pres-card-timestamp" class="font-mono-tech font-bold text-amber-400 bg-slate-800 px-3 py-1 rounded-lg border border-slate-700 shadow-sm"></span>
+                    </div>
+                </div>
+
+                <!-- ปุ่มส่งออกรูปภาพดีไซน์อลังการ -->
+                <button onclick="exportMasterReportImage()" class="w-full py-4 bg-gradient-to-r from-amber-500 via-orange-500 to-yellow-500 hover:brightness-110 active:scale-[0.99] text-slate-950 font-black rounded-2xl text-sm transition flex items-center justify-center gap-2.5 shadow-xl">
+                    <i class="fa-solid fa-circle-nodes text-base"></i> 📸 บันทึกรายงานรูปภาพความละเอียดสูง (ส่งสถิติเข้า LINE)
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- โมดัลการจัดการรูปภาพพนักงานและเบอร์โทรศัพท์ -->
+    <div id="profile-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-900 border border-slate-700 rounded-3xl max-w-md w-full p-6 shadow-2xl relative text-slate-200">
+            <button onclick="closeProfileModal()" class="absolute top-4 right-4 w-7 h-7 bg-slate-800 rounded-full flex items-center justify-center text-slate-400 hover:text-white border border-slate-700">
+                <i class="fa-solid fa-xmark text-xs"></i>
+            </button>
+            <h3 class="text-sm font-black text-white mb-5 flex items-center gap-2">
+                <i class="fa-solid fa-user-gear text-amber-400"></i> อัปเดตข้อมูลและภาพถ่ายสมาชิก
+            </h3>
+            <div class="flex flex-col items-center p-4 bg-slate-950 rounded-2xl border border-slate-800 mb-4">
+                <div id="modal-avatar-preview" class="w-24 h-24 rounded-full border-4 border-slate-700 overflow-hidden flex items-center justify-center bg-slate-800 text-3xl font-bold text-slate-500 shadow-inner"></div>
+                <div class="flex gap-2 mt-4">
+                    <label class="px-3 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-xl text-xs cursor-pointer transition">
+                        อัปโหลดรูปภาพ <input type="file" accept="image/*" class="hidden" onchange="handlePhotoStream(event)">
+                    </label>
+                    <button onclick="deletePhotoNode()" class="px-3 py-2 bg-rose-950/60 text-rose-400 border border-rose-900/40 rounded-xl text-xs font-bold transition hover:bg-rose-900/60">ลบรูป</button>
+                </div>
+            </div>
+            <div class="space-y-3 text-xs">
+                <div>
+                    <label class="block font-bold text-slate-400 mb-1.5">ชื่อ-นามสกุล สมาชิก</label>
+                    <input type="text" id="modal-emp-name" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-amber-500 font-bold">
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-400 mb-1.5">เบอร์โทรศัพท์ติดต่อ</label>
+                    <input type="text" id="modal-emp-phone" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-amber-500 font-mono-tech font-bold" placeholder="เช่น 081-234-5678">
+                </div>
+            </div>
+            <button onclick="saveModalState()" class="w-full mt-6 py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-xl text-xs transition shadow-lg">บันทึกลงความจำเครื่องถาวร</button>
+        </div>
+    </div>
+
+    <!-- แถบแจ้งเตือน Toast -->
+    <div id="toast-box" class="fixed bottom-6 right-6 bg-slate-900 border-2 border-amber-500 text-amber-400 px-6 py-3.5 rounded-2xl shadow-2xl flex items-center gap-3 z-[100] transform translate-y-20 opacity-0 transition-all duration-300 text-xs font-black">
+        <i class="fa-solid fa-square-sliders-stroke text-base"></i> <span id="toast-txt">บันทึกสำเร็จ</span>
+    </div>
+
+    <script>
+        // แกะรายชื่อจากภาพพิมพ์ให้ใหม่ครบถ้วนทั้ง 17 ท่าน พร้อมเพิ่มช่องเบอร์โทรศัพท์
+        const krwEpaeSeedData = [
+            { id: "EPAE-01", name: "สมบัติ แสงทอง", phone: "081-765-4321", avatar: "", attendance: {}, ot: {} },
+            { id: "EPAE-02", name: "เยาวมาลย์ พันนา", phone: "082-123-4567", avatar: "", attendance: {}, ot: {} },
+            { id: "EPAE-03", name: "พุทธศรี สามีพันธ์", phone: "083-234-5678", avatar: "", attendance: {}, ot: {} },
+            { id: "EPAE-04", name: "มะลิ ดาวังปา", phone: "084-345-6789", avatar: "", attendance: {}, ot: {} },
+            { id: "EPAE-05", name: "หนูจันทร์ ผิวดี", phone: "085-456-7890", avatar: "", attendance: {}, ot: {} },
+            { id: "EPAE-06", name: "จันทร์เพ็ญ บุตรมา", phone: "086-567-8901", avatar: "", attendance: {}, ot: {} },
+            { id: "EPAE-07", name: "นางบุบผา กุลวงศ์", phone: "087-678-9012", avatar: "", attendance: {}, ot: {} },
+            { id: "EPAE-08", name: "นางศิริพร เสน่ห์จันทร์", phone: "088-789-0123", avatar: "", attendance: {}, ot: {} },
+            { id: "EPAE-09", name: "นางประกอบ ไชยเพ็ง", phone: "089-890-1234", avatar: "", attendance: {}, ot: {} },
+            { id: "EPAE-10", name: "ดาวบด แสนพล", phone: "090-901-2345", avatar: "", attendance: {}, ot: {} },
+            { id: "EPAE-11", name: "ปางทอง คงมังคละ", phone: "091-012-3456", avatar: "", attendance: {}, ot: {} },
+            { id: "EPAE-12", name: "พีราพร ค่อมสิงห์", phone: "092-123-0192", avatar: "", attendance: {}, ot: {} },
+            { id: "EPAE-13", name: "นางประครอง ชัยสมคุณ", phone: "093-345-9876", avatar: "", attendance: {}, ot: {} },
+            { id: "EPAE-14", name: "มลฤดี ปัทเนตร", phone: "094-456-8765", avatar: "", attendance: {}, ot: {} },
+            { id: "EPAE-15", name: "น.ส.ไพรวัน วงษาสืบ", phone: "095-567-7654", avatar: "", attendance: {}, ot: {} },
+            { id: "EPAE-16", name: "นางจันสุดา ถาบุญแก้ว", phone: "096-678-6543", avatar: "", attendance: {}, ot: {} },
+            { id: "EPAE-17", name: "น.ส.กมลรัตน์ พูลทรัพย์", phone: "097-789-5432", avatar: "", attendance: {}, ot: {} }
+        ];
+
+        let employees = [];
+        let currentDayStr = "2026-06-12"; 
+        let targetModalId = null;
+        let modalImgBuffer = "";
+
+        // แยกคีย์ความจำไม่ให้ปะปนกับแผนกเดิม
+        function initData() {
+            const storageData = localStorage.getItem('manpower_krw_epae_v1');
+            if (storageData) {
+                employees = JSON.parse(storageData);
+            } else {
+                employees = JSON.parse(JSON.stringify(krwEpaeSeedData));
+                saveToLocalStorage();
+            }
+        }
+
+        function saveToLocalStorage() {
+            localStorage.setItem('manpower_krw_epae_v1', JSON.stringify(employees));
+        }
+
+        const attendCycle = ["", "✓", "✅", "สาย", "H", "❌"];
+        function getNextAttend(val) { return attendCycle[(attendCycle.indexOf(val) + 1) % attendCycle.length]; }
+
+        function translateStatusToThai(val, hasOT) {
+            let otBadge = hasOT ? `<span class="block text-[9px] bg-amber-400 text-slate-950 font-black px-1.5 py-0.5 mt-1 rounded-md shadow-sm tracking-wide">＋OT ⚡</span>` : '';
+            switch(val) {
+                case '✓': return `<div class="flex flex-col items-center"><span class="text-emerald-400 font-extrabold text-[11px] bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/20">🟢 กะเช้า</span>${otBadge}</div>`;
+                case '✅': return `<div class="flex flex-col items-center"><span class="text-cyan-400 font-extrabold text-[11px] bg-cyan-500/10 px-2 py-0.5 rounded-md border border-cyan-500/20">🔵 กะดึก</span>${otBadge}</div>`;
+                case 'สาย': return `<div class="flex flex-col items-center"><span class="text-yellow-400 font-extrabold text-[11px] bg-yellow-500/10 px-2 py-0.5 rounded-md border border-yellow-500/20">🟡 มาสาย</span>${otBadge}</div>`;
+                case 'H': return `<span class="text-purple-400 font-bold bg-purple-500/10 px-2 py-0.5 rounded-md border border-purple-500/20">🟣 วันหยุด</span>`;
+                case '❌': return `<span class="text-rose-400 font-black bg-rose-500/10 px-2 py-0.5 rounded-md border border-rose-400/30">🔴 ขาดงาน</span>`;
+                default: return `<span class="text-slate-500 font-medium bg-slate-800/40 px-2 py-0.5 rounded border border-slate-700/50">- ไม่ได้ลงชื่อ -</span>`;
+            }
+        }
+
+        function getAttendStyle(val) {
+            switch(val) {
+                case '✓': return 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40';
+                case '✅': return 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/40';
+                case 'สาย': return 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/40';
+                case 'H': return 'bg-purple-500/20 text-purple-400 border border-purple-500/40';
+                case '❌': return 'bg-rose-500/20 text-rose-400 border border-rose-400/40';
+                default: return 'bg-slate-900 text-slate-400 border border-slate-700 hover:text-slate-200';
+            }
+        }
+
+        function formatThaiFullDate(str) {
+            const mTh = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
+            const p = str.split('-'); if(p.length !== 3) return str;
+            return `${parseInt(p[2])} ${mTh[parseInt(p[1])-1]} ${parseInt(p[0])+543}`;
+        }
+
+        function handleDateChange(v) {
+            if(!v) return;
+            currentDayStr = v;
+            document.getElementById('calendar-display-string').innerText = formatThaiFullDate(v);
+            document.getElementById('master-card-date-sub').innerText = formatThaiFullDate(v);
+            renderTable();
+            renderMasterAllInOneReport();
+        }
+
+        function stepAttendance(id) {
+            const emp = employees.find(e => e.id === id);
+            if(emp) {
+                emp.attendance[currentDayStr] = getNextAttend(emp.attendance[currentDayStr] || "");
+                saveToLocalStorage(); renderTable(); renderMasterAllInOneReport();
+            }
+        }
+
+        function toggleOTField(id) {
+            const emp = employees.find(e => e.id === id);
+            if(emp) {
+                emp.ot[currentDayStr] = !emp.ot[currentDayStr];
+                saveToLocalStorage(); renderTable(); renderMasterAllInOneReport();
+            }
+        }
+
+        function renderTable() {
+            const sQuery = document.getElementById('search-input').value.toLowerCase();
+            const box = document.getElementById('employee-rows');
+            box.innerHTML = '';
+
+            const filtered = employees.filter(e => e.name.toLowerCase().includes(sQuery) || e.id.includes(sQuery) || e.phone.includes(sQuery));
+
+            filtered.forEach(e => {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-white/5 border-b border-white/5 text-xs transition';
+                
+                const currentAttend = e.attendance[currentDayStr] || "";
+                const isOTChecked = e.ot[currentDayStr] || false;
+
+                const avatarView = e.avatar ? 
+                    `<img src="${e.avatar}" class="w-9 h-9 rounded-full object-cover border border-slate-600 shadow">` :
+                    `<div class="w-9 h-9 rounded-full bg-slate-800 flex items-center justify-center font-bold text-slate-400 text-[10px]">${e.name.substring(0,2)}</div>`;
+
+                tr.innerHTML = `
+                    <td class="p-2.5 text-center">
+                        <div class="relative inline-block">
+                            ${avatarView}
+                            <button onclick="openProfileModal('${e.id}')" class="absolute -bottom-1 -right-1 w-4 h-4 bg-amber-500 hover:bg-amber-400 text-slate-950 rounded-full flex items-center justify-center text-[9px] shadow-lg font-bold">
+                                <i class="fa-solid fa-pen"></i>
+                            </button>
+                        </div>
+                    </td>
+                    <td class="p-2.5">
+                        <span class="font-bold text-white text-xs block truncate max-w-[150px]">${e.name}</span>
+                        <span class="text-slate-400 text-[10px] font-mono-tech">${e.phone}</span>
+                    </td>
+                    <td class="p-1.5 text-center">
+                        <button onclick="stepAttendance('${e.id}')" class="w-12 h-8 rounded-lg text-[10px] font-black mx-auto transition-all transform active:scale-95 ${getAttendStyle(currentAttend)}">
+                            ${currentAttend === '✓' ? 'เช้า' : currentAttend === '✅' ? 'ดึก' : currentAttend || "-"}
+                        </button>
+                    </td>
+                    <td class="p-1.5 text-center">
+                        <button onclick="toggleOTField('${e.id}')" class="w-10 h-8 rounded-lg text-xs transition-all transform active:scale-95 ${isOTChecked ? 'bg-amber-500 text-slate-950 font-black shadow' : 'bg-slate-900 text-slate-500 border border-slate-700'}">
+                            ${isOTChecked ? '⚡' : '💤'}
+                        </button>
+                    </td>
+                `;
+                box.appendChild(tr);
+            });
+        }
+
+        function renderMasterAllInOneReport() {
+            const pParts = currentDayStr.split('-');
+            const year = parseInt(pParts[0]);
+            const month = parseInt(pParts[1]);
+            const daysInMonth = new Date(year, month, 0).getDate();
+
+            const mTh = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
+            document.getElementById('pres-card-timestamp').innerText = `สถิติรวมรอบเดือน ${mTh[month-1]} ${year+543}`;
+
+            const tbody = document.getElementById('master-summary-rows');
+            tbody.innerHTML = '';
+
+            let totalPresent = 0;
+            let totalOT = 0;
+            let totalAbsent = 0;
+
+            employees.forEach(e => {
+                const dAttend = e.attendance[currentDayStr] || "";
+                const hasOT = e.ot[currentDayStr] || false;
+                
+                if (dAttend === '✓' || dAttend === '✅' || dAttend === 'สาย') totalPresent++;
+                if (hasOT) totalOT++;
+                if (dAttend === '❌') totalAbsent++;
+
+                let totalAbsentCount = 0;
+                let totalLateCount = 0;
+
+                // คำนวณหาลูปวันที่ในเดือนเพื่อเช็คเงื่อนไข ขาด/สาย สะสม
+                for (let d = 1; d <= daysInMonth; d++) {
+                    const dKey = `${year}-${month < 10 ? '0'+month : month}-${d < 10 ? '0'+d : d}`;
+                    if (e.attendance[dKey] === '❌') totalAbsentCount++;
+                    if (e.attendance[dKey] === 'สาย') totalLateCount++;
+                }
+
+                // สถิติงวดช่วงวันตามระบบเดิม
+                const getStatsForRange = (start, end) => {
+                    let work = 0, ot = 0;
+                    for (let d = start; d <= end; d++) {
+                        const dKey = `${year}-${month < 10 ? '0'+month : month}-${d < 10 ? '0'+d : d}`;
+                        if (e.attendance[dKey] === '✓' || e.attendance[dKey] === '✅' || e.attendance[dKey] === 'สาย') work++;
+                        if (e.ot[dKey]) ot++;
+                    }
+                    return { work, ot };
+                };
+
+                const p1 = getStatsForRange(1, 12);
+                const p2 = getStatsForRange(13, 24);
+                const pMonth = getStatsForRange(1, daysInMonth);
+
+                // ระบบ AI เงื่อนไขอัจฉริยะแจ้งเตือนความเสี่ยงพฤติกรรมพนักงาน
+                let alertBadgeHtml = "";
+                if (totalAbsentCount >= 3) {
+                    alertBadgeHtml = `<div class="mt-1 text-[9px] bg-rose-500/20 text-rose-400 font-black border border-rose-500/40 px-2 py-0.5 rounded-md inline-block animate-pulse">🛑 พ้นสภาพสมาชิก (ขาด ${totalAbsentCount} วัน)</div>`;
+                } else if (totalLateCount >= 3) {
+                    alertBadgeHtml = `<div class="mt-1 text-[9px] bg-orange-500/20 text-orange-400 font-black border border-orange-500/40 px-2 py-0.5 rounded-md inline-block">⚠️ เรียกพบ (สายครบ ${totalLateCount} ครั้ง)</div>`;
+                } else if (totalAbsentCount > 0 || totalLateCount > 0) {
+                    alertBadgeHtml = `<div class="mt-1 text-[9px] bg-amber-500/10 text-amber-300 font-medium border border-amber-500/20 px-2 py-0.5 rounded-md inline-block">🟨 สุ่มเสี่ยงลางานบ่อย/ขาดสาย</div>`;
+                } else {
+                    alertBadgeHtml = `<div class="mt-1 text-[9px] bg-emerald-500/10 text-emerald-400 font-medium border border-emerald-500/20 px-2 py-0.5 rounded-md inline-block">🟢 ประวัติพฤติกรรมดีเยี่ยม</div>`;
+                }
+
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-800/40 border-b border-slate-800 text-xs text-slate-300 transition";
+
+                const picHtml = e.avatar ? 
+                    `<img src="${e.avatar}" class="w-8 h-8 rounded-full object-cover border border-slate-600 shadow-md">` :
+                    `<div class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-[10px] font-black text-slate-400">${e.name.substring(0,2)}</div>`;
+
+                tr.innerHTML = `
+                    <td class="p-3 flex items-center gap-3 overflow-hidden">
+                        <div class="flex-shrink-0">${picHtml}</div>
+                        <div class="min-w-0 flex-1">
+                            <div class="font-extrabold text-white text-[13px] tracking-wide block truncate">${e.name}</div>
+                            <div class="text-[10px] font-mono-tech text-amber-400/80 mt-0.5"><i class="fa-solid fa-phone-flip text-[9px]"></i> โทร: ${e.phone}</div>
+                            ${alertBadgeHtml}
+                        </div>
+                    </td>
+                    <td class="p-3 text-center bg-slate-900/20 border-x border-slate-800 font-medium">
+                        ${translateStatusToThai(dAttend, hasOT)}
+                    </td>
+                    <td class="p-3 text-center font-mono-tech text-[11px] border-r border-slate-800 text-slate-300">
+                        <div><span class="text-slate-400 font-medium">งาน:</span> <span class="text-emerald-400 font-bold">${p1.work}</span></div>
+                        <div class="mt-0.5"><span class="text-slate-400">โอที:</span> <span class="text-amber-400 font-medium">${p1.ot}</span></div>
+                    </td>
+                    <td class="p-3 text-center font-mono-tech text-[11px] border-r border-slate-800 text-slate-300">
+                        <div><span class="text-slate-400 font-medium">งาน:</span> <span class="text-emerald-400 font-bold">${p2.work}</span></div>
+                        <div class="mt-0.5"><span class="text-slate-400">โอที:</span> <span class="text-amber-400 font-medium">${p2.ot}</span></div>
+                    </td>
+                    <td class="p-3 text-center bg-amber-500/5 font-mono-tech text-[12px]">
+                        <div class="text-emerald-400 font-extrabold bg-emerald-500/5 py-0.5 rounded border border-emerald-500/10">งาน: ${pMonth.work}</div>
+                        <div class="text-amber-400 font-extrabold bg-amber-500/5 py-0.5 rounded border border-amber-500/10 mt-1">โอที: ${pMonth.ot}</div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            document.getElementById('count-present').innerText = `${totalPresent} คน`;
+            document.getElementById('count-ot').innerText = `${totalOT} คน`;
+            document.getElementById('count-absent').innerText = `${totalAbsent} คน`;
+        }
+
+        function openProfileModal(id) {
+            const emp = employees.find(e => e.id === id); if(!emp) return;
+            targetModalId = id; modalImgBuffer = emp.avatar;
+            document.getElementById('modal-emp-name').value = emp.name;
+            document.getElementById('modal-emp-phone').value = emp.phone;
+            paintModalAvatar();
+            document.getElementById('profile-modal').classList.remove('hidden');
+        }
+        function paintModalAvatar() {
+            const b = document.getElementById('modal-avatar-preview');
+            b.innerHTML = modalImgBuffer ? `<img src="${modalImgBuffer}" class="w-full h-full object-cover">` : `<i class="fa-solid fa-user text-slate-500"></i>`;
+        }
+        function handlePhotoStream(ev) {
+            const f = ev.target.files[0];
+            if(f) {
+                const rd = new FileReader();
+                rd.onload = (e) => { modalImgBuffer = e.target.result; paintModalAvatar(); };
+                rd.readAsDataURL(f);
+            }
+        }
+        function deletePhotoNode() { modalImgBuffer = ""; paintModalAvatar(); }
+        
+        function saveModalState() {
+            const emp = employees.find(e => e.id === targetModalId);
+            if(emp) {
+                emp.name = document.getElementById('modal-emp-name').value;
+                emp.phone = document.getElementById('modal-emp-phone').value;
+                emp.avatar = modalImgBuffer; 
+                saveToLocalStorage();
+                renderTable(); 
+                renderMasterAllInOneReport(); 
+                closeProfileModal();
+                showToast("🔒 ข้อมูลสมาชิกอัปเดตถาวรในเครื่องแล้ว");
+            }
+        }
+        function closeProfileModal() { document.getElementById('profile-modal').classList.add('hidden'); }
+
+        function exportMasterReportImage() {
+            const target = document.getElementById('presentation-card');
+            showToast("📸 กำลังประมวลผลรูปภาพความละเอียดสูงความเที่ยงตรงสูง...");
+            html2canvas(target, { 
+                backgroundColor: "#0f1319", 
+                scale: 3, 
+                useCORS: true 
+            }).then(cv => {
+                const a = document.createElement('a');
+                a.download = `รายงานกรออีแปะ_${currentDayStr}.png`;
+                a.href = cv.toDataURL('image/png'); a.click();
+                showToast("✨ เซฟรูปภาพสำเร็จ! ส่งเข้ากลุ่มไลน์ได้ทันทีครับ");
+            });
+        }
+
+        function showToast(m) {
+            const box = document.getElementById('toast-box'); document.getElementById('toast-txt').innerText = m;
+            box.classList.remove('translate-y-20', 'opacity-0'); box.classList.add('translate-y-0', 'opacity-100');
+            setTimeout(() => { box.classList.remove('translate-y-0', 'opacity-100'); box.classList.add('translate-y-20', 'opacity-0'); }, 3000);
+        }
+
+        document.getElementById('search-input').addEventListener('input', renderTable);
+        
+        window.onload = () => { 
+            initData();
+            document.getElementById('main-date-picker').value = currentDayStr;
+            handleDateChange(currentDayStr);
+        }
+    </script>
+</body>
+</html>
