@@ -46,7 +46,6 @@
 
     <div class="max-w-7xl mx-auto space-y-6">
         
-        <!-- ================= HEADER SECTION ================= -->
         <header class="cyber-glass rounded-2xl p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 shadow-2xl">
             <div class="flex items-center gap-4">
                 <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center text-white text-xl font-black shadow-lg shadow-sky-500/20">
@@ -60,7 +59,6 @@
                 </div>
             </div>
 
-            <!-- วันที่งวดงาน -->
             <div class="relative bg-slate-900 border border-slate-800 px-4 py-2 rounded-xl flex items-center gap-3 cursor-pointer">
                 <i class="fa-solid fa-calendar text-sky-400 text-sm"></i>
                 <div class="flex flex-col text-left">
@@ -71,10 +69,8 @@
             </div>
         </header>
 
-        <!-- ================= MAIN LAYOUT ================= -->
         <div class="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
             
-            <!-- 📱 ฝั่งซ้าย: แผงติ๊กชื่อและแก้ไขข้อมูลพนักงาน (เหมือนเดิม) -->
             <div class="xl:col-span-4 space-y-4">
                 <div class="cyber-glass p-3 rounded-xl">
                     <div class="relative">
@@ -91,18 +87,13 @@
                         <span class="text-[10px] text-sky-400 bg-sky-500/10 px-2 py-0.5 rounded font-mono">17 MEMBERS</span>
                     </div>
                     <div class="max-h-[580px] overflow-y-auto divide-y divide-slate-800/40" id="manual-rows-container">
-                        <!-- รายชื่อและแถวแก้ไขจะสร้างตรงนี้ -->
-                    </div>
+                        </div>
                 </div>
             </div>
 
-            <!-- 🖼️ ฝั่งขวา: โรงละครนำเสนอระดับพรีเมียม (โชว์รอบละ 4 คน ตัวใหญ่เต็มตา คมชัด) -->
             <div class="xl:col-span-8 space-y-4">
                 
-                <!-- 🟥 ตัวโรงภาพยนตร์ที่จะถูกนำไปบันทึกเป็น ภาพ หรือ วิดีโอ -->
                 <div class="presentation-theme rounded-2xl p-6 shadow-2xl relative" id="presentation-theater">
-                    
-                    <!-- ส่วนหัวสไลด์ -->
                     <div class="flex justify-between items-center pb-4 border-b border-slate-800 mb-6">
                         <div>
                             <h2 class="text-sm font-black text-white flex items-center gap-2">
@@ -115,7 +106,6 @@
                         </div>
                     </div>
 
-                    <!-- 📊 แดชบอร์ดมินิสรุปยอดกราฟและตัวเลขภาพรวมประจำสไลด์ -->
                     <div class="grid grid-cols-12 gap-4 bg-slate-950/90 p-4 rounded-xl border border-slate-900 mb-6 items-center">
                         <div class="col-span-3 flex flex-col items-center border-r border-slate-850 pr-2">
                             <div class="w-20 h-20 relative">
@@ -142,12 +132,9 @@
                         </div>
                     </div>
 
-                    <!-- 👥 SLIDE CONTAINER: แสดงผลครั้งละ 4 คน แบบตัวใหญ่ คมชัดพิเศษ -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 min-h-[300px]" id="slide-cards-grid">
-                        <!-- รายชื่อ 4 คนในหน้านั้นๆ จะมาแสดงผลตรงนี้ -->
-                    </div>
+                        </div>
 
-                    <!-- แถบด้านล่าง: ตัวบอกสถานะหน้าสไลด์ปัจจุบัน -->
                     <div class="mt-6 pt-3 border-t border-slate-900 flex justify-between items-center text-[10px] text-slate-500">
                         <div class="flex gap-2 font-bold">
                             <span>🟢 กะเช้า</span> <span>🔵 กะดึก</span> <span>🟡 สาย</span> <span>🟣 วันหยุด</span> <span>🔴 ขาดงาน</span>
@@ -158,9 +145,7 @@
                     </div>
                 </div>
 
-                <!-- 🕹️ แผงควบคุมสไลด์ภาพและระบบอัดวิดีโออัจฉริยะ -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <!-- ปุ่มเปลี่ยนหน้าแมนนวล -->
                     <div class="cyber-glass p-2 rounded-xl flex items-center justify-between gap-2 sm:col-span-2">
                         <button onclick="changeSlidePage(-1)" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 rounded-lg text-xs font-bold text-white transition">
                             <i class="fa-solid fa-chevron-left mr-1"></i> หน้าก่อนหน้า
@@ -171,12 +156,10 @@
                         </button>
                     </div>
 
-                    <!-- ปุ่มส่งออกเป็นรูปภาพสไลด์หน้านี้ -->
                     <button onclick="exportSlideAsImage()" class="py-3.5 bg-slate-900 hover:bg-slate-800 border border-slate-700 text-white font-bold rounded-xl text-xs transition flex items-center justify-center gap-2">
                         <i class="fa-solid fa-image text-emerald-400"></i> บันทึกภาพนิ่งสไลด์หน้านี้ (ส่ง LINE ชัดแจ๋ว)
                     </button>
 
-                    <!-- ปุ่มอัดวิดีโอแอนิเมชันรันสไลด์อัตโนมัติ -->
                     <button onclick="recordPresentationVideo()" id="btn-video-record" class="py-3.5 bg-gradient-to-r from-rose-600 to-amber-600 hover:brightness-110 active:scale-[0.99] text-white font-black rounded-xl text-xs transition flex items-center justify-center gap-2 shadow-lg shadow-rose-900/20">
                         <i class="fa-solid fa-circle text-white animate-ping text-[10px]" id="record-ping-dot" style="display:none;"></i>
                         <i class="fa-solid fa-video"></i> อัดวิดีโอนำเสนออัตโนมัติ (รันวนครบทุกคนส่งเข้า LINE)
@@ -187,15 +170,62 @@
         </div>
     </div>
 
-    <!-- แจ้งเตือนสถานะความสำเร็จ -->
+    <div id="edit-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center hidden opacity-0 transition-all duration-350">
+        <div class="cyber-glass max-w-sm w-full mx-4 rounded-2xl border border-slate-800 shadow-2xl overflow-hidden transform scale-95 transition-all duration-350 p-6 space-y-5">
+            
+            <div class="flex justify-between items-center pb-2 border-b border-slate-800">
+                <h3 class="text-sm font-black text-white flex items-center gap-2">
+                    <i class="fa-solid fa-user-gear text-sky-400"></i> แก้ไขข้อมูลพนักงานอัจฉริยะ
+                </h3>
+                <button onclick="closeEditModal()" class="text-slate-500 hover:text-white transition">
+                    <i class="fa-solid fa-xmark text-sm"></i>
+                </button>
+            </div>
+
+            <input type="hidden" id="modal-emp-id">
+
+            <div class="flex flex-col items-center space-y-2 py-2">
+                <div class="relative group">
+                    <div id="modal-avatar-preview" class="w-20 h-20 rounded-full bg-slate-800 border-2 border-sky-500/50 flex items-center justify-center text-xl font-black text-slate-400 object-cover overflow-hidden">
+                        A
+                    </div>
+                    <label class="absolute inset-0 bg-black/70 rounded-full flex flex-col items-center justify-center cursor-pointer opacity-0 group-hover:opacity-100 transition text-[9px] text-white font-bold">
+                        <i class="fa-solid fa-camera text-xs mb-1"></i> อัปโหลดรูป
+                        <input type="file" id="modal-file-input" accept="image/*" class="hidden" onchange="previewModalAvatar(event)">
+                    </label>
+                </div>
+                <span class="text-[10px] text-slate-500">แตะที่รูปเพื่อเลือกไฟล์ภาพใหม่</span>
+            </div>
+
+            <div class="space-y-3">
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">ชื่อ - นามสกุล พนักงาน</label>
+                    <input type="text" id="modal-input-name" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-sky-500">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">เบอร์โทรศัพท์ติดต่อ</label>
+                    <input type="text" id="modal-input-phone" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-sky-500 font-mono">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3 pt-2">
+                <button onclick="closeEditModal()" class="py-2 bg-slate-900 hover:bg-slate-800 text-xs text-slate-400 font-bold rounded-lg transition">
+                    ยกเลิก
+                </button>
+                <button onclick="saveModalEmployeeData()" class="py-2 bg-gradient-to-r from-sky-500 to-indigo-600 text-xs text-white font-black rounded-lg shadow-lg shadow-sky-500/10 transition">
+                    💾 บันทึกข้อมูล
+                </button>
+            </div>
+        </div>
+    </div>
+
     <div id="toast-el" class="fixed bottom-6 right-6 bg-slate-900 border border-sky-500 text-sky-400 px-5 py-3 rounded-xl shadow-2xl z-50 transform translate-y-20 opacity-0 transition-all duration-300 text-xs font-black flex items-center gap-2">
         <i class="fa-solid fa-circle-notch animate-spin text-sm"></i> <span id="toast-text-node">กำลังประมวลผล...</span>
     </div>
 
-    <!-- ================= JAVASCRIPT LOGIC ================= -->
     <script>
         const krwEpaeSeedData = [
-            { id: "1", name: "สมบัติ แงทอง", phone: "081-765-4321", avatar: "", attendance: {}, ot: {} },
+            { id: "1", name: "สมบัติ แสทอง", phone: "081-765-4321", avatar: "", attendance: {}, ot: {} },
             { id: "2", name: "เยาวมาลย์ พันนา", phone: "082-123-4567", avatar: "", attendance: {}, ot: {} },
             { id: "3", name: "พุทธศรี สามีพันธ์", phone: "083-234-5678", avatar: "", attendance: {}, ot: {} },
             { id: "4", name: "มะลิ ดาวังปา", phone: "084-345-6789", avatar: "", attendance: {}, ot: {} },
@@ -217,8 +247,9 @@
         let employees = [];
         let currentDayStr = "2026-06-12"; 
         let liveChartInstance = null;
-        let currentSlidePage = 0; // ลำดับหน้าสไลด์ (0 คือหน้าแรก 1,2,3,4 ตามลำดับ)
-        const itemsPerSlide = 4; // แสดงผลหน้าละ 4 คน
+        let currentSlidePage = 0; 
+        const itemsPerSlide = 4; 
+        let temporaryAvatarBase64 = ""; // ตัวแปรพักรูปภาพชั่วคราวตอนเลือกรูปในโมดอล
 
         function initDatabase() {
             const cache = localStorage.getItem('manpower_epae_ai_chart_v2026');
@@ -286,36 +317,80 @@
             }
         }
 
-        function inlineEditEmployeeInfo(id) {
+        // ================= 🕹️ ระบบเรียกเปิดกล่อง Pop-up แก้ไข 3 อย่างพร้อมกัน =================
+        function openEditModal(id) {
             const emp = employees.find(e => e.id === id);
             if(!emp) return;
-            const newName = prompt(`📝 แก้ไขชื่อพนักงาน:`, emp.name);
-            if (newName === null || newName.trim() === "") return;
-            const newPhone = prompt(`📞 แก้ไขเบอร์โทรศัพท์:`, emp.phone);
-            if (newPhone === null) return;
-            emp.name = newName.trim();
-            emp.phone = newPhone.trim();
-            localStorage.setItem('manpower_epae_ai_chart_v2026', JSON.stringify(employees));
-            renderWorkspace();
-            showToast(`✨ อัปเดตข้อมูลพนักงานเรียบร้อย`);
+
+            // บรรจุข้อมูลเดิมลงฟอร์มในกล่อง Pop-up
+            document.getElementById('modal-emp-id').value = emp.id;
+            document.getElementById('modal-input-name').value = emp.name;
+            document.getElementById('modal-input-phone').value = emp.phone;
+            
+            // ล้างค่าและพรีวิวรูปภาพเดิม
+            temporaryAvatarBase64 = emp.avatar || ""; 
+            const previewEl = document.getElementById('modal-avatar-preview');
+            if (temporaryAvatarBase64) {
+                previewEl.innerHTML = `<img src="${temporaryAvatarBase64}" class="w-full h-full object-cover">`;
+            } else {
+                previewEl.innerHTML = emp.name.substring(0,2);
+            }
+
+            // สั่งเปิดเอฟเฟกต์ Fade หน้าต่าง
+            const modal = document.getElementById('edit-modal');
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modal.querySelector('.max-w-sm').classList.remove('scale-95');
+            }, 10);
         }
 
-        function uploadStaffAvatar(event, id) {
+        function closeEditModal() {
+            const modal = document.getElementById('edit-modal');
+            modal.classList.add('opacity-0');
+            modal.querySelector('.max-w-sm').classList.add('scale-95');
+            document.getElementById('modal-file-input').value = ""; // ล้างไฟล์ค้าง
+            setTimeout(() => modal.classList.add('hidden'), 350);
+        }
+
+        // พรีวิวรูปภาพทันทีที่เลือกไฟล์ในโมดอล
+        function previewModalAvatar(event) {
             const file = event.target.files[0];
             if(file) {
                 const reader = new FileReader();
                 reader.onload = (e) => {
-                    const emp = employees.find(x => x.id === id);
-                    if(emp) {
-                        emp.avatar = e.target.result;
-                        localStorage.setItem('manpower_epae_ai_chart_v2026', JSON.stringify(employees));
-                        renderWorkspace();
-                        showToast(`🔒 เปลี่ยนรูปโปรไฟล์พนักงานสำเร็จ`);
-                    }
+                    temporaryAvatarBase64 = e.target.result;
+                    document.getElementById('modal-avatar-preview').innerHTML = `<img src="${temporaryAvatarBase64}" class="w-full h-full object-cover">`;
                 };
                 reader.readAsDataURL(file);
             }
         }
+
+        // กดยืนยันบันทึกทั้ง 3 อย่างลงฐานข้อมูล
+        function saveModalEmployeeData() {
+            const id = document.getElementById('modal-emp-id').value;
+            const newName = document.getElementById('modal-input-name').value.trim();
+            const newPhone = document.getElementById('modal-input-phone').value.trim();
+
+            if (newName === "") {
+                alert("❌ กรุณากรอกชื่อพนักงานด้วยครับ");
+                return;
+            }
+
+            const emp = employees.find(e => e.id === id);
+            if(emp) {
+                // บันทึกรวดเดียว 3 ข้อมูล
+                emp.name = newName;
+                emp.phone = newPhone;
+                emp.avatar = temporaryAvatarBase64;
+
+                localStorage.setItem('manpower_epae_ai_chart_v2026', JSON.stringify(employees));
+                renderWorkspace();
+                closeEditModal();
+                showToast(`✨ อัปเดตข้อมูลและรูปภาพของ ${newName} เรียบร้อยครับ`);
+            }
+        }
+        // =========================================================================
 
         function changeSlidePage(direction) {
             const maxPage = Math.ceil(employees.length / itemsPerSlide) - 1;
@@ -341,7 +416,6 @@
 
             const filteredForLeft = employees.filter(e => e.name.toLowerCase().includes(sQuery) || e.phone.includes(sQuery));
 
-            // 1. วาดเมนูด้านซ้ายสำหรับแก้ไขและติ๊กมือ
             filteredForLeft.forEach(e => {
                 const dayAttend = e.attendance[currentDayStr] || "";
                 const dayOT = e.ot[currentDayStr] || false;
@@ -354,20 +428,16 @@
                     `<div class="w-8 h-8 rounded-full bg-slate-800 text-slate-400 font-bold flex items-center justify-center text-[10px]">${e.name.substring(0,1)}</div>`;
 
                 row.innerHTML = `
-                    <div class="flex items-center gap-2 min-w-0 flex-1">
-                        <div class="relative flex-shrink-0 group">
+                    <div class="flex items-center gap-2 min-w-0 flex-1 cursor-pointer" onclick="openEditModal('${e.id}')">
+                        <div class="relative flex-shrink-0">
                             ${picNode}
-                            <label class="absolute inset-0 bg-black/70 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 cursor-pointer transition text-[9px] text-white">
-                                <i class="fa-solid fa-pen"></i>
-                                <input type="file" accept="image/*" class="hidden" onchange="uploadStaffAvatar(event, '${e.id}')">
-                            </label>
                         </div>
                         <div class="min-w-0 flex-1">
-                            <span class="font-bold text-white text-xs block truncate">${e.name}</span>
+                            <span class="font-bold text-white text-xs block truncate hover:text-sky-400 transition">${e.name}</span>
                             <span class="text-[9px] text-slate-500 font-mono block">${e.phone}</span>
                         </div>
-                        <button onclick="inlineEditEmployeeInfo('${e.id}')" class="text-slate-500 hover:text-sky-400 p-1 transition flex-shrink-0">
-                            <i class="fa-solid fa-pen-to-square text-xs"></i>
+                        <button class="text-slate-500 hover:text-sky-400 p-1 transition flex-shrink-0">
+                            <i class="fa-solid fa-user-pen text-xs"></i>
                         </button>
                     </div>
                     <div class="flex items-center gap-1.5 flex-shrink-0">
@@ -382,7 +452,6 @@
                 leftBox.appendChild(row);
             });
 
-            // คำนวณสถิติภาพรวมยอดกำลังพล
             employees.forEach(e => {
                 const dayAttend = e.attendance[currentDayStr] || "";
                 const dayOT = e.ot[currentDayStr] || false;
@@ -396,7 +465,6 @@
                 if (dayOT) countOT++;
             });
 
-            // 2. คำนวณขอบเขตหน้าสไลด์และเรนเดอร์ในจอภาพยนตร์ทีละ 4 คนแบบตัวใหญ่
             const totalSlides = Math.ceil(employees.length / itemsPerSlide);
             if (currentSlidePage >= totalSlides && totalSlides > 0) currentSlidePage = totalSlides - 1;
 
@@ -458,7 +526,6 @@
                 slideGrid.appendChild(card);
             });
 
-            // อัปเดตตัวเลขรวมบนบอร์ดพรีเมียม
             document.getElementById('cnt-present').innerText = countPresent;
             document.getElementById('cnt-ot').innerText = countOT;
             document.getElementById('cnt-late').innerText = countLate;
@@ -492,7 +559,6 @@
             }
         }
 
-        // ฟังก์ชันส่งออกเป็นภาพถ่ายสไลด์หน้านี้โดยเฉพาะ
         function exportSlideAsImage() {
             const target = document.getElementById('presentation-theater');
             showToast("📸 กำลังถ่ายภาพนิ่งสไลด์หน้านี้ความละเอียดสูง...");
@@ -505,15 +571,14 @@
             });
         }
 
-        // 🎬 ฟังก์ชันเด็ด: สลับหน้าอัตโนมัติแล้วอัดหน้าจอเซฟเป็นวิดีโอ (Video Recorder ในตัว)
         async function recordPresentationVideo() {
             const theater = document.getElementById('presentation-theater');
             const btn = document.getElementById('btn-video-record');
             const dot = document.getElementById('record-ping-dot');
             const totalSlides = Math.ceil(employees.length / itemsPerSlide);
 
-            if (!navigator.mediaDevices || !window.MediaRecorder) {
-                alert("❌ เบราว์เซอร์ของคุณไม่รองรับระบบการบันทึกวิดีโอแบบแอนิเมชันผ่านหน้าเว็บ (แนะนำให้ใช้ Google Chrome หรือ Microsoft Edge เวอร์ชันล่าสุดครับ)");
+            if (!navigator.mediaDevices) {
+                alert("❌ เบราว์เซอร์หรืออุปกรณ์ของคุณปฏิเสธการเข้าถึงระบบบันทึกหน้าจอ");
                 return;
             }
 
@@ -522,35 +587,49 @@
                 currentSlidePage = 0;
                 renderWorkspace();
 
-                // สตรีมข้อมูลจากหน้าบอร์ดนำเสนอ
-                const stream = theater.captureStream ? theater.captureStream(30) : theater.mozCaptureStream(30);
-                const recorder = new MediaRecorder(stream, { mimeType: 'video/webm;codecs=vp9' });
+                let stream = null;
+                if (typeof theater.captureStream === "function") {
+                    stream = theater.captureStream(30);
+                } else if (typeof theater.mozCaptureStream === "function") {
+                    stream = theater.mozCaptureStream(30);
+                } else {
+                    alert("❌ อุปกรณ์ไม่สนับสนุนการดึงภาพสตรีมโดยตรง แนะนำให้เปิดผ่าน Google Chrome บนคอมพิวเตอร์ หรือกดปุ่ม 'บันทึกภาพนิ่ง' ชั่วคราวครับ");
+                    return;
+                }
+
+                let options = { mimeType: 'video/webm' };
+                if (MediaRecorder.isTypeSupported('video/webm;codecs=vp9')) {
+                    options = { mimeType: 'video/webm;codecs=vp9' };
+                } else if (MediaRecorder.isTypeSupported('video/mp4')) {
+                    options = { mimeType: 'video/mp4' };
+                }
+
+                const recorder = new MediaRecorder(stream, options);
                 const chunks = [];
 
                 recorder.ondataavailable = (e) => { if (e.data.size > 0) chunks.push(e.data); };
                 
                 recorder.onstop = () => {
-                    const blob = new Blob(chunks, { type: 'video/webm' });
+                    const blob = new Blob(chunks, { type: options.mimeType });
                     const url = URL.createObjectURL(blob);
                     const link = document.createElement('a');
                     link.href = url;
-                    link.download = `วิดีโอสรุปรายงานกำลังพล_กรออีแปะ_${currentDayStr}.webm`;
+                    
+                    const ext = options.mimeType.includes('mp4') ? 'mp4' : 'webm';
+                    link.download = `วิดีโอสรุปรายงานกำลังพล_กรออีแปะ_${currentDayStr}.${ext}`;
                     link.click();
                     
-                    // คืนค่าปุ่มปกติ
                     btn.disabled = false;
                     dot.style.display = "none";
                     btn.innerHTML = `<i class="fa-solid fa-video"></i> อัดวิดีโอนำเสนออัตโนมัติ (รันวนครบทุกคนส่งเข้า LINE)`;
-                    showToast("🎬 บันทึกวิดีโอแอนิเมชันนำเสนอลงเครื่องสำเร็จ! ส่งเข้า LINE ได้ทันทีครับ");
+                    showToast("🎬 บันทึกวิดีโอแอนิเมชันนำเสนอลงเครื่องสำเร็จ!");
                 };
 
-                // เริ่มอัดวิดีโอ
                 recorder.start();
                 btn.disabled = true;
                 dot.style.display = "inline-block";
                 btn.innerText = " 🔴 กำลังบันทึกวิดีโอภาพเคลื่อนไหว (กรุณารอระบบวนสไลด์จนครบ)";
 
-                // ลูปเปลี่ยนหน้าสไลด์ทุกๆ 2.5 วินาที เพื่อสร้างแอนิเมชันวิดีโอ
                 let pageCounter = 0;
                 const interval = setInterval(() => {
                     pageCounter++;
@@ -558,7 +637,7 @@
                         changeSlidePage(1);
                     } else {
                         clearInterval(interval);
-                        recorder.stop(); // สิ้นสุดการอัดวิดีโอเมื่อรันครบทุกหน้า
+                        recorder.stop(); 
                     }
                 }, 2500);
 
