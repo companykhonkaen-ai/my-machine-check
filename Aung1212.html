@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบจัดการกำลังพลและประสิทธิภาพ กรออีแปะ v5.0 (Auto-Save)</title>
+    <title>โปรแกรมอัจฉริยะ คำนวณประสิทธิภาพการทำงานและเช็คชื่อของสมาชิก กรออีแปะแผนกทอ E v6.0</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -50,25 +50,25 @@
         
         <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 pb-3 border-b border-slate-800/60">
             <div>
-                <h1 class="text-lg font-black text-white tracking-wider flex items-center gap-2">
-                    <span class="w-2.5 h-2.5 rounded-full bg-sky-500 shadow-lg shadow-sky-500/50"></span>
-                    EPAE PRODUCTION CONTROL SYSTEM
+                <h1 class="text-sm md:text-base font-black text-white tracking-wide flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-sky-500 shadow-lg shadow-sky-500/50 flex-shrink-0"></span>
+                    โปรแกรมอัจฉริยะ คำนวณประสิทธิภาพการทำงานและเช็คชื่อของสมาชิก กรออีแปะแผนกทอ E
                 </h1>
-                <div class="flex items-center gap-2 mt-0.5">
-                    <p class="text-[11px] text-slate-500">ระบบคลังข้อมูลถาวรรายวัน ตรวจเช็คย้อนหลังผ่านปฏิทิน</p>
+                <div class="flex items-center gap-2 mt-1">
+                    <p class="text-[11px] text-slate-500">ระบบบันทึกข้อมูลถาวรรายวัน สามารถแก้ไขรายชื่อพนักงานได้โดยตรง</p>
                     <span class="inline-flex items-center gap-1 bg-emerald-950/60 border border-emerald-900/60 text-emerald-400 text-[9px] px-1.5 py-0.5 rounded font-bold">
                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse-fast"></span> AUTOSAVE ACTIVE
                     </span>
                 </div>
             </div>
 
-            <div class="flex items-center gap-2 bg-slate-900/90 border border-slate-800 px-3 py-1.5 rounded-xl">
+            <div class="flex items-center gap-2 bg-slate-900/90 border border-slate-800 px-3 py-1.5 rounded-xl flex-shrink-0">
                 <i class="fa-solid fa-calendar-days text-sky-400 text-sm"></i>
                 <label class="text-xs text-slate-400 font-bold hidden sm:inline">วันที่บันทึก/ดูย้อนหลัง:</label>
                 <input type="date" id="working-date-picker" onchange="handleDateChange()" class="bg-slate-950 text-white text-xs font-mono font-bold rounded-lg px-2 py-1 border border-slate-700 focus:outline-none focus:border-sky-500 cursor-pointer">
             </div>
             
-            <div class="flex flex-wrap items-center gap-2 bg-slate-900/80 p-1 rounded-xl border border-slate-800">
+            <div class="flex flex-wrap items-center gap-2 bg-slate-900/80 p-1 rounded-xl border border-slate-800 flex-shrink-0">
                 <button onclick="switchPage('dashboard')" id="tab-dashboard" class="nav-tab active px-4 py-2 text-xs font-bold rounded-lg transition flex items-center gap-2 text-slate-400 hover:text-white">
                     <i class="fa-solid fa-chart-pie"></i> หน้าหลัก (ภาพรวมสรุป)
                 </button>
@@ -114,7 +114,7 @@
                         <h3 class="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-1.5">
                             <i class="fa-solid fa-sliders text-amber-400"></i> ตั้งเป้าหมายผลผลิตประจำวัน
                         </h3>
-                        <p class="text-[10px] text-slate-400">เป้าหมายจะถูกผูกบันทึกแยกไว้รายวันตามปฏิทินเช่นกัน</p>
+                        <p class="text-[10px] text-slate-400">เป้าหมายจะถูกผูกบันทึกแยกไว้รายวันตามปฏิทิน</p>
                         
                         <div class="space-y-2 text-xs">
                             <div>
@@ -138,7 +138,7 @@
                         
                         <div class="flex justify-between items-center border-b border-slate-800/80 pb-4">
                             <div>
-                                <h2 class="text-sm font-bold text-white tracking-wide">รายงานสถานะกำลังพลประจำวัน สมาชิก กรออีแปะ</h2>
+                                <h2 class="text-xs md:text-sm font-bold text-white tracking-wide">รายงานสถานะกำลังพลและประสิทธิภาพประจำวัน แผนกทอ E</h2>
                                 <p class="text-[11px] text-slate-400">แสดงผลครั้งละ 4 ท่าน เพื่อความชัดเจนในการส่งเข้ากลุ่ม LINE</p>
                             </div>
                             <div class="text-xs font-mono font-bold text-sky-400 bg-sky-950/40 border border-sky-800/60 px-3 py-1 rounded-md" id="slide-date-label">
@@ -220,8 +220,9 @@
                 <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-2">
                     <div>
                         <h2 class="text-sm font-bold text-white flex items-center gap-2">
-                            <i class="fa-solid fa-user-check text-sky-400"></i> บันทึกข้อมูลพนักงาน ขาด ลา มาสาย เช็คชื่อ
+                            <i class="fa-solid fa-user-check text-sky-400"></i> บันทึกข้อมูลพนักงาน ขาด ลา มาสาย เช็คชื่อ และ แก้ไขรายชื่อพนักงาน
                         </h2>
+                        <p class="text-[11px] text-slate-500 mt-0.5">💡 คุณสามารถคลิกพิมพ์ที่ช่อง "ชื่อพนักงาน" หรือ "เบอร์โทร" เพื่อเปลี่ยนรายชื่อได้โดยตรง ระบบจะเซฟให้อัตโนมัติ</p>
                     </div>
                     <input type="text" id="search-att" oninput="renderApp()" placeholder="🔍 ค้นหารายชื่อพนักงาน..." class="px-3 py-1.5 bg-slate-950 border border-slate-800 rounded-lg text-xs focus:outline-none focus:border-sky-500 text-white w-full sm:w-64">
                 </div>
@@ -229,8 +230,8 @@
                     <table class="w-full text-left text-xs divide-y divide-slate-800">
                         <thead class="bg-slate-900/80 text-slate-400 font-bold">
                             <tr>
-                                <th class="p-3">รหัส / รายชื่อพนักงาน</th>
-                                <th class="p-3">เบอร์โทรศัพท์</th>
+                                <th class="p-3">ชื่อ - นามสกุลพนักงาน (คลิกแก้ไขพิมพ์ได้เลย)</th>
+                                <th class="p-3">เบอร์โทรศัพท์ (คลิกแก้ไขได้เลย)</th>
                                 <th class="p-3 text-center">ปุ่มสลับสถานะ (เช้า / ดึก / สาย / หยุด / ขาด)</th>
                                 <th class="p-3 text-center">ล่วงเวลา (OT)</th>
                             </tr>
@@ -307,7 +308,6 @@
             { id: "17", name: "น.ส.กมลรัตน์ พูลทรัพย์", phone: "097-789-5432", attendance: "", ot: false, table: "-", yarn: "-", sheets: 0, boxes: 0, trucks: 0 }
         ];
 
-        // 🗃️ โครงสร้างฐานข้อมูลจัดเก็บหลักแบบผูกถาวรใน Browser
         let archiveDatabase = {};
         let currentSelectedDate = "";
 
@@ -315,52 +315,32 @@
         const pageSize = 4;
         const statusList = ["", "✓", "✅", "สาย", "H", "❌"];
 
-        // 💾 ฟังก์ชันเซฟลงเบราว์เซอร์ (localStorage)
         function saveToLocalStorage() {
-            localStorage.setItem('epae_archive_db', JSON.stringify(archiveDatabase));
+            localStorage.setItem('epae_archive_db_v6', JSON.stringify(archiveDatabase));
         }
 
-        // 🔄 ฟังก์ชันโหลดข้อมูลกลับคืนมาจากเบราว์เซอร์
         function loadFromLocalStorage() {
-            const data = localStorage.getItem('epae_archive_db');
-            if (data) {
-                archiveDatabase = JSON.parse(data);
-            }
+            const data = localStorage.getItem('epae_archive_db_v6');
+            if (data) { archiveDatabase = JSON.parse(data); }
         }
 
-        // ⏰ เริ่มต้นระบบ Auto-Save ทุกๆ 1 วินาที (1000 มิลลิวินาที)
         function startAutoSaveEngine() {
-            setInterval(() => {
-                saveToLocalStorage();
-            }, 1000);
+            setInterval(() => { saveToLocalStorage(); }, 1000);
         }
 
         function initDatePicker() {
             const picker = document.getElementById('working-date-picker');
             const today = new Date();
-            const year = today.getFullYear();
-            const month = String(today.getMonth() + 1).padStart(2, '0');
-            const date = String(today.getDate()).padStart(2, '0');
-            
-            currentSelectedDate = `${year}-${month}-${date}`;
+            currentSelectedDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
             picker.value = currentSelectedDate;
-            
             checkAndInitDateData(currentSelectedDate);
         }
 
         function checkAndInitDateData(dateStr) {
-            // ถ้าในวันนั้นยังไม่มีกล่องเป้าหมายและรายชื่อ ให้สร้างโครงสร้างพื้นฐานขึ้นมา
             if (!archiveDatabase[dateStr]) {
                 archiveDatabase[dateStr] = {
                     targets: { sheets: 1000, boxes: 100, trucks: 10 },
                     employees: JSON.parse(JSON.stringify(baseEmployees))
-                };
-            }
-            // รองรับโครงสร้างเก่าใน Patch 4.0 ถ้าเกิดไม่มีฟิลด์ targets ซ้อนอยู่
-            if (!archiveDatabase[dateStr].targets) {
-                archiveDatabase[dateStr] = {
-                    targets: { sheets: 1000, boxes: 100, trucks: 10 },
-                    employees: archiveDatabase[dateStr].employees || JSON.parse(JSON.stringify(baseEmployees))
                 };
             }
         }
@@ -375,7 +355,6 @@
             document.getElementById('perf-empty-state').classList.remove('hidden');
             document.getElementById('perf-actual-form').classList.add('hidden');
             
-            // ดึงข้อมูลเป้าหมายของวันนั้นมาหยอดใส่กล่อง Input คืน
             const dayData = archiveDatabase[currentSelectedDate];
             document.getElementById('target-sheets-input').value = dayData.targets.sheets;
             document.getElementById('target-boxes-input').value = dayData.targets.boxes;
@@ -387,9 +366,8 @@
         function formatThaiDate(dateStr) {
             if(!dateStr) return "";
             const parts = dateStr.split('-');
-            const year = parseInt(parts[0]) + 543;
             const months = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
-            return `${parseInt(parts[2])} ${months[parseInt(parts[1]) - 1]} ${year}`;
+            return `${parseInt(parts[2])} ${months[parseInt(parts[1]) - 1]} ${parseInt(parts[0]) + 543}`;
         }
 
         function updateTargets() {
@@ -398,6 +376,26 @@
             dayData.targets.boxes = parseInt(document.getElementById('target-boxes-input').value) || 1;
             dayData.targets.trucks = parseInt(document.getElementById('target-trucks-input').value) || 1;
             renderApp();
+        }
+
+        // 📝 ฟังก์ชันจัดการอัปเดตข้อมูลพนักงานเมื่อมีการพิมพ์แก้ไขชื่อหรือเบอร์โทรศัพท์แบบสดๆ (เพิ่มใหม่ใน v6.0)
+        function editEmployeeData(id, field, value) {
+            let activeDb = archiveDatabase[currentSelectedDate].employees;
+            const idx = activeDb.findIndex(e => e.id === id);
+            if(idx !== -1) {
+                activeDb[idx][field] = value;
+                
+                // หากกำลังเลือกแก้ไขคนนั้นคาไว้ในหน้าประสิทธิภาพ ให้ตัวหนังสืออัปเดตตามด้วยทันที
+                const activeIdForm = document.getElementById('perf-active-id') ? document.getElementById('perf-active-id').value : null;
+                if(activeIdForm === id) {
+                    if(field === 'name') document.getElementById('perf-form-title-name').innerText = value;
+                    if(field === 'phone') document.getElementById('perf-form-title-phone').innerText = value;
+                }
+                
+                // สั่งรีเซ็ตการวาดหน้าหลักแบบ Realtime แต่ไม่รีเฟรชหน้าเบราว์เซอร์
+                const currentTabActive = document.querySelector('.nav-tab.active').id;
+                if(currentTabActive !== 'tab-attendance') { renderApp(); }
+            }
         }
 
         function switchPage(pageId) {
@@ -464,7 +462,6 @@
             document.getElementById('p-input-trucks').value = emp.trucks || "";
         }
 
-        // ฟังชันก์เมื่อผู้ใช้ป้อนตัวเลขคาไว้ ให้รีบ Auto-save ลงอาเรย์ทันทีก่อนกดยืนยัน (ช่วยเสริมการบันทึกเรียลไทม์)
         function syncFormToMemory() {
             const id = document.getElementById('perf-active-id').value;
             if(!id) return;
@@ -481,7 +478,7 @@
 
         function savePerformanceInline() {
             syncFormToMemory();
-            saveToLocalStorage(); // บันทึกลง Harddisk ของบราวเซอร์ทันที
+            saveToLocalStorage();
             let id = document.getElementById('perf-active-id').value;
             let activeDb = archiveDatabase[currentSelectedDate].employees;
             let emp = activeDb.find(e => e.id === id);
@@ -508,7 +505,6 @@
             let activeDb = dayData.employees;
             let currentTargets = dayData.targets;
 
-            // ผูกฟังก์ชันป้อนข้อมูลสดให้เซฟเรียลไทม์ตลอดเวลา
             const activeId = document.getElementById('perf-active-id') ? document.getElementById('perf-active-id').value : null;
             if(activeId && !document.getElementById('perf-actual-form').classList.contains('hidden')) {
                 syncFormToMemory();
@@ -579,6 +575,7 @@
                 slideContainer.appendChild(card);
             });
 
+            // ตารางบันทึกเช็คชื่อ (เวอร์ชัน 6.0 ปรับให้ช่องรายชื่อและเบอร์โทรพิมพ์แก้ไขสดๆ ได้เลย)
             const attBody = document.getElementById('table-attendance-body');
             if(attBody) {
                 attBody.innerHTML = "";
@@ -588,10 +585,18 @@
                     const tr = document.createElement('tr');
                     tr.className = "hover:bg-slate-900/20";
                     tr.innerHTML = `
-                        <td class="p-3 font-bold text-white">${e.name}</td>
-                        <td class="p-3 font-mono text-slate-400">${e.phone}</td>
-                        <td class="p-3 text-center"><button onclick="cycleAttendance('${e.id}')" class="w-24 py-1 rounded-lg text-[11px] ${getBtnStyle(e.attendance)}">${btnText}</button></td>
-                        <td class="p-3 text-center"><button onclick="toggleOT('${e.id}')" class="px-3 py-1 rounded-lg text-[11px] ${e.ot ? 'bg-sky-500 text-slate-950 font-bold' : 'bg-slate-900 text-slate-600'}">${e.ot ? 'เปิดโหมด OT' : 'ไม่มี OT'}</button></td>
+                        <td class="p-2">
+                            <input type="text" value="${e.name}" oninput="editEmployeeData('${e.id}', 'name', this.value)" class="w-full bg-slate-950/80 border border-slate-800 rounded px-2 py-1 text-white focus:outline-none focus:border-sky-500 font-medium">
+                        </td>
+                        <td class="p-2">
+                            <input type="text" value="${e.phone}" oninput="editEmployeeData('${e.id}', 'phone', this.value)" class="w-full bg-slate-950/80 border border-slate-800 rounded px-2 py-1 text-slate-400 focus:outline-none focus:border-sky-500 font-mono">
+                        </td>
+                        <td class="p-2 text-center">
+                            <button onclick="cycleAttendance('${e.id}')" class="w-24 py-1 rounded-lg text-[11px] ${getBtnStyle(e.attendance)}">${btnText}</button>
+                        </td>
+                        <td class="p-2 text-center">
+                            <button onclick="toggleOT('${e.id}')" class="px-3 py-1 rounded-lg text-[11px] ${e.ot ? 'bg-sky-500 text-slate-950 font-bold' : 'bg-slate-900 text-slate-600'}">${e.ot ? 'เปิดโหมด OT' : 'ไม่มี OT'}</button>
+                        </td>
                     `;
                     attBody.appendChild(tr);
                 });
@@ -610,13 +615,12 @@
             }
         }
 
-        // เรียกใช้งานเมื่อเปิดหน้าเว็บบูตระบบ
         window.onload = function() {
-            loadFromLocalStorage(); // 1. ดึงฐานข้อมูลเก่าจากฮาร์ดดิสก์เบราว์เซอร์มาก่อน
-            initDatePicker();       // 2. ตั้งค่าวันที่ปัจจุบัน
-            handleDateChange();     // 3. หยอดข้อมูลเป้าหมายประจำวันเข้ากล่องอินพุต
-            renderApp();            // 4. แสดงผลผลลัพธ์
-            startAutoSaveEngine();  // 5. รันระบบเซฟออโต้ทุกวินาที
+            loadFromLocalStorage();
+            initDatePicker();
+            handleDateChange();
+            renderApp();
+            startAutoSaveEngine();
         };
     </script>
 </body>
