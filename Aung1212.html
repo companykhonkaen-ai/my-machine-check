@@ -3,16 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบจัดการกำลังพลและประสิทธิภาพ กรออีแปะ v3.0</title>
-    <!-- Tailwind CSS -->
+    <title>ระบบจัดการกำลังพลและประสิทธิภาพ กรออีแปะ v4.0</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- html2canvas สำหรับเซฟภาพ -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
     <style>
@@ -45,17 +41,21 @@
 
     <div class="max-w-[1400px] mx-auto space-y-4">
         
-        <!-- ================= TOP BAR & NAVIGATION ================= -->
         <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 pb-3 border-b border-slate-800/60">
             <div>
                 <h1 class="text-lg font-black text-white tracking-wider flex items-center gap-2">
                     <span class="w-2.5 h-2.5 rounded-full bg-sky-500 shadow-lg shadow-sky-500/50"></span>
                     EPAE PRODUCTION CONTROL SYSTEM
                 </h1>
-                <p class="text-[11px] text-slate-500">ระบบรายงานสรุปผลผลิต และบริหารจัดการเป้าหมายรายวันแบบยืดหยุ่น</p>
+                <p class="text-[11px] text-slate-500">ระบบรายงานสรุปผลผลิต เลือกจัดการและดูข้อมูลภาพรวมย้อนหลังรายวันผ่านปฏิทิน</p>
+            </div>
+
+            <div class="flex items-center gap-2 bg-slate-900/90 border border-slate-800 px-3 py-1.5 rounded-xl">
+                <i class="fa-solid fa-calendar-days text-sky-400 text-sm"></i>
+                <label class="text-xs text-slate-400 font-bold hidden sm:inline">วันที่บันทึก/ดูย้อนหลัง:</label>
+                <input type="date" id="working-date-picker" onchange="handleDateChange()" class="bg-slate-950 text-white text-xs font-mono font-bold rounded-lg px-2 py-1 border border-slate-700 focus:outline-none focus:border-sky-500 cursor-pointer">
             </div>
             
-            <!-- 📌 แถบเมนูกดสลับหน้า -->
             <div class="flex flex-wrap items-center gap-2 bg-slate-900/80 p-1 rounded-xl border border-slate-800">
                 <button onclick="switchPage('dashboard')" id="tab-dashboard" class="nav-tab active px-4 py-2 text-xs font-bold rounded-lg transition flex items-center gap-2 text-slate-400 hover:text-white">
                     <i class="fa-solid fa-chart-pie"></i> หน้าหลัก (ภาพรวมสรุป)
@@ -69,13 +69,10 @@
             </div>
         </div>
 
-        <!-- ================= PAGE 1: หน้าหลัก (ภาพรวมสรุป) ================= -->
         <div id="page-dashboard" class="page-content space-y-4">
             <div class="grid grid-cols-1 xl:grid-cols-12 gap-5 items-start">
                 
-                <!-- ฝั่งซ้ายของหน้าหลัก: สรุปกำลังพล + 🛠️ ช่องตั้งเป้าหมายประจำวัน (เพิ่มใหม่) -->
                 <div class="xl:col-span-4 space-y-4">
-                    <!-- บล็อกสถานะกำลังพล -->
                     <div class="cyber-panel rounded-xl p-4 space-y-4">
                         <h3 class="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-1.5">
                             <i class="fa-solid fa-users text-sky-400"></i> สรุปสถานะกำลังพลวันนี้
@@ -101,7 +98,6 @@
                         </div>
                     </div>
 
-                    <!-- 🛠️ บล็อกตั้งเป้าหมายผลิตผลประจำวัน (พนักงาน/หัวหน้างาน แก้ไขได้เองจากตรงนี้เลย) -->
                     <div class="cyber-panel rounded-xl p-4 space-y-3 bg-gradient-to-b from-slate-900/40 to-slate-950/80">
                         <h3 class="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-1.5">
                             <i class="fa-solid fa-sliders text-amber-400"></i> ตั้งเป้าหมายผลผลิตประจำวัน
@@ -125,7 +121,6 @@
                     </div>
                 </div>
 
-                <!-- ฝั่งขวาของหน้าหลัก: บอร์ดภาพรวมผลผลิต + สไลด์ส่ง LINE -->
                 <div class="xl:col-span-8 space-y-4">
                     <div class="cinema-card rounded-2xl p-6 shadow-2xl space-y-6" id="presentation-view">
                         
@@ -134,14 +129,12 @@
                                 <h2 class="text-sm font-bold text-white tracking-wide">รายงานสถานะกำลังพลประจำวัน สมาชิก กรออีแปะ</h2>
                                 <p class="text-[11px] text-slate-400">แสดงผลครั้งละ 4 ท่าน เพื่อความชัดเจนในการส่งเข้ากลุ่ม LINE</p>
                             </div>
-                            <div class="text-xs font-mono font-bold text-sky-400 bg-sky-950/40 border border-sky-800/60 px-3 py-1 rounded-md">
-                                12 มิถุนายน 2569
+                            <div class="text-xs font-mono font-bold text-sky-400 bg-sky-950/40 border border-sky-800/60 px-3 py-1 rounded-md" id="slide-date-label">
+                                -
                             </div>
                         </div>
 
-                        <!-- 📊 ส่วนแสดงยอดรวมพร้อมเปอร์เซ็นต์ที่เปลี่ยนตามค่า Input ที่ตั้งไว้ -->
                         <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 text-center">
-                            <!-- แผ่นอีแปะภาพรวม -->
                             <div class="bg-emerald-950/20 border border-emerald-900/40 p-3 rounded-xl flex flex-col justify-between">
                                 <span class="block text-[9px] font-bold text-slate-400 leading-tight">จำนวนแผ่นอีแปะภาพรวม</span>
                                 <div class="my-1">
@@ -151,7 +144,6 @@
                                 <span class="text-[10px] text-emerald-500 font-bold font-mono bg-emerald-500/10 rounded py-0.5" id="pct-sheets">0.0%</span>
                             </div>
                             
-                            <!-- ลังภาพรวม -->
                             <div class="bg-sky-950/20 border border-sky-900/40 p-3 rounded-xl flex flex-col justify-between">
                                 <span class="block text-[9px] font-bold text-slate-400 leading-tight">จำนวนลังที่ได้ภาพรวม</span>
                                 <div class="my-1">
@@ -161,7 +153,6 @@
                                 <span class="text-[10px] text-sky-500 font-bold font-mono bg-sky-500/10 rounded py-0.5" id="pct-boxes">0.0%</span>
                             </div>
                             
-                            <!-- คันรถภาพรวม -->
                             <div class="bg-amber-950/20 border border-amber-900/40 p-3 rounded-xl flex flex-col justify-between">
                                 <span class="block text-[9px] font-bold text-slate-400 leading-tight">จำนวนคันรถอีแปะภาพรวม</span>
                                 <div class="my-1">
@@ -171,7 +162,6 @@
                                 <span class="text-[10px] text-amber-500 font-bold font-mono bg-amber-500/10 rounded py-0.5" id="pct-trucks">0.0%</span>
                             </div>
 
-                            <!-- ยอดผู้ขาดงานสะสม -->
                             <div class="bg-rose-950/20 border border-rose-900/40 p-3 rounded-xl flex flex-col justify-between">
                                 <span class="block text-[9px] font-bold text-slate-400 leading-tight">ยอดกำลังพลขาดงานวันนี้</span>
                                 <div class="my-2">
@@ -182,10 +172,8 @@
                             </div>
                         </div>
 
-                        <!-- สไลด์ Grid พนักงาน 4 คน -->
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" id="slide-grid-container">
-                            <!-- เจนโดย JS -->
-                        </div>
+                            </div>
 
                         <div class="flex justify-between items-center text-[10px] font-bold text-slate-500 pt-2 border-t border-slate-900">
                             <div class="flex gap-3">
@@ -197,7 +185,6 @@
                         </div>
                     </div>
 
-                    <!-- ปุ่มควบคุมสไลด์และการเซฟภาพส่ง LINE -->
                     <div class="cyber-panel p-2 rounded-xl flex flex-col sm:flex-row justify-between items-center gap-3">
                         <div class="flex items-center gap-2">
                             <button onclick="prevPage()" class="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs font-bold rounded-lg text-white">
@@ -216,9 +203,7 @@
             </div>
         </div>
 
-        <!-- ================= PAGE 2: ขาด ลา มาสาย เช็คชื่อ ================= -->
         <div id="page-attendance" class="page-content hidden space-y-4">
-            <!-- คงตารางเดิมไว้สำหรับเช็ค ขาด ลา มาสาย -->
             <div class="cyber-panel rounded-xl p-4 space-y-4">
                 <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-2">
                     <div>
@@ -244,9 +229,7 @@
             </div>
         </div>
 
-        <!-- ================= PAGE 3: กรอกประสิทธิภาพพนักงาน ================= -->
         <div id="page-performance" class="page-content hidden space-y-4">
-            <!-- คงฟอร์มกรอกประสิทธิภาพรายบุคคลไว้ -->
             <div class="cyber-panel rounded-xl p-4 space-y-4">
                 <div>
                     <h2 class="text-sm font-bold text-white flex items-center gap-2">
@@ -290,9 +273,9 @@
 
     </div>
 
-    <!-- ================= CORE LOGIC JAVASCRIPT ================= -->
     <script>
-        let database = [
+        // รายชื่อพนักงานเริ่มต้น
+        const baseEmployees = [
             { id: "1", name: "สมบัติ แสทอง", phone: "081-765-4321", attendance: "✓", ot: false, table: "-", yarn: "-", sheets: 0, boxes: 0, trucks: 0 },
             { id: "2", name: "เยาวมาลย์ พันนา", phone: "082-123-4567", attendance: "✓", ot: false, table: "-", yarn: "-", sheets: 0, boxes: 0, trucks: 0 },
             { id: "3", name: "พุทธศรี สามีพันธ์", phone: "083-234-5678", attendance: "✓", ot: false, table: "-", yarn: "-", sheets: 0, boxes: 0, trucks: 0 },
@@ -312,7 +295,11 @@
             { id: "17", name: "น.ส.กมลรัตน์ พูลทรัพย์", phone: "097-789-5432", attendance: "", ot: false, table: "-", yarn: "-", sheets: 0, boxes: 0, trucks: 0 }
         ];
 
-        // ตัวแปรเก็บค่าเป้าหมายหลัก (เริ่มต้นดึงมาจาก Input)
+        // 🗃️ โครงสร้างฐานข้อมูลจัดเก็บแยกตามวันที่ {"YYYY-MM-DD": [array ข้อมูลพนักงาน]}
+        let archiveDatabase = {};
+        let currentSelectedDate = "";
+
+        // ค่าเป้าหมายหลัก
         let targetSheets = 1000;
         let targetBoxes = 100;
         let targetTrucks = 10;
@@ -321,13 +308,58 @@
         const pageSize = 4;
         const statusList = ["", "✓", "✅", "สาย", "H", "❌"];
 
-        // ฟังก์ชันเมื่อผู้ใช้พิมพ์แก้ไขตัวเลขเป้าหมายในกล่อง Input
+        // เริ่มต้นตั้งค่าวันที่เป็น "วันนี้" ตอนเปิดเว็บครั้งแรก
+        function initDatePicker() {
+            const picker = document.getElementById('working-date-picker');
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const date = String(today.getDate()).padStart(2, '0');
+            
+            currentSelectedDate = `${year}-${month}-${date}`;
+            picker.value = currentSelectedDate;
+            
+            // ดึงหรือสร้างข้อมูลของวันนี้
+            checkAndInitDateData(currentSelectedDate);
+        }
+
+        // ตรวจสอบว่ามีข้อมูลของวันที่เลือกในคลังหรือยัง ถ้าไม่มีให้สร้างใหม่จากรายชื่อพนักงานตั้งต้น
+        function checkAndInitDateData(dateStr) {
+            if (!archiveDatabase[dateStr]) {
+                // คัดลอกโครงสร้างรายชื่อคนงานไปเป็นกล่องข้อมูลใหม่ของวันนั้นๆ
+                archiveDatabase[dateStr] = JSON.parse(JSON.stringify(baseEmployees));
+            }
+        }
+
+        // ฟังก์ชันเมื่อเปลี่ยนวันที่บนปฏิทิน
+        function handleDateChange() {
+            currentSelectedDate = document.getElementById('working-date-picker').value;
+            if(!currentSelectedDate) return;
+            
+            checkAndInitDateData(currentSelectedDate);
+            currentPage = 0; // รีเซ็ตหน้าแสดงสไลด์ไปที่คนแรก
+            
+            // ปิดหน้าฟอร์มกรอกคะแนนเดิมเพื่อป้องกันการสับสน
+            document.getElementById('perf-empty-state').classList.remove('hidden');
+            document.getElementById('perf-actual-form').classList.add('hidden');
+            
+            renderApp();
+        }
+
+        // แปลงวันที่ YYYY-MM-DD เป็นรูปแบบภาษาไทยสำหรับแสดงบนหัวสไลด์
+        function formatThaiDate(dateStr) {
+            if(!dateStr) return "";
+            const parts = dateStr.split('-');
+            const year = parseInt(parts[0]) + 543;
+            const months = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
+            const monthStr = months[parseInt(parts[1]) - 1];
+            return `${parseInt(parts[2])} ${monthStr} ${year}`;
+        }
+
         function updateTargets() {
             targetSheets = parseInt(document.getElementById('target-sheets-input').value) || 1;
             targetBoxes = parseInt(document.getElementById('target-boxes-input').value) || 1;
             targetTrucks = parseInt(document.getElementById('target-trucks-input').value) || 1;
-            
-            // สั่งคำนวณและวาดสัดส่วน % ใหม่ทันที
             renderApp();
         }
 
@@ -340,18 +372,20 @@
         }
 
         function cycleAttendance(id) {
-            const idx = database.findIndex(e => e.id === id);
+            let activeDb = archiveDatabase[currentSelectedDate];
+            const idx = activeDb.findIndex(e => e.id === id);
             if(idx !== -1) {
-                let currentStatus = database[idx].attendance;
+                let currentStatus = activeDb[idx].attendance;
                 let nextIdx = (statusList.indexOf(currentStatus) + 1) % statusList.length;
-                database[idx].attendance = statusList[nextIdx];
+                activeDb[idx].attendance = statusList[nextIdx];
                 renderApp();
             }
         }
 
         function toggleOT(id) {
-            const idx = database.findIndex(e => e.id === id);
-            if(idx !== -1) { database[idx].ot = !database[idx].ot; renderApp(); }
+            let activeDb = archiveDatabase[currentSelectedDate];
+            const idx = activeDb.findIndex(e => e.id === id);
+            if(idx !== -1) { activeDb[idx].ot = !activeDb[idx].ot; renderApp(); }
         }
 
         function getStatusBadge(status, table, yarn) {
@@ -378,7 +412,8 @@
         }
 
         function selectEmpForPerf(id) {
-            const emp = database.find(e => e.id === id);
+            let activeDb = archiveDatabase[currentSelectedDate];
+            const emp = activeDb.find(e => e.id === id);
             if(!emp) return;
             document.getElementById('perf-empty-state').classList.add('hidden');
             document.getElementById('perf-actual-form').classList.remove('hidden');
@@ -393,27 +428,28 @@
         }
 
         function savePerformanceInline() {
+            let activeDb = archiveDatabase[currentSelectedDate];
             const id = document.getElementById('perf-active-id').value;
-            const idx = database.findIndex(e => e.id === id);
+            const idx = activeDb.findIndex(e => e.id === id);
             if(idx !== -1) {
-                database[idx].table = document.getElementById('p-input-table').value;
-                database[idx].yarn = document.getElementById('p-input-yarn').value;
-                database[idx].sheets = parseInt(document.getElementById('p-input-sheets').value) || 0;
-                database[idx].boxes = parseInt(document.getElementById('p-input-boxes').value) || 0;
-                database[idx].trucks = parseInt(document.getElementById('p-input-trucks').value) || 0;
-                alert(`อัปเดตยอดของ ${database[idx].name} สำเร็จ!`);
+                activeDb[idx].table = document.getElementById('p-input-table').value;
+                activeDb[idx].yarn = document.getElementById('p-input-yarn').value;
+                activeDb[idx].sheets = parseInt(document.getElementById('p-input-sheets').value) || 0;
+                activeDb[idx].boxes = parseInt(document.getElementById('p-input-boxes').value) || 0;
+                activeDb[idx].trucks = parseInt(document.getElementById('p-input-trucks').value) || 0;
+                alert(`อัปเดตยอดของ ${activeDb[idx].name} ประจำวันที่ ${formatThaiDate(currentSelectedDate)} สำเร็จ!`);
                 renderApp();
             }
         }
 
-        function nextPage() { if ((currentPage + 1) * pageSize < database.length) { currentPage++; renderApp(); } }
+        function nextPage() { let activeDb = archiveDatabase[currentSelectedDate]; if ((currentPage + 1) * pageSize < activeDb.length) { currentPage++; renderApp(); } }
         function prevPage() { if (currentPage > 0) { currentPage--; renderApp(); } }
 
         function captureBoard() {
             const board = document.getElementById('presentation-view');
             html2canvas(board, { backgroundColor: '#060913', scale: 2 }).then(canvas => {
                 const link = document.createElement('a');
-                link.download = `รายงานกรออีแปะ.png`;
+                link.download = `รายงานกรออีแปะ_${currentSelectedDate}.png`;
                 link.href = canvas.toDataURL();
                 link.click();
             });
@@ -421,29 +457,34 @@
 
         // ================= CORE RENDER APPLICATION =================
         function renderApp() {
+            // ดึงข้อมูลอาเรย์พนักงานของวันที่เปิดดูอยู่ขึ้นมาทำงาน
+            let activeDb = archiveDatabase[currentSelectedDate];
+
+            // 1. คำนวณยอดสะสมของวันที่เลือก
             let totalSheets = 0; let totalBoxes = 0; let totalTrucks = 0;
-            database.forEach(emp => {
+            activeDb.forEach(emp => {
                 totalSheets += (emp.sheets || 0);
                 totalBoxes += (emp.boxes || 0);
                 totalTrucks += (emp.trucks || 0);
             });
 
-            // 🎯 คำนวณเปอร์เซ็นต์โดยอิงจากค่าตัวแปรเป้าหมายที่ผู้ใช้พิมพ์กรอกเองแบบ Dynamic
             let pctSheets = ((totalSheets / targetSheets) * 100).toFixed(1) + "%";
             let pctBoxes = ((totalBoxes / targetBoxes) * 100).toFixed(1) + "%";
             let pctTrucks = ((totalTrucks / targetTrucks) * 100).toFixed(1) + "%";
 
-            let totalPresent = database.filter(e => e.attendance === "✓" || e.attendance === "✅").length;
-            let totalLate = database.filter(e => e.attendance === "สาย").length;
-            let totalHoliday = database.filter(e => e.attendance === "H").length;
-            let totalAbsent = database.filter(e => e.attendance === "❌").length;
+            let totalPresent = activeDb.filter(e => e.attendance === "✓" || e.attendance === "✅").length;
+            let totalLate = activeDb.filter(e => e.attendance === "สาย").length;
+            let totalAbsent = activeDb.filter(e => e.attendance === "❌").length;
 
-            document.getElementById('dash-total').innerText = database.length + " คน";
+            document.getElementById('dash-total').innerText = activeDb.length + " คน";
             document.getElementById('dash-present').innerText = totalPresent + " คน";
             document.getElementById('dash-late').innerText = totalLate + " คน";
             document.getElementById('dash-absent').innerText = totalAbsent + " คน";
 
-            // อัปเดตตัวเลขผลผลิตภาพรวมบนแผ่นสไลด์
+            // ติดป้ายระบุวันที่บนหัวแผ่นสไลด์
+            document.getElementById('slide-date-label').innerText = formatThaiDate(currentSelectedDate);
+
+            // ผลผลิตรวมของวันนั้นๆ
             document.getElementById('count-sheets').innerText = totalSheets.toLocaleString();
             document.getElementById('lbl-target-sheets').innerText = `/ ${targetSheets.toLocaleString()}`;
             document.getElementById('pct-sheets').innerText = `สัดส่วน: ${pctSheets}`;
@@ -458,14 +499,14 @@
             
             document.getElementById('count-absent').innerText = totalAbsent;
 
-            // ส่วนของการวาดแผ่นสไลด์และตารางอื่นๆ (คงเดิม)
+            // วาดแผ่นสไลด์ 4 คนของวันที่เลือก
             const slideContainer = document.getElementById('slide-grid-container');
             slideContainer.innerHTML = "";
-            const totalPages = Math.ceil(database.length / pageSize);
-            const activeItems = database.slice(currentPage * pageSize, (currentPage * pageSize) + pageSize);
+            const totalPages = Math.ceil(activeDb.length / pageSize);
+            const activeItems = activeDb.slice(currentPage * pageSize, (currentPage * pageSize) + pageSize);
             
             document.getElementById('page-badge').innerText = `PAGE: ${currentPage + 1} / ${totalPages}`;
-            document.getElementById('txt-pagination-info').innerText = `คนที่ ${currentPage * pageSize + 1} - ${Math.min((currentPage * pageSize) + pageSize, database.length)}`;
+            document.getElementById('txt-pagination-info').innerText = `คนที่ ${currentPage * pageSize + 1} - ${Math.min((currentPage * pageSize) + pageSize, activeDb.length)}`;
 
             activeItems.forEach(e => {
                 const card = document.createElement('div');
@@ -475,7 +516,7 @@
                         <div class="w-10 h-10 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-center font-bold text-xs text-sky-400">${e.name.substring(0,2)}</div>
                         <div class="min-w-0 flex-1">
                             <h4 class="text-xs font-bold text-white truncate">${e.name}</h4>
-                            <span class="text-[10px] font-mono text-slate-500">${e.phone}</span>
+                            <span class="text-[10px] font-mono text-slate-500">${e.phone} ${e.ot ? '• <span class="text-sky-400 font-bold">OT</span>':''}</span>
                         </div>
                     </div>
                     <div>${getStatusBadge(e.attendance, e.table, e.yarn)}</div>
@@ -488,37 +529,43 @@
                 slideContainer.appendChild(card);
             });
 
+            // ตารางบันทึกเช็คชื่อของวันที่เลือก
             const attBody = document.getElementById('table-attendance-body');
             if(attBody) {
                 attBody.innerHTML = "";
-                database.forEach(e => {
-                    let btnText = e.attendance === "✓" ? "กะเช้า" : (e.attendance === "✅" ? "กะดึก" : (e.attendance === "สาย" ? "มาสาย" : (e.attendance === "❌" ? "ขาดงาน" : "ยังไม่ระบุ")));
+                const qAtt = document.getElementById('search-att').value.toLowerCase();
+                activeDb.filter(e => e.name.toLowerCase().includes(qAtt)).forEach(e => {
+                    let btnText = e.attendance === "✓" ? "กะเช้า" : (e.attendance === "✅" ? "กะดึก" : (e.attendance === "สาย" ? "มาสาย" : (e.attendance === "H" ? "วันหยุด" : (e.attendance === "❌" ? "ขาดงาน" : "ยังไม่ระบุ"))));
                     const tr = document.createElement('tr');
                     tr.className = "hover:bg-slate-900/20";
                     tr.innerHTML = `
                         <td class="p-3 font-bold text-white">${e.name}</td>
                         <td class="p-3 font-mono text-slate-400">${e.phone}</td>
                         <td class="p-3 text-center"><button onclick="cycleAttendance('${e.id}')" class="w-24 py-1 rounded-lg text-[11px] ${getBtnStyle(e.attendance)}">${btnText}</button></td>
-                        <td class="p-3 text-center"><button onclick="toggleOT('${e.id}')" class="px-3 py-1 rounded-lg text-[11px] ${e.ot ? 'bg-sky-500 text-slate-950 font-bold' : 'bg-slate-900 text-slate-600'}">${e.ot ? 'มี OT' : 'ไม่มี OT'}</button></td>
+                        <td class="p-3 text-center"><button onclick="toggleOT('${e.id}')" class="px-3 py-1 rounded-lg text-[11px] ${e.ot ? 'bg-sky-500 text-slate-950 font-bold' : 'bg-slate-900 text-slate-600'}">${e.ot ? 'เปิดโหมด OT' : 'ไม่มี OT'}</button></td>
                     `;
                     attBody.appendChild(tr);
                 });
             }
 
+            // เมนูเลือกกรอกข้อมูลประสิทธิภาพของวันที่เลือก
             const perfList = document.getElementById('perf-emp-list');
             if(perfList) {
                 perfList.innerHTML = "";
-                database.forEach(e => {
+                activeDb.forEach(e => {
                     const b = document.createElement('button');
                     b.onclick = () => selectEmpForPerf(e.id);
                     b.className = "w-full text-left p-2 rounded-xl bg-slate-900/30 hover:bg-slate-900 border border-slate-850 block text-xs mb-1";
-                    b.innerHTML = `<span class="font-bold text-white block">${e.name}</span><span class="text-[9px] text-slate-500">แผ่น: ${e.sheets} | ลัง: ${e.boxes}</span>`;
+                    b.innerHTML = `<span class="font-bold text-white block">${e.name}</span><span class="text-[9px] text-slate-500">แผ่น: ${e.sheets} | ลัง: ${e.boxes} | คันรถ: ${e.trucks}</span>`;
                     perfList.appendChild(b);
                 });
             }
         }
 
-        window.onload = function() { renderApp(); };
+        window.onload = function() {
+            initDatePicker();
+            renderApp();
+        };
     </script>
 </body>
 </html>
