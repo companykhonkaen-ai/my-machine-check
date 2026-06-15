@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบจัดการกำลังพลและประสิทธิภาพ กรออีแปะ v4.0</title>
+    <title>ระบบจัดการกำลังพลและประสิทธิภาพ กรออีแปะ v5.0 (Auto-Save)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -32,6 +32,13 @@
             color: #38bdf8;
             border-color: #0284c7;
         }
+        @keyframes pulse-fast {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+        .animate-pulse-fast {
+            animation: pulse-fast 1s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
         ::-webkit-scrollbar-thumb { background: rgba(14, 165, 233, 0.2); border-radius: 99px; }
@@ -47,7 +54,12 @@
                     <span class="w-2.5 h-2.5 rounded-full bg-sky-500 shadow-lg shadow-sky-500/50"></span>
                     EPAE PRODUCTION CONTROL SYSTEM
                 </h1>
-                <p class="text-[11px] text-slate-500">ระบบรายงานสรุปผลผลิต เลือกจัดการและดูข้อมูลภาพรวมย้อนหลังรายวันผ่านปฏิทิน</p>
+                <div class="flex items-center gap-2 mt-0.5">
+                    <p class="text-[11px] text-slate-500">ระบบคลังข้อมูลถาวรรายวัน ตรวจเช็คย้อนหลังผ่านปฏิทิน</p>
+                    <span class="inline-flex items-center gap-1 bg-emerald-950/60 border border-emerald-900/60 text-emerald-400 text-[9px] px-1.5 py-0.5 rounded font-bold">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse-fast"></span> AUTOSAVE ACTIVE
+                    </span>
+                </div>
             </div>
 
             <div class="flex items-center gap-2 bg-slate-900/90 border border-slate-800 px-3 py-1.5 rounded-xl">
@@ -102,7 +114,7 @@
                         <h3 class="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-1.5">
                             <i class="fa-solid fa-sliders text-amber-400"></i> ตั้งเป้าหมายผลผลิตประจำวัน
                         </h3>
-                        <p class="text-[10px] text-slate-400">แก้ไขตัวเลขเป้าหมายด้านล่างนี้ ระบบจะคำนวณสัดส่วน % ให้ใหม่ทันที</p>
+                        <p class="text-[10px] text-slate-400">เป้าหมายจะถูกผูกบันทึกแยกไว้รายวันตามปฏิทินเช่นกัน</p>
                         
                         <div class="space-y-2 text-xs">
                             <div>
@@ -263,7 +275,7 @@
                                 </div>
                             </div>
                             <div class="pt-2 flex justify-end">
-                                <button onclick="savePerformanceInline()" class="px-6 py-2 bg-gradient-to-r from-sky-500 to-indigo-600 font-bold text-white rounded-xl">บันทึกข้อมูล</button>
+                                <button onclick="savePerformanceInline()" class="px-6 py-2 bg-gradient-to-r from-sky-500 to-indigo-600 font-bold text-white rounded-xl shadow-lg hover:brightness-110">บันทึกข้อมูล</button>
                             </div>
                         </div>
                     </div>
@@ -295,20 +307,34 @@
             { id: "17", name: "น.ส.กมลรัตน์ พูลทรัพย์", phone: "097-789-5432", attendance: "", ot: false, table: "-", yarn: "-", sheets: 0, boxes: 0, trucks: 0 }
         ];
 
-        // 🗃️ โครงสร้างฐานข้อมูลจัดเก็บแยกตามวันที่ {"YYYY-MM-DD": [array ข้อมูลพนักงาน]}
+        // 🗃️ โครงสร้างฐานข้อมูลจัดเก็บหลักแบบผูกถาวรใน Browser
         let archiveDatabase = {};
         let currentSelectedDate = "";
-
-        // ค่าเป้าหมายหลัก
-        let targetSheets = 1000;
-        let targetBoxes = 100;
-        let targetTrucks = 10;
 
         let currentPage = 0;
         const pageSize = 4;
         const statusList = ["", "✓", "✅", "สาย", "H", "❌"];
 
-        // เริ่มต้นตั้งค่าวันที่เป็น "วันนี้" ตอนเปิดเว็บครั้งแรก
+        // 💾 ฟังก์ชันเซฟลงเบราว์เซอร์ (localStorage)
+        function saveToLocalStorage() {
+            localStorage.setItem('epae_archive_db', JSON.stringify(archiveDatabase));
+        }
+
+        // 🔄 ฟังก์ชันโหลดข้อมูลกลับคืนมาจากเบราว์เซอร์
+        function loadFromLocalStorage() {
+            const data = localStorage.getItem('epae_archive_db');
+            if (data) {
+                archiveDatabase = JSON.parse(data);
+            }
+        }
+
+        // ⏰ เริ่มต้นระบบ Auto-Save ทุกๆ 1 วินาที (1000 มิลลิวินาที)
+        function startAutoSaveEngine() {
+            setInterval(() => {
+                saveToLocalStorage();
+            }, 1000);
+        }
+
         function initDatePicker() {
             const picker = document.getElementById('working-date-picker');
             const today = new Date();
@@ -319,47 +345,58 @@
             currentSelectedDate = `${year}-${month}-${date}`;
             picker.value = currentSelectedDate;
             
-            // ดึงหรือสร้างข้อมูลของวันนี้
             checkAndInitDateData(currentSelectedDate);
         }
 
-        // ตรวจสอบว่ามีข้อมูลของวันที่เลือกในคลังหรือยัง ถ้าไม่มีให้สร้างใหม่จากรายชื่อพนักงานตั้งต้น
         function checkAndInitDateData(dateStr) {
+            // ถ้าในวันนั้นยังไม่มีกล่องเป้าหมายและรายชื่อ ให้สร้างโครงสร้างพื้นฐานขึ้นมา
             if (!archiveDatabase[dateStr]) {
-                // คัดลอกโครงสร้างรายชื่อคนงานไปเป็นกล่องข้อมูลใหม่ของวันนั้นๆ
-                archiveDatabase[dateStr] = JSON.parse(JSON.stringify(baseEmployees));
+                archiveDatabase[dateStr] = {
+                    targets: { sheets: 1000, boxes: 100, trucks: 10 },
+                    employees: JSON.parse(JSON.stringify(baseEmployees))
+                };
+            }
+            // รองรับโครงสร้างเก่าใน Patch 4.0 ถ้าเกิดไม่มีฟิลด์ targets ซ้อนอยู่
+            if (!archiveDatabase[dateStr].targets) {
+                archiveDatabase[dateStr] = {
+                    targets: { sheets: 1000, boxes: 100, trucks: 10 },
+                    employees: archiveDatabase[dateStr].employees || JSON.parse(JSON.stringify(baseEmployees))
+                };
             }
         }
 
-        // ฟังก์ชันเมื่อเปลี่ยนวันที่บนปฏิทิน
         function handleDateChange() {
             currentSelectedDate = document.getElementById('working-date-picker').value;
             if(!currentSelectedDate) return;
             
             checkAndInitDateData(currentSelectedDate);
-            currentPage = 0; // รีเซ็ตหน้าแสดงสไลด์ไปที่คนแรก
+            currentPage = 0;
             
-            // ปิดหน้าฟอร์มกรอกคะแนนเดิมเพื่อป้องกันการสับสน
             document.getElementById('perf-empty-state').classList.remove('hidden');
             document.getElementById('perf-actual-form').classList.add('hidden');
             
+            // ดึงข้อมูลเป้าหมายของวันนั้นมาหยอดใส่กล่อง Input คืน
+            const dayData = archiveDatabase[currentSelectedDate];
+            document.getElementById('target-sheets-input').value = dayData.targets.sheets;
+            document.getElementById('target-boxes-input').value = dayData.targets.boxes;
+            document.getElementById('target-trucks-input').value = dayData.targets.trucks;
+
             renderApp();
         }
 
-        // แปลงวันที่ YYYY-MM-DD เป็นรูปแบบภาษาไทยสำหรับแสดงบนหัวสไลด์
         function formatThaiDate(dateStr) {
             if(!dateStr) return "";
             const parts = dateStr.split('-');
             const year = parseInt(parts[0]) + 543;
             const months = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
-            const monthStr = months[parseInt(parts[1]) - 1];
-            return `${parseInt(parts[2])} ${monthStr} ${year}`;
+            return `${parseInt(parts[2])} ${months[parseInt(parts[1]) - 1]} ${year}`;
         }
 
         function updateTargets() {
-            targetSheets = parseInt(document.getElementById('target-sheets-input').value) || 1;
-            targetBoxes = parseInt(document.getElementById('target-boxes-input').value) || 1;
-            targetTrucks = parseInt(document.getElementById('target-trucks-input').value) || 1;
+            const dayData = archiveDatabase[currentSelectedDate];
+            dayData.targets.sheets = parseInt(document.getElementById('target-sheets-input').value) || 1;
+            dayData.targets.boxes = parseInt(document.getElementById('target-boxes-input').value) || 1;
+            dayData.targets.trucks = parseInt(document.getElementById('target-trucks-input').value) || 1;
             renderApp();
         }
 
@@ -372,7 +409,7 @@
         }
 
         function cycleAttendance(id) {
-            let activeDb = archiveDatabase[currentSelectedDate];
+            let activeDb = archiveDatabase[currentSelectedDate].employees;
             const idx = activeDb.findIndex(e => e.id === id);
             if(idx !== -1) {
                 let currentStatus = activeDb[idx].attendance;
@@ -383,7 +420,7 @@
         }
 
         function toggleOT(id) {
-            let activeDb = archiveDatabase[currentSelectedDate];
+            let activeDb = archiveDatabase[currentSelectedDate].employees;
             const idx = activeDb.findIndex(e => e.id === id);
             if(idx !== -1) { activeDb[idx].ot = !activeDb[idx].ot; renderApp(); }
         }
@@ -412,7 +449,7 @@
         }
 
         function selectEmpForPerf(id) {
-            let activeDb = archiveDatabase[currentSelectedDate];
+            let activeDb = archiveDatabase[currentSelectedDate].employees;
             const emp = activeDb.find(e => e.id === id);
             if(!emp) return;
             document.getElementById('perf-empty-state').classList.add('hidden');
@@ -427,9 +464,11 @@
             document.getElementById('p-input-trucks').value = emp.trucks || "";
         }
 
-        function savePerformanceInline() {
-            let activeDb = archiveDatabase[currentSelectedDate];
+        // ฟังชันก์เมื่อผู้ใช้ป้อนตัวเลขคาไว้ ให้รีบ Auto-save ลงอาเรย์ทันทีก่อนกดยืนยัน (ช่วยเสริมการบันทึกเรียลไทม์)
+        function syncFormToMemory() {
             const id = document.getElementById('perf-active-id').value;
+            if(!id) return;
+            let activeDb = archiveDatabase[currentSelectedDate].employees;
             const idx = activeDb.findIndex(e => e.id === id);
             if(idx !== -1) {
                 activeDb[idx].table = document.getElementById('p-input-table').value;
@@ -437,12 +476,20 @@
                 activeDb[idx].sheets = parseInt(document.getElementById('p-input-sheets').value) || 0;
                 activeDb[idx].boxes = parseInt(document.getElementById('p-input-boxes').value) || 0;
                 activeDb[idx].trucks = parseInt(document.getElementById('p-input-trucks').value) || 0;
-                alert(`อัปเดตยอดของ ${activeDb[idx].name} ประจำวันที่ ${formatThaiDate(currentSelectedDate)} สำเร็จ!`);
-                renderApp();
             }
         }
 
-        function nextPage() { let activeDb = archiveDatabase[currentSelectedDate]; if ((currentPage + 1) * pageSize < activeDb.length) { currentPage++; renderApp(); } }
+        function savePerformanceInline() {
+            syncFormToMemory();
+            saveToLocalStorage(); // บันทึกลง Harddisk ของบราวเซอร์ทันที
+            let id = document.getElementById('perf-active-id').value;
+            let activeDb = archiveDatabase[currentSelectedDate].employees;
+            let emp = activeDb.find(e => e.id === id);
+            alert(`[บันทึกสำเร็จ] อัปเดตยอดของ ${emp.name} ประจำวันที่ ${formatThaiDate(currentSelectedDate)} เรียบร้อยแล้ว!`);
+            renderApp();
+        }
+
+        function nextPage() { let activeDb = archiveDatabase[currentSelectedDate].employees; if ((currentPage + 1) * pageSize < activeDb.length) { currentPage++; renderApp(); } }
         function prevPage() { if (currentPage > 0) { currentPage--; renderApp(); } }
 
         function captureBoard() {
@@ -457,10 +504,16 @@
 
         // ================= CORE RENDER APPLICATION =================
         function renderApp() {
-            // ดึงข้อมูลอาเรย์พนักงานของวันที่เปิดดูอยู่ขึ้นมาทำงาน
-            let activeDb = archiveDatabase[currentSelectedDate];
+            let dayData = archiveDatabase[currentSelectedDate];
+            let activeDb = dayData.employees;
+            let currentTargets = dayData.targets;
 
-            // 1. คำนวณยอดสะสมของวันที่เลือก
+            // ผูกฟังก์ชันป้อนข้อมูลสดให้เซฟเรียลไทม์ตลอดเวลา
+            const activeId = document.getElementById('perf-active-id') ? document.getElementById('perf-active-id').value : null;
+            if(activeId && !document.getElementById('perf-actual-form').classList.contains('hidden')) {
+                syncFormToMemory();
+            }
+
             let totalSheets = 0; let totalBoxes = 0; let totalTrucks = 0;
             activeDb.forEach(emp => {
                 totalSheets += (emp.sheets || 0);
@@ -468,9 +521,9 @@
                 totalTrucks += (emp.trucks || 0);
             });
 
-            let pctSheets = ((totalSheets / targetSheets) * 100).toFixed(1) + "%";
-            let pctBoxes = ((totalBoxes / targetBoxes) * 100).toFixed(1) + "%";
-            let pctTrucks = ((totalTrucks / targetTrucks) * 100).toFixed(1) + "%";
+            let pctSheets = ((totalSheets / currentTargets.sheets) * 100).toFixed(1) + "%";
+            let pctBoxes = ((totalBoxes / currentTargets.boxes) * 100).toFixed(1) + "%";
+            let pctTrucks = ((totalTrucks / currentTargets.trucks) * 100).toFixed(1) + "%";
 
             let totalPresent = activeDb.filter(e => e.attendance === "✓" || e.attendance === "✅").length;
             let totalLate = activeDb.filter(e => e.attendance === "สาย").length;
@@ -481,25 +534,22 @@
             document.getElementById('dash-late').innerText = totalLate + " คน";
             document.getElementById('dash-absent').innerText = totalAbsent + " คน";
 
-            // ติดป้ายระบุวันที่บนหัวแผ่นสไลด์
             document.getElementById('slide-date-label').innerText = formatThaiDate(currentSelectedDate);
 
-            // ผลผลิตรวมของวันนั้นๆ
             document.getElementById('count-sheets').innerText = totalSheets.toLocaleString();
-            document.getElementById('lbl-target-sheets').innerText = `/ ${targetSheets.toLocaleString()}`;
+            document.getElementById('lbl-target-sheets').innerText = `/ ${currentTarget.sheets.toLocaleString()}`;
             document.getElementById('pct-sheets').innerText = `สัดส่วน: ${pctSheets}`;
             
             document.getElementById('count-boxes').innerText = totalBoxes.toLocaleString();
-            document.getElementById('lbl-target-boxes').innerText = `/ ${targetBoxes.toLocaleString()}`;
+            document.getElementById('lbl-target-boxes').innerText = `/ ${currentTarget.boxes.toLocaleString()}`;
             document.getElementById('pct-boxes').innerText = `สัดส่วน: ${pctBoxes}`;
             
             document.getElementById('count-trucks').innerText = totalTrucks.toLocaleString();
-            document.getElementById('lbl-target-trucks').innerText = `/ ${targetTrucks.toLocaleString()}`;
+            document.getElementById('lbl-target-trucks').innerText = `/ ${currentTarget.trucks.toLocaleString()}`;
             document.getElementById('pct-trucks').innerText = `สัดส่วน: ${pctTrucks}`;
             
             document.getElementById('count-absent').innerText = totalAbsent;
 
-            // วาดแผ่นสไลด์ 4 คนของวันที่เลือก
             const slideContainer = document.getElementById('slide-grid-container');
             slideContainer.innerHTML = "";
             const totalPages = Math.ceil(activeDb.length / pageSize);
@@ -529,7 +579,6 @@
                 slideContainer.appendChild(card);
             });
 
-            // ตารางบันทึกเช็คชื่อของวันที่เลือก
             const attBody = document.getElementById('table-attendance-body');
             if(attBody) {
                 attBody.innerHTML = "";
@@ -548,7 +597,6 @@
                 });
             }
 
-            // เมนูเลือกกรอกข้อมูลประสิทธิภาพของวันที่เลือก
             const perfList = document.getElementById('perf-emp-list');
             if(perfList) {
                 perfList.innerHTML = "";
@@ -562,9 +610,13 @@
             }
         }
 
+        // เรียกใช้งานเมื่อเปิดหน้าเว็บบูตระบบ
         window.onload = function() {
-            initDatePicker();
-            renderApp();
+            loadFromLocalStorage(); // 1. ดึงฐานข้อมูลเก่าจากฮาร์ดดิสก์เบราว์เซอร์มาก่อน
+            initDatePicker();       // 2. ตั้งค่าวันที่ปัจจุบัน
+            handleDateChange();     // 3. หยอดข้อมูลเป้าหมายประจำวันเข้ากล่องอินพุต
+            renderApp();            // 4. แสดงผลผลลัพธ์
+            startAutoSaveEngine();  // 5. รันระบบเซฟออโต้ทุกวินาที
         };
     </script>
 </body>
