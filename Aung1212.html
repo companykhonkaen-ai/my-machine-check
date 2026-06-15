@@ -3,854 +3,486 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EPAE AI Cinema Presentation Center v2026</title>
+    <title>EPAE Production Cinema Center v2026</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Noto+Sans+Thai:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
 
     <style>
         body {
             font-family: 'Noto Sans Thai', sans-serif;
-            background-color: #020617;
-            background-image: 
-                radial-gradient(at 0% 0%, rgba(14, 165, 233, 0.07) 0px, transparent 55%),
-                radial-gradient(at 100% 100%, rgba(99, 102, 241, 0.05) 0px, transparent 55%);
-            background-attachment: fixed;
+            background-color: #030712;
+            background-image: radial-gradient(at 50% 0%, rgba(14, 165, 233, 0.05) 0px, transparent 50%);
         }
-        .cyber-glass {
-            background: rgba(15, 23, 42, 0.8);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+        .cyber-panel {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+        }
+        .cinema-card {
+            background: linear-gradient(135deg, #0b1120 0%, #060913 100%);
             border: 1px solid rgba(255, 255, 255, 0.05);
         }
-        .presentation-theme {
-            background: linear-gradient(135deg, #0f172a 0%, #05070f 100%);
-            border: 2px solid rgba(14, 165, 233, 0.15);
-        }
-        ::-webkit-scrollbar { width: 4px; }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
         ::-webkit-scrollbar-thumb { background: rgba(14, 165, 233, 0.2); border-radius: 99px; }
     </style>
 </head>
-<body class="text-slate-200 min-h-screen p-4 md:p-6">
+<body class="text-slate-300 min-h-screen p-4 md:p-6 selection:bg-sky-500 selection:text-white">
 
-    <div class="max-w-7xl mx-auto space-y-6">
+    <div class="max-w-[1400px] mx-auto space-y-4">
         
-        <header class="cyber-glass rounded-2xl p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 shadow-2xl">
-            <div class="flex items-center gap-4">
-                <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center text-white text-xl font-black shadow-lg shadow-sky-500/20">
-                    <i class="fa-solid fa-industry"></i>
-                </div>
-                <div>
-                    <h1 class="text-xl font-black text-white tracking-wide flex items-center gap-2">
-                        EPAE PRODUCTION CINEMA v2026
-                    </h1>
-                    <p class="text-xs text-slate-400">ระบบบันทึกผลงานโต๊ะกรอและวิเคราะห์ประสิทธิภาพ AI Real-time</p>
-                </div>
+        <!-- ================= TOP BAR ================= -->
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 pb-2 border-b border-slate-800/60">
+            <div>
+                <h1 class="text-lg font-black text-white tracking-wider flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-sky-500 shadow-lg shadow-sky-500/50"></span>
+                    EPAE PRODUCTION CINEMA SYSTEM
+                </h1>
+                <p class="text-[11px] text-slate-500">ระบบบันทึกสถานะกำลังพลและประสิทธิภาพงานสมาชิกรายวัน</p>
             </div>
-
-            <div class="flex flex-wrap items-center gap-3">
-                <div class="bg-emerald-500/10 border border-emerald-500/30 px-3 py-1.5 rounded-xl flex items-center gap-2 text-xs text-emerald-400 font-bold">
-                    <i class="fa-solid fa-database animate-pulse"></i>
-                    <span>Local Storage Database (เสถียร 100%)</span>
-                </div>
-
-                <div class="relative bg-slate-900 border border-slate-800 px-4 py-2 rounded-xl flex items-center gap-3 cursor-pointer">
-                    <i class="fa-solid fa-calendar text-sky-400 text-sm"></i>
-                    <div class="flex flex-col text-left">
-                        <span class="text-[8px] text-slate-500 font-bold uppercase">ประจำงวดวันที่</span>
-                        <span id="txt-thai-date" class="text-xs font-black text-white">12 มิถุนายน 2569</span>
-                    </div>
-                    <input type="date" id="main-date-picker" value="2026-06-12" class="absolute inset-0 opacity-0 cursor-pointer" onchange="handleDateChange(this.value)">
-                </div>
+            <!-- ส่วนจัดงวดวันที่ -->
+            <div class="bg-slate-900/90 border border-slate-800 px-3 py-1.5 rounded-xl flex items-center gap-2.5 text-xs font-bold text-white">
+                <i class="fa-solid fa-calendar-days text-sky-400"></i>
+                <span id="label-date-display">12 มิถุนายน 2569</span>
             </div>
-        </header>
+        </div>
 
-        <div class="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
+        <!-- ================= MAIN CORE LAYOUT ================= -->
+        <div class="grid grid-cols-1 xl:grid-cols-12 gap-5 items-start">
             
-            <div class="xl:col-span-4 space-y-4">
-                <div class="cyber-glass p-3 rounded-xl space-y-3">
+            <!-- 👤 แผงฝั่งซ้าย: ลงข้อมูลมาทำงาน / เช็คชื่อเข้างาน (อ้างอิงดีไซน์ซ้ายมือจากภาพ image_f40f9b.jpg) -->
+            <div class="xl:col-span-4 space-y-3">
+                <div class="cyber-panel rounded-xl p-3 space-y-3 shadow-xl">
+                    
+                    <!-- ช่องค้นหารายชื่อ -->
                     <div class="relative">
                         <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-500">
                             <i class="fa-solid fa-magnifying-glass text-xs"></i>
                         </span>
-                        <input type="text" id="search-input" oninput="renderWorkspace()" placeholder="ค้นหาชื่อพนักงาน หรือดูประวัติ..." class="w-full pl-9 pr-4 py-2 bg-slate-950 border border-slate-800 rounded-lg focus:outline-none focus:border-sky-500 text-xs text-white">
+                        <input type="text" id="emp-search" oninput="renderApp()" placeholder="ค้นหารายชื่อพนักงาน..." class="w-full pl-9 pr-4 py-2 bg-slate-950 border border-slate-800 rounded-xl focus:outline-none focus:border-sky-500 text-xs text-white placeholder:text-slate-600">
                     </div>
-                    
-                    <div class="grid grid-cols-4 gap-1 text-[10px] text-center font-bold">
-                        <button onclick="setHistoryScope('day')" id="scope-day" class="py-1 rounded bg-sky-500 text-slate-950">รายวัน</button>
-                        <button onclick="setHistoryScope('week')" id="scope-week" class="py-1 rounded bg-slate-900 text-slate-400 border border-slate-800">รายสัปดาห์</button>
-                        <button onclick="setHistoryScope('month')" id="scope-month" class="py-1 rounded bg-slate-900 text-slate-400 border border-slate-800">รายเดือน</button>
-                        <button onclick="setHistoryScope('year')" id="scope-year" class="py-1 rounded bg-slate-900 text-slate-400 border border-slate-800">รายปี</button>
-                    </div>
-                </div>
 
-                <div class="cyber-glass rounded-xl overflow-hidden shadow-xl">
-                    <div class="p-3 bg-white/5 border-b border-slate-800 flex justify-between items-center text-xs font-bold text-slate-300">
-                        <span>🔘 รายชื่อพนักงาน (คลิกเพื่อบันทึกผลงาน/ดูประวัติ)</span>
-                        <span class="text-[10px] text-sky-400 bg-sky-500/10 px-2 py-0.5 rounded font-mono" id="emp-count-badge">17 MEMBERS</span>
+                    <!-- หัวแถบเมนูซ้าย -->
+                    <div class="flex justify-between items-center bg-slate-900/60 border border-slate-800/80 px-3 py-2 rounded-lg text-xs font-bold">
+                        <span class="text-slate-400"><i class="fa-solid fa-users-gear mr-1"></i> แผงแก้ไขข้อมูล & สลับกะทำงาน</span>
+                        <span class="text-[10px] text-sky-400 bg-sky-500/10 border border-sky-500/20 px-2 py-0.5 rounded-md font-mono" id="total-members-badge">17 MEMBERS</span>
                     </div>
-                    <div class="max-h-[500px] overflow-y-auto divide-y divide-slate-800/40" id="manual-rows-container">
-                        </div>
-                </div>
 
-                <div class="cyber-glass p-3 rounded-xl grid grid-cols-3 gap-2">
-                    <button onclick="exportData('excel')" class="py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition flex items-center justify-center gap-1">
-                        <i class="fa-solid fa-file-excel"></i> Excel
-                    </button>
-                    <button onclick="exportData('pdf')" class="py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-bold transition flex items-center justify-center gap-1">
-                        <i class="fa-solid fa-file-pdf"></i> PDF
-                    </button>
-                    <button onclick="exportData('csv')" class="py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-xs font-bold transition flex items-center justify-center gap-1">
-                        <i class="fa-solid fa-file-csv"></i> CSV
-                    </button>
+                    <!-- รายชื่อพนักงานสำหรับการคลิกติ๊กสถานะและกดลงข้อมูลประสิทธิภาพ -->
+                    <div class="max-h-[580px] overflow-y-auto divide-y divide-slate-800/40 pr-1" id="list-employees-box">
+                        <!-- รายชื่อถูกวาดโดย JavaScript -->
+                    </div>
                 </div>
             </div>
 
-            <div class="xl:col-span-8 space-y-6">
+            <!-- 🎬 แผงฝั่งขวา: หน้าแดชบอร์ดสไลด์ภาพนำเสนอ (อ้างอิงขวามือจากภาพ image_f40f9b.jpg) -->
+            <div class="xl:col-span-8 space-y-4">
                 
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div class="cyber-glass p-4 rounded-xl border-l-4 border-emerald-500 shadow-lg">
-                        <div class="text-[11px] font-bold text-slate-400">ยอดผลิตแผ่นทั้งหมด</div>
-                        <div class="text-2xl font-black text-emerald-400 mt-1 font-mono" id="kpi-total-sheets">0</div>
-                        <div class="text-[9px] text-slate-500 mt-0.5">ชิ้นงานรวมทุกโต๊ะกรอ</div>
-                    </div>
-                    <div class="cyber-glass p-4 rounded-xl border-l-4 border-sky-500 shadow-lg">
-                        <div class="text-[11px] font-bold text-slate-400">จำนวนลังทั้งหมด</div>
-                        <div class="text-2xl font-black text-sky-400 mt-1 font-mono" id="kpi-total-boxes">0</div>
-                        <div class="text-[9px] text-slate-500 mt-0.5">แพ็กเกจบรรจุเสร็จ</div>
-                    </div>
-                    <div class="cyber-glass p-4 rounded-xl border-l-4 border-amber-500 shadow-lg">
-                        <div class="text-[11px] font-bold text-slate-400">จำนวนคันรถทั้งหมด</div>
-                        <div class="text-2xl font-black text-amber-400 mt-1 font-mono" id="kpi-total-trucks">0</div>
-                        <div class="text-[9px] text-slate-500 mt-0.5">พร้อมขนส่งออกโรงงาน</div>
-                    </div>
-                    <div class="cyber-glass p-4 rounded-xl border-l-4 border-indigo-500 shadow-lg">
-                        <div class="text-[11px] font-bold text-slate-400">ประสิทธิภาพเฉลี่ย</div>
-                        <div class="text-2xl font-black text-indigo-400 mt-1 font-mono" id="kpi-avg-efficiency">0.0%</div>
-                        <div class="text-[9px] text-slate-500 mt-0.5">เทียบมาตรฐานแต่ละเบอร์ใย</div>
-                    </div>
-                </div>
-
-                <div class="presentation-theme rounded-2xl p-6 shadow-2xl relative overflow-hidden" id="presentation-theater">
-                    <div class="absolute top-0 right-0 bg-gradient-to-l from-indigo-950/80 to-transparent pl-8 pr-4 py-1.5 text-[9px] text-slate-400 font-mono hidden md:flex gap-3 items-center border-b border-slate-800/50">
-                        <span>💡 ประสิทธิภาพคิดอัตโนมัติตามเบอร์ใยและโต๊ะกรอ</span>
-                    </div>
-
-                    <div class="flex justify-between items-center pb-4 border-b border-slate-800 mb-4 mt-2 md:mt-0">
+                <!-- THEATRE CONTAINER -->
+                <div class="cinema-card rounded-2xl p-6 shadow-2xl relative space-y-6" id="presentation-view">
+                    
+                    <!-- ส่วนหัวสไลด์ -->
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-slate-800/80 pb-4">
                         <div>
-                            <h2 class="text-sm font-black text-white flex items-center gap-2">
-                                <span class="w-2 h-2 rounded-full bg-sky-400 animate-ping"></span> รายงานสถานะกำลังพลและผลงานโต๊ะกรอประจำวัน
+                            <h2 class="text-sm font-bold text-white tracking-wide flex items-center gap-2">
+                                รายงานสถานะกำลังพลประจำวัน สมาชิก กรออีแปะ
                             </h2>
-                            <p class="text-[10px] text-slate-400">สไลด์แผงสรุปผลงานรายบุคคล ชัดเจน วัดผลได้จริง</p>
+                            <p class="text-[11px] text-slate-400">แสดงผลแบบคมชัดสูง 4 ท่านต่อหน้า เพื่อส่งเข้ากลุ่ม LINE</p>
                         </div>
-                        <div class="text-[11px] font-mono font-bold bg-slate-900 border border-slate-800 px-3 py-1 rounded-lg text-sky-400" id="master-card-date-sub">
+                        <div class="text-xs font-mono font-bold text-sky-400 bg-sky-950/40 border border-sky-800/60 px-3 py-1 rounded-md" id="slide-date-node">
                             12 มิถุนายน 2569
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 min-h-[220px]" id="slide-cards-grid">
+                    <!-- โซนตัวเลขเคาน์เตอร์สรุปผลงานภาพรวม -->
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                        <div class="bg-emerald-950/20 border border-emerald-900/40 p-3 rounded-xl text-center">
+                            <span class="block text-[10px] font-bold text-slate-400">มาทำงาน</span>
+                            <span class="text-xl font-black text-emerald-400 font-mono mt-0.5 block" id="count-present">0</span>
                         </div>
+                        <div class="bg-sky-950/20 border border-sky-900/40 p-3 rounded-xl text-center">
+                            <span class="block text-[10px] font-bold text-slate-400">ทำโอที (OT)</span>
+                            <span class="text-xl font-black text-sky-400 font-mono mt-0.5 block" id="count-ot">0</span>
+                        </div>
+                        <div class="bg-amber-950/20 border border-amber-900/40 p-3 rounded-xl text-center">
+                            <span class="block text-[10px] font-bold text-slate-400">มาสาย</span>
+                            <span class="text-xl font-black text-amber-400 font-mono mt-0.5 block" id="count-late">0</span>
+                        </div>
+                        <div class="bg-rose-950/20 border border-rose-900/40 p-3 rounded-xl text-center">
+                            <span class="block text-[10px] font-bold text-slate-400">ขาดงาน</span>
+                            <span class="text-xl font-black text-rose-400 font-mono mt-0.5 block" id="count-absent">0</span>
+                        </div>
+                    </div>
 
-                    <div class="mt-4 pt-3 border-t border-slate-900 flex justify-between items-center text-[10px] text-slate-500">
-                        <div class="flex gap-2 font-bold">
-                            <span>🟢 กะเช้า</span> <span>🔵 กะดึก</span> <span>🟡 สาย</span> <span>🔴 ขาดงาน</span>
+                    <!-- 👥 สไลด์แสดงผลพนักงานแบบ 4 ช่อง (ตรงตามรูปต้นฉบับ) -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" id="slide-grid-container">
+                        <!-- ถูกเจนข้อมูลพนักงานแบบกลุ่มละ 4 คนอัตโนมัติ -->
+                    </div>
+
+                    <!-- ฟุตเตอร์สไลด์บอกความหมายสัญลักษณ์และหน้า -->
+                    <div class="flex justify-between items-center text-[10px] font-bold text-slate-500 pt-2 border-t border-slate-900">
+                        <div class="flex flex-wrap gap-3">
+                            <span class="flex items-center gap-1">🔴 กะเช้า</span>
+                            <span class="flex items-center gap-1">🔵 กะดึก</span>
+                            <span class="flex items-center gap-1">🟡 มาสาย</span>
+                            <span class="flex items-center gap-1">🟣 วันหยุด</span>
+                            <span class="flex items-center gap-1">❌ ขาดงาน</span>
                         </div>
-                        <div class="font-mono bg-slate-900 px-2 py-0.5 rounded text-sky-400 font-bold" id="slide-page-indicator">
+                        <div class="text-sky-400 font-mono bg-sky-950/40 border border-sky-900/50 px-2 py-0.5 rounded text-[9px]" id="page-badge">
                             PAGE: 1 / 5
                         </div>
                     </div>
                 </div>
 
-                <div class="cyber-glass p-2 rounded-xl flex items-center justify-between gap-2">
-                    <button onclick="changeSlidePage(-1)" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 rounded-lg text-xs font-bold text-white transition">
+                <!-- แถบควบคุมเปลี่ยนหน้าสไลด์ภาพนำเสนอ -->
+                <div class="cyber-panel p-2 rounded-xl flex justify-between items-center gap-2">
+                    <button onclick="prevPage()" class="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs font-bold rounded-lg text-white transition">
                         <i class="fa-solid fa-chevron-left mr-1"></i> หน้าก่อนหน้า
                     </button>
-                    <span class="text-xs text-slate-400 font-bold" id="txt-slide-summary-node">กำลังแสดงคนที่ 1 - 4</span>
-                    <button onclick="changeSlidePage(1)" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 rounded-lg text-xs font-bold text-white transition">
+                    <span class="text-[11px] text-slate-400 font-medium" id="txt-pagination-info">กำลังแสดงคนที่ 1 - 4</span>
+                    <button onclick="nextPage()" class="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs font-bold rounded-lg text-white transition">
                         หน้าถัดไป <i class="fa-solid fa-chevron-right ml-1"></i>
                     </button>
                 </div>
-                
-                <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
-                    <div class="cyber-glass p-4 rounded-xl md:col-span-7 space-y-2">
-                        <div class="text-xs font-bold text-slate-300"><i class="fa-solid fa-chart-bar text-sky-400 mr-1"></i> ผลผลิตรวมรายวันแยกตามสัปดาห์ปัจจุบัน (Bar Chart)</div>
-                        <div class="h-48 relative">
-                            <canvas id="chartDailyProductivity"></canvas>
-                        </div>
-                    </div>
-                    <div class="cyber-glass p-4 rounded-xl md:col-span-5 space-y-2">
-                        <div class="text-xs font-bold text-slate-300"><i class="fa-solid fa-chart-pie text-amber-400 mr-1"></i> Top 5 พนักงานผลงานดีเด่นวันนี้ (Doughnut)</div>
-                        <div class="h-48 relative flex items-center justify-center">
-                            <canvas id="chartTopPerformers"></canvas>
-                        </div>
-                    </div>
-                    <div class="cyber-glass p-4 rounded-xl md:col-span-12 space-y-2">
-                        <div class="text-xs font-bold text-slate-300"><i class="fa-solid fa-chart-line text-indigo-400 mr-1"></i> แนวโน้มประสิทธิภาพเฉลี่ยรายเดือนตลอดปี (Line Chart)</div>
-                        <div class="h-48 relative">
-                            <canvas id="chartMonthlyTrend"></canvas>
-                        </div>
-                    </div>
-                </div>
-
-                <button onclick="exportSlideAsImage()" class="w-full py-3 bg-gradient-to-r from-sky-600 to-indigo-600 hover:brightness-110 text-white font-black rounded-xl text-xs transition flex items-center justify-center gap-2 shadow-lg shadow-sky-900/20">
-                    <i class="fa-solid fa-image text-white"></i> บันทึกภาพนิ่งสไลด์หน้านี้ (ส่งเข้ากลุ่ม LINE คมชัดสูง 100%)
-                </button>
             </div>
         </div>
     </div>
 
-    <div id="edit-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center hidden opacity-0 transition-all duration-350">
-        <div class="cyber-glass max-w-lg w-full mx-4 rounded-2xl border border-slate-800 shadow-2xl overflow-hidden p-6 space-y-4">
+    <!-- ================= 🗔 MODAL: หน้าต่างลงข้อมูลประสิทธิภาพพนักงานรายคน (ส่วนที่ 2 เพิ่มเติม) ================= -->
+    <div id="performance-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-200">
+        <div class="cyber-panel max-w-md w-full mx-4 rounded-2xl border border-slate-800 shadow-2xl p-5 space-y-4">
             
+            <!-- ส่วนหัว Modal -->
             <div class="flex justify-between items-center pb-2 border-b border-slate-800">
-                <h3 class="text-sm font-black text-white flex items-center gap-2">
-                    <i class="fa-solid fa-user-gear text-sky-400"></i> จัดการข้อมูล & บันทึกผลงานรายวันพนักงาน
-                </h3>
-                <button onclick="closeEditModal()" class="text-slate-500 hover:text-white transition">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-chart-line text-sky-400"></i>
+                    <div>
+                        <h3 class="text-sm font-bold text-white">ลงข้อมูลประสิทธิภาพการทำงาน</h3>
+                        <p class="text-[10px] text-slate-400 font-medium" id="modal-emp-name">พนักงาน</p>
+                    </div>
+                </div>
+                <button onclick="closeModal()" class="text-slate-500 hover:text-white transition">
                     <i class="fa-solid fa-xmark text-sm"></i>
                 </button>
             </div>
 
-            <input type="hidden" id="modal-emp-id">
-
-            <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
-                <div class="md:col-span-4 flex flex-col items-center space-y-3 bg-slate-950/50 p-3 rounded-xl border border-slate-900">
-                    <div class="relative group">
-                        <div id="modal-avatar-preview" class="w-20 h-20 rounded-full bg-slate-800 border-2 border-sky-500/50 flex items-center justify-center text-xl font-black text-slate-400 object-cover overflow-hidden">
-                            A
-                        </div>
-                        <label class="absolute inset-0 bg-black/70 rounded-full flex flex-col items-center justify-center cursor-pointer opacity-0 group-hover:opacity-100 transition text-[9px] text-white font-bold">
-                            <i class="fa-solid fa-camera text-xs mb-1"></i> อัปโหลดรูป
-                            <input type="file" id="modal-file-input" accept="image/*" class="hidden" onchange="previewModalAvatar(event)">
-                        </label>
+            <!-- ฟอร์มกรอกข้อมูลประสิทธิภาพตามหัวข้อข้อ 1 -->
+            <input type="hidden" id="modal-target-id">
+            <div class="space-y-3 text-xs">
+                
+                <div class="grid grid-cols-2 gap-3">
+                    <!-- โต๊ะที่กรอ -->
+                    <div>
+                        <label class="block text-slate-400 font-medium mb-1">โต๊ะที่กรอ</label>
+                        <select id="input-table" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white focus:outline-none focus:border-sky-500">
+                            <option value="-">-</option>
+                            <option value="T1">T1</option><option value="T2">T2</option><option value="T3">T3</option>
+                            <option value="T4">T4</option><option value="T5">T5</option><option value="T6">T6</option>
+                            <option value="T7">T7</option><option value="T8">T8</option><option value="T9">T9</option>
+                            <option value="T10">T10</option>
+                        </select>
                     </div>
-                    <div class="w-full space-y-2">
-                        <div>
-                            <label class="block text-[9px] font-bold text-slate-500 uppercase mb-0.5">ชื่อ-นามสกุล</label>
-                            <input type="text" id="modal-input-name" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-2 py-1 text-xs text-white focus:outline-none focus:border-sky-500">
-                        </div>
-                        <div>
-                            <label class="block text-[9px] font-bold text-slate-500 uppercase mb-0.5">เบอร์โทรศัพท์</label>
-                            <input type="text" id="modal-input-phone" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-2 py-1 text-xs text-white focus:outline-none focus:border-sky-500 font-mono">
-                        </div>
+                    <!-- เบอร์ใยที่กรอ -->
+                    <div>
+                        <label class="block text-slate-400 font-medium mb-1">เบอร์ใยที่กรอ</label>
+                        <select id="input-yarn" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white focus:outline-none focus:border-sky-500">
+                            <option value="-">-</option>
+                            <option value="210/3K91">210/3K91</option>
+                            <option value="210/2T05">210/2T05</option>
+                            <option value="210/6K91">210/6K91</option>
+                            <option value="135/2ต่ำ">135/2ต่ำ</option>
+                        </select>
                     </div>
                 </div>
 
-                <div class="md:col-span-8 bg-slate-900/40 p-3 rounded-xl border border-slate-800/60 space-y-2">
-                    <div class="text-xs font-bold text-sky-400 flex items-center gap-1 border-b border-slate-800 pb-1 mb-1">
-                        <i class="fa-solid fa-pen-to-square"></i> กรอกผลผลิตประจํางวดวัน
+                <!-- จำนวนอีแปะที่กรอได้ (จำนวนแผ่น) -->
+                <div>
+                    <label class="block text-slate-400 font-medium mb-1">จำนวนอีแปะที่กรอได้ (จำนวนแผ่น)</label>
+                    <div class="relative">
+                        <input type="number" id="input-sheets" placeholder="กรอกจำนวนแผ่น..." min="0" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 pl-3 pr-12 text-white focus:outline-none focus:border-sky-500 font-mono">
+                        <span class="absolute inset-y-0 right-0 flex items-center pr-3 text-[10px] font-bold text-slate-500">แผ่น</span>
                     </div>
-                    <div class="grid grid-cols-2 gap-2">
-                        <div>
-                            <label class="block text-[10px] font-bold text-slate-400 mb-0.5">โต๊ะกรอ</label>
-                            <select id="modal-prod-table" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2 py-1.5 text-xs text-white focus:outline-none focus:border-sky-500"></select>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <!-- จำนวนลัง -->
+                    <div>
+                        <label class="block text-slate-400 font-medium mb-1">จำนวนลัง</label>
+                        <div class="relative">
+                            <input type="number" id="input-boxes" placeholder="จำนวนลัง..." min="0" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 pr-10 text-white focus:outline-none focus:border-sky-500 font-mono">
+                            <span class="absolute inset-y-0 right-0 flex items-center pr-3 text-[10px] text-slate-500">ลัง</span>
                         </div>
-                        <div>
-                            <label class="block text-[10px] font-bold text-slate-400 mb-0.5">เบอร์ใย</label>
-                            <select id="modal-prod-yarn" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2 py-1.5 text-xs text-white focus:outline-none focus:border-sky-500"></select>
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-bold text-slate-400 mb-0.5">จำนวนแผ่น</label>
-                            <input type="number" id="modal-prod-sheets" value="0" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2 py-1 text-xs text-white focus:outline-none focus:border-sky-500 font-mono">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-bold text-slate-400 mb-0.5">จำนวนลัง</label>
-                            <input type="number" id="modal-prod-boxes" value="0" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2 py-1 text-xs text-white focus:outline-none focus:border-sky-500 font-mono">
-                        </div>
-                        <div class="col-span-2">
-                            <label class="block text-[10px] font-bold text-slate-400 mb-0.5">จำนวนคันรถ</label>
-                            <input type="number" id="modal-prod-trucks" value="0" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2 py-1 text-xs text-white focus:outline-none focus:border-sky-500 font-mono">
-                        </div>
-                        <div class="col-span-2">
-                            <label class="block text-[10px] font-bold text-slate-400 mb-0.5">หมายเหตุ</label>
-                            <input type="text" id="modal-prod-remark" placeholder="ไม่มี" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2 py-1 text-xs text-white focus:outline-none focus:border-sky-500">
+                    </div>
+                    <!-- จำนวนคันรถอีแปะ -->
+                    <div>
+                        <label class="block text-slate-400 font-medium mb-1">จำนวนคันรถอีแปะ</label>
+                        <div class="relative">
+                            <input type="number" id="input-trucks" placeholder="จำนวนคันรถ..." min="0" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 pr-12 text-white focus:outline-none focus:border-sky-500 font-mono">
+                            <span class="absolute inset-y-0 right-0 flex items-center pr-3 text-[10px] text-slate-500">คันรถ</span>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="grid grid-cols-2 gap-3 pt-2 border-t border-slate-850">
-                <button onclick="closeEditModal()" class="py-2 bg-slate-900 hover:bg-slate-800 text-xs text-slate-400 font-bold rounded-lg transition">ยกเลิก</button>
-                <button onclick="saveModalEmployeeData()" class="py-2 bg-gradient-to-r from-sky-500 to-indigo-600 text-xs text-white font-black rounded-lg shadow-lg shadow-sky-500/10 transition">💾 บันทึกข้อมูลและผลงาน</button>
+            <!-- ปุ่มบันทึก -->
+            <div class="flex gap-2 pt-2 border-t border-slate-850">
+                <button onclick="closeModal()" class="flex-1 py-2 bg-slate-900 hover:bg-slate-800 text-xs font-bold text-slate-400 rounded-lg transition">ยกเลิก</button>
+                <button onclick="savePerformance()" class="flex-1 py-2 bg-gradient-to-r from-sky-500 to-indigo-600 hover:brightness-110 text-xs font-bold text-white rounded-lg shadow-lg shadow-sky-500/20 transition">💾 บันทึกข้อมูล</button>
             </div>
         </div>
     </div>
 
-    <div id="toast-el" class="fixed bottom-6 right-6 bg-slate-900 border border-sky-500 text-sky-400 px-5 py-3 rounded-xl shadow-2xl z-50 transform translate-y-20 opacity-0 transition-all duration-300 text-xs font-black flex items-center gap-2">
-        <i class="fa-solid fa-circle-check text-emerald-400"></i> <span id="toast-text-node">กำลังประมวลผล...</span>
-    </div>
 
+    <!-- ================= CORE LOGIC JAVASCRIPT ================= -->
     <script>
-        // 1. เพิ่มโครงสร้างข้อมูลหลักรองรับความต้องการข้อ 1
-        const krwEpaeSeedData = [
-            { id: "1", name: "สมบัติ แสทอง", phone: "081-765-4321", avatar: "", attendance: {}, ot: {}, productivity: {} },
-            { id: "2", name: "เยาวมาลย์ พันนา", phone: "082-123-4567", avatar: "", attendance: {}, ot: {}, productivity: {} },
-            { id: "3", name: "พุทธศรี สามีพันธ์", phone: "083-234-5678", avatar: "", attendance: {}, ot: {}, productivity: {} },
-            { id: "4", name: "มะลิ ดาวังปา", phone: "084-345-6789", avatar: "", attendance: {}, ot: {}, productivity: {} },
-            { id: "5", name: "หนูจันทร์ ผิวดี", phone: "085-456-7890", avatar: "", attendance: {}, ot: {}, productivity: {} },
-            { id: "6", name: "จันทร์เพ็ญ บุตรมา", phone: "086-567-8901", avatar: "", attendance: {}, ot: {}, productivity: {} },
-            { id: "7", name: "นางบุบผา กุลวงศ์", phone: "087-678-9012", avatar: "", attendance: {}, ot: {}, productivity: {} },
-            { id: "8", name: "นางศิริพร เสน่ห์จันทร์", phone: "088-789-0123", avatar: "", attendance: {}, ot: {} , productivity: {}},
-            { id: "9", name: "นางประกอบ ไชยเพ็ง", phone: "089-890-1234", avatar: "", attendance: {}, ot: {} , productivity: {}},
-            { id: "10", name: "ดาวบด แสนพล", phone: "090-901-2345", avatar: "", attendance: {}, ot: {} , productivity: {}},
-            { id: "11", name: "ปางทอง คงมังคละ", phone: "091-012-3456", avatar: "", attendance: {}, ot: {} , productivity: {}},
-            { id: "12", name: "พีราพร ค่อมสิงห์", phone: "092-123-0192", avatar: "", attendance: {}, ot: {} , productivity: {}},
-            { id: "13", name: "นางประครอง ชัยสมคุณ", phone: "093-345-9876", avatar: "", attendance: {}, ot: {} , productivity: {}},
-            { id: "14", name: "มลฤดี ปัทเนตร", phone: "094-456-8765", avatar: "", attendance: {}, ot: {} , productivity: {}},
-            { id: "15", name: "น.ส.ไพรวัน วงษาสืบ", phone: "095-567-7654", avatar: "", attendance: {}, ot: {} , productivity: {}},
-            { id: "16", name: "นางจันสุดา ถาบุญแก้ว", phone: "096-678-6543", avatar: "", attendance: {}, ot: {} , productivity: {}},
-            { id: "17", name: "น.ส.กมลรัตน์ พูลทรัพย์", phone: "097-789-5432", avatar: "", attendance: {}, ot: {} , productivity: {}}
+        // ชุดข้อมูลเริ่มต้นรายชื่อพนักงานตามภาพประกอบ
+        let database = [
+            { id: "1", name: "สมบัติ แสทอง", phone: "081-765-4321", attendance: "✓", ot: false, table: "-", yarn: "-", sheets: 0, boxes: 0, trucks: 0 },
+            { id: "2", name: "เยาวมาลย์ พันนา", phone: "082-123-4567", attendance: "✓", ot: false, table: "-", yarn: "-", sheets: 0, boxes: 0, trucks: 0 },
+            { id: "3", name: "พุทธศรี สามีพันธ์", phone: "083-234-5678", attendance: "✓", ot: false, table: "-", yarn: "-", sheets: 0, boxes: 0, trucks: 0 },
+            { id: "4", name: "มะลิ ดาวังปา", phone: "084-345-6789", attendance: "✓", ot: false, table: "-", yarn: "-", sheets: 0, boxes: 0, trucks: 0 },
+            { id: "5", name: "หนูจันทร์ ผิวดี", phone: "085-456-7890", attendance: "", ot: false, table: "-", yarn: "-", sheets: 0, boxes: 0, trucks: 0 },
+            { id: "6", name: "จันทร์เพ็ญ บุตรมา", phone: "086-567-8901", attendance: "", ot: false, table: "-", yarn: "-", sheets: 0, boxes: 0, trucks: 0 },
+            { id: "7", name: "นางบุบผา กุลวงศ์", phone: "087-678-9012", attendance: "", ot: false, table: "-", yarn: "-", sheets: 0, boxes: 0, trucks: 0 },
+            { id: "8", name: "นางศิริพร เสน่ห์จันทร์", phone: "088-789-0123", attendance: "", ot: false, table: "-", yarn: "-", sheets: 0, boxes: 0, trucks: 0 },
+            { id: "9", name: "นางประกอบ ไชยเพ็ง", phone: "089-890-1234", attendance: "", ot: false, table: "-", yarn: "-", sheets: 0, boxes: 0, trucks: 0 },
+            { id: "10", name: "ดาวบด แสนพล", phone: "090-901-2345", attendance: "", ot: false, table: "-", yarn: "-", sheets: 0, boxes: 0, trucks: 0 },
+            { id: "11", name: "ปางทอง คงมังคละ", phone: "091-012-3456", attendance: "", ot: false, table: "-", yarn: "-", sheets: 0, boxes: 0, trucks: 0 },
+            { id: "12", name: "พีราพร ค่อมสิงห์", phone: "092-123-0192", attendance: "", ot: false, table: "-", yarn: "-", sheets: 0, boxes: 0, trucks: 0 },
+            { id: "13", name: "นางประครอง ชัยสมคุณ", phone: "093-345-9876", attendance: "", ot: false, table: "-", yarn: "-", sheets: 0, boxes: 0, trucks: 0 },
+            { id: "14", name: "มลฤดี ปัทเนตร", phone: "094-456-8765", attendance: "", ot: false, table: "-", yarn: "-", sheets: 0, boxes: 0, trucks: 0 },
+            { id: "15", name: "น.ส.ไพรวัน วงษาสืบ", phone: "095-567-7654", attendance: "", ot: false, table: "-", yarn: "-", sheets: 0, boxes: 0, trucks: 0 },
+            { id: "16", name: "นางจันสุดา ถาบุญแก้ว", phone: "096-678-6543", attendance: "", ot: false, table: "-", yarn: "-", sheets: 0, boxes: 0, trucks: 0 },
+            { id: "17", name: "น.ส.กมลรัตน์ พูลทรัพย์", phone: "097-789-5432", attendance: "", ot: false, table: "-", yarn: "-", sheets: 0, boxes: 0, trucks: 0 }
         ];
 
-        // 2 & 3. ตัวแปรโต๊ะกรอและเบอร์ใยจากข้อมูลจริงตามข้อ 2, 3
-        const tables = [
-            "T1","T2","T3","T4","T5","T6","T7","T8","T9","T10",
-            "T11","T12","T13","T14","T15","T16","T17","T18","T19","T20",
-            "T21","T22","T23","T24","T25","T26","T27","T28","T29","T30",
-            "T31","T32","T33","T34","T35","T36","T37","T38","T39","T40",
-            "T41","T42","T43","T44","T45"
-        ];
+        let currentPage = 0;
+        const pageSize = 4; // แสดงสไลด์หน้าละ 4 คนตามดีไซน์เป๊ะๆ
+        const statusList = ["", "✓", "✅", "สาย", "H", "❌"];
 
-        const yarns = [
-            "210/3K91", "210/2T05", "210/6K91", "210/9K91", "210/2K91",
-            "210/4K91", "135/2ต่ำ", "210/2", "210/3F", "210/4F",
-            "110/2ขาว", "025DK960", "028DK960", "029DK960", "031M206"
-        ];
-
-        // 8. ค่ามาตรฐานเตรียมไว้ตามข้อ 8
-        const standards = {
-            "210/3K91_T3": 450,
-            "210/2T05_T1": 400,
-            "210/6K91_T2": 420
-        };
-
-        let employees = [];
-        let currentDayStr = "2026-06-12"; 
-        let currentSlidePage = 0; 
-        const itemsPerSlide = 4; 
-        let temporaryAvatarBase64 = "";
-        let currentHistoryScope = "day"; // ตัวแปรสำหรับคุม Scope ค้นหาประวัติข้อ 6
-
-        // ตัวแปรเก็บ Object Chart.js 
-        let chartDailyInstance = null;
-        let chartTopInstance = null;
-        let chartTrendInstance = null;
-
-        function initDatabase() {
-            const cache = localStorage.getItem('manpower_epae_ai_chart_v2026');
-            if (cache) { 
-                employees = JSON.parse(cache); 
-            } else {
-                employees = JSON.parse(JSON.stringify(krwEpaeSeedData));
-                // จำลองข้อมูลผลผลิตเพื่อให้บอร์ดเห็นตัวเลขสวยงามและเริ่มระบบมีประสิทธิภาพทันที
-                employees[0].productivity["2026-06-12"] = { table: "T3", yarn: "210/3K91", sheets: 450, boxes: 18, trucks: 2, remark: "ทำงานดีมาก" };
-                employees[1].productivity["2026-06-12"] = { table: "T1", yarn: "210/2T05", sheets: 400, boxes: 16, trucks: 1, remark: "" };
-                employees[2].productivity["2026-06-12"] = { table: "T2", yarn: "210/6K91", sheets: 380, boxes: 14, trucks: 2, remark: "" };
-                localStorage.setItem('manpower_epae_ai_chart_v2026', JSON.stringify(employees));
-            }
-            buildFormDropdowns();
-        }
-
-        function buildFormDropdowns() {
-            const tSel = document.getElementById('modal-prod-table');
-            tSel.innerHTML = tables.map(t => `<option value="${t}">${t}</option>`).join('');
-            const ySel = document.getElementById('modal-prod-yarn');
-            ySel.innerHTML = yarns.map(y => `<option value="${y}">${y}</option>`).join('');
-        }
-
-        const statusCycle = ["", "✓", "✅", "สาย", "H", "❌"];
-        function getNextStatus(curr) { return statusCycle[(statusCycle.indexOf(curr) + 1) % statusCycle.length]; }
-
-        function translateToBadge(val, prodInfo) {
-            let badgeStr = "";
-            switch(val) {
-                case '✓': badgeStr = `<span class="px-2 py-0.5 rounded bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 font-bold text-[10px]">🟢 เช้า</span>`; break;
-                case '✅': badgeStr = `<span class="px-2 py-0.5 rounded bg-sky-500/20 border border-sky-500/40 text-sky-400 font-bold text-[10px]">🔵 ดึก</span>`; break;
-                case 'สาย': badgeStr = `<span class="px-2 py-0.5 rounded bg-yellow-500/20 border border-yellow-500/40 text-yellow-400 font-bold text-[10px]">🟡 สาย</span>`; break;
-                case 'H': badgeStr = `<span class="px-2 py-0.5 rounded bg-purple-500/20 border border-purple-500/30 text-purple-400 text-[10px]">🟣 วันหยุด</span>`; break;
-                case '❌': badgeStr = `<span class="px-2 py-0.5 rounded bg-rose-500/20 border border-rose-500/40 text-rose-400 font-black text-[10px]">🔴 ขาด</span>`; break;
-                default: badgeStr = `<span class="px-2 py-0.5 rounded bg-slate-800 text-slate-500 border border-slate-700/40 text-[10px]">ไม่ระบุ</span>`;
-            }
-            if(prodInfo && prodInfo.sheets > 0) {
-                badgeStr += ` <span class="px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 text-[9px] font-mono">โต๊ะ ${prodInfo.table} (${prodInfo.efficiency}% Eff)</span>`;
-            }
-            return badgeStr;
-        }
-
-        function getBtnStyle(val) {
-            switch(val) {
-                case '✓': return 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/50';
-                case '✅': return 'bg-sky-500/20 text-sky-400 border border-sky-500/50';
-                case 'สาย': return 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/50';
-                case 'H': return 'bg-purple-500/20 text-purple-400 border border-purple-400';
-                case '❌': return 'bg-rose-500/20 text-rose-400 border border-rose-500/50';
-                default: return 'bg-slate-900 text-slate-500 border border-slate-800';
+        // ฟังก์ชันลูปเปลี่ยนสถานะงานเมื่อคลิกปุ่ม
+        function cycleAttendance(id) {
+            const idx = database.findIndex(e => e.id === id);
+            if(idx !== -1) {
+                let currentStatus = database[idx].attendance;
+                let nextIdx = (statusList.indexOf(currentStatus) + 1) % statusList.length;
+                database[idx].attendance = statusList[nextIdx];
+                renderApp();
             }
         }
 
-        function formatThaiFullDate(str) {
-            const mTh = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
-            const p = str.split('-'); if(p.length !== 3) return str;
-            return `${parseInt(p[2])} ${mTh[parseInt(p[1])-1]} ${parseInt(p[0])+543}`;
-        }
-
-        function handleDateChange(v) {
-            if(!v) return;
-            currentDayStr = v;
-            document.getElementById('txt-thai-date').innerText = formatThaiFullDate(v);
-            document.querySelectorAll('#master-card-date-sub').forEach(el => el.innerText = formatThaiFullDate(v));
-            renderWorkspace();
-        }
-
-        function setHistoryScope(scope) {
-            currentHistoryScope = scope;
-            document.querySelectorAll("[id^='scope-']").forEach(btn => {
-                btn.className = "py-1 rounded bg-slate-900 text-slate-400 border border-slate-800";
-            });
-            document.getElementById(`scope-${scope}`).className = "py-1 rounded bg-sky-500 text-slate-950";
-            renderWorkspace();
-            showToast(`🔍 ปรับขอบเขตการดูประวัติเป็น: ราย${scope === 'day'?'วัน':scope==='week'?'สัปดาห์':scope==='month'?'เดือน':'ปี'}`);
-        }
-
-        function tickAttendanceManual(id) {
-            const emp = employees.find(e => e.id === id);
-            if(emp) {
-                emp.attendance[currentDayStr] = getNextStatus(emp.attendance[currentDayStr] || "");
-                localStorage.setItem('manpower_epae_ai_chart_v2026', JSON.stringify(employees));
-                renderWorkspace();
+        // ฟังก์ชันเปิด-ปิด สถานะโอกา
+        function toggleOT(id) {
+            const idx = database.findIndex(e => e.id === id);
+            if(idx !== -1) {
+                database[idx].ot = !database[idx].ot;
+                renderApp();
             }
         }
 
-        function toggleOTManual(id) {
-            const emp = employees.find(e => e.id === id);
-            if(emp) {
-                emp.ot[currentDayStr] = !emp.ot[currentDayStr];
-                localStorage.setItem('manpower_epae_ai_chart_v2026', JSON.stringify(employees));
-                renderWorkspace();
+        // ฟังก์ชันแสดงป้ายข้อความสถานะบนแผ่นสไลด์ขวามือ
+        function getStatusBadge(status, table, yarn) {
+            let labelText = "ไม่ระบุ";
+            let colorClass = "bg-slate-800 text-slate-400 border-slate-700";
+            
+            if (status === "✓") { labelText = "🟢 ประพฤติงานปกติ (กะเช้า)"; colorClass = "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"; }
+            else if (status === "✅") { labelText = "🔵 เข้างานกะดึก"; colorClass = "bg-sky-500/10 text-sky-400 border-sky-500/30"; }
+            else if (status === "สาย") { labelText = "🟡 มาสาย"; colorClass = "bg-amber-500/10 text-amber-400 border-amber-500/30"; }
+            else if (status === "H") { labelText = "🟣 วันหยุดพักผ่อน"; colorClass = "bg-purple-500/10 text-purple-400 border-purple-500/30"; }
+            else if (status === "❌") { labelText = "🔴 ขาดงาน"; colorClass = "bg-rose-500/10 text-rose-400 border-rose-500/30"; }
+
+            let infoString = `<span class="px-2 py-0.5 rounded-md border text-[10px] font-bold ${colorClass}">${labelText}</span>`;
+            if (table !== "-" && table !== "") {
+                infoString += ` <span class="bg-indigo-950/60 border border-indigo-800/50 text-indigo-300 px-1.5 py-0.5 rounded text-[9px] font-mono">โต๊ะ ${table} [${yarn}]</span>`;
             }
+            return infoString;
         }
 
-        // ข้อ 4. พัฒนากล่องบันทึกข้อมูลและผลงานพนักงานรายวัน
-        function openEditModal(id) {
-            const emp = employees.find(e => e.id === id);
+        function getBtnStyle(status) {
+            if (status === "✓") return "bg-emerald-600 text-white font-bold";
+            if (status === "✅") return "bg-sky-600 text-white font-bold";
+            if (status === "สาย") return "bg-amber-500 text-slate-950 font-bold";
+            if (status === "H") return "bg-purple-600 text-white font-bold";
+            if (status === "❌") return "bg-rose-600 text-white font-bold";
+            return "bg-slate-900 text-slate-500 border border-slate-800";
+        }
+
+        // ฟังก์ชันจัดการเปิด Modal กรอกประสิทธิภาพ
+        function openModal(id) {
+            const emp = database.find(e => e.id === id);
             if(!emp) return;
 
-            document.getElementById('modal-emp-id').value = emp.id;
-            document.getElementById('modal-input-name').value = emp.name;
-            document.getElementById('modal-input-phone').value = emp.phone;
-            
-            // ดึงข้อมูลผลผลิตเดิมออกมาแสดงผล (ถ้ามี)
-            const prod = emp.productivity[currentDayStr] || { table: "T1", yarn: "210/3K91", sheets: 0, boxes: 0, trucks: 0, remark: "" };
-            document.getElementById('modal-prod-table').value = prod.table || "T1";
-            document.getElementById('modal-prod-yarn').value = prod.yarn || "210/3K91";
-            document.getElementById('modal-prod-sheets').value = prod.sheets || 0;
-            document.getElementById('modal-prod-boxes').value = prod.boxes || 0;
-            document.getElementById('modal-prod-trucks').value = prod.trucks || 0;
-            document.getElementById('modal-prod-remark').value = prod.remark || "";
+            document.getElementById('modal-target-id').value = emp.id;
+            document.getElementById('modal-emp-name').innerText = `${emp.name} (${emp.phone})`;
+            document.getElementById('input-table').value = emp.table;
+            document.getElementById('input-yarn').value = emp.yarn;
+            document.getElementById('input-sheets').value = emp.sheets || "";
+            document.getElementById('input-boxes').value = emp.boxes || "";
+            document.getElementById('input-trucks').value = emp.trucks || "";
 
-            temporaryAvatarBase64 = emp.avatar || ""; 
-            const previewEl = document.getElementById('modal-avatar-preview');
-            if (temporaryAvatarBase64) {
-                previewEl.innerHTML = `<img src="${temporaryAvatarBase64}" class="w-full h-full object-cover">`;
-            } else {
-                previewEl.innerHTML = emp.name.substring(0,2);
-            }
-
-            const modal = document.getElementById('edit-modal');
-            modal.classList.remove('hidden');
-            setTimeout(() => modal.classList.remove('opacity-0'), 10);
+            const m = document.getElementById('performance-modal');
+            m.classList.remove('hidden');
+            setTimeout(() => m.classList.remove('opacity-0'), 10);
         }
 
-        function closeEditModal() {
-            const modal = document.getElementById('edit-modal');
-            modal.classList.add('opacity-0');
-            document.getElementById('modal-file-input').value = "";
-            setTimeout(() => modal.classList.add('hidden'), 350);
+        function closeModal() {
+            const m = document.getElementById('performance-modal');
+            m.classList.add('opacity-0');
+            setTimeout(() => m.classList.add('hidden'), 200);
         }
 
-        function previewModalAvatar(event) {
-            const file = event.target.files[0];
-            if(file) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    temporaryAvatarBase64 = e.target.result;
-                    document.getElementById('modal-avatar-preview').innerHTML = `<img src="${temporaryAvatarBase64}" class="w-full h-full object-cover">`;
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-
-        // ข้อ 9. ระบบคำนวณอัตโนมัติ (Efficiency) ทันทีเมื่อเซฟบันทึกงาน
-        function saveModalEmployeeData() {
-            const id = document.getElementById('modal-emp-id').value;
-            const newName = document.getElementById('modal-input-name').value.trim();
-            const newPhone = document.getElementById('modal-input-phone').value.trim();
-
-            if (newName === "") return alert("❌ กรุณากรอกชื่อพนักงาน");
-
-            const emp = employees.find(e => e.id === id);
-            if(emp) {
-                emp.name = newName;
-                emp.phone = newPhone;
-                emp.avatar = temporaryAvatarBase64;
-
-                // บันทึกกลุ่มข้อมูลผลงานลงออบเจกต์ (ตามข้อ 4)
-                const table = document.getElementById('modal-prod-table').value;
-                const yarn = document.getElementById('modal-prod-yarn').value;
-                const sheets = parseInt(document.getElementById('modal-prod-sheets').value) || 0;
-                const boxes = parseInt(document.getElementById('modal-prod-boxes').value) || 0;
-                const trucks = parseInt(document.getElementById('modal-prod-trucks').value) || 0;
-                const remark = document.getElementById('modal-prod-remark').value.trim();
-
-                // ประมวลผลสูตรคำนวณประสิทธิภาพตามความต้องการข้อ 9
-                const stdKey = `${yarn}_${table}`;
-                const stdValue = standards[stdKey] || 0;
-                let efficiency = 100; // หากยังไม่มีมาตรฐาน ตั้งค่า default เป็น 100%
-                if (stdValue > 0) {
-                    efficiency = parseFloat(((sheets / stdValue) * 100).toFixed(1));
-                }
-
-                emp.productivity[currentDayStr] = { table, yarn, sheets, boxes, trucks, remark, efficiency };
-
-                localStorage.setItem('manpower_epae_ai_chart_v2026', JSON.stringify(employees));
-                renderWorkspace();
-                closeEditModal();
-                showToast(`✨ บันทึกผลงานของ ${newName} ลงระบบเรียบร้อย`);
-            }
-        }
-
-        function changeSlidePage(direction) {
-            const maxPage = Math.ceil(employees.length / itemsPerSlide) - 1;
-            currentSlidePage += direction;
-            if (currentSlidePage < 0) currentSlidePage = 0;
-            if (currentSlidePage > maxPage) currentSlidePage = maxPage;
-            renderWorkspace();
-        }
-
-        // ฟังก์ชันประมวลผลการค้นหาลึกระดับวัน/สัปดาห์/เดือน/ปี ตามข้อ 6
-        function getScopeFilteredProductivity(emp) {
-            let totalSheets = 0, totalBoxes = 0, totalTrucks = 0, effSum = 0, effCount = 0;
-            const targetDate = new Date(currentDayStr);
-            
-            Object.keys(emp.productivity).forEach(dateKey => {
-                const pDate = new Date(dateKey);
-                let isMatch = false;
-
-                if (currentHistoryScope === 'day') {
-                    isMatch = (dateKey === currentDayStr);
-                } else if (currentHistoryScope === 'week') {
-                    const oneDay = 24 * 60 * 60 * 1000;
-                    const diffDays = Math.round(Math.abs((targetDate - pDate) / oneDay));
-                    isMatch = (diffDays <= 7);
-                } else if (currentHistoryScope === 'month') {
-                    isMatch = (pDate.getMonth() === targetDate.getMonth() && pDate.getFullYear() === targetDate.getFullYear());
-                } else if (currentHistoryScope === 'year') {
-                    isMatch = (pDate.getFullYear() === targetDate.getFullYear());
-                }
-
-                if (isMatch) {
-                    const data = emp.productivity[dateKey];
-                    totalSheets += data.sheets || 0;
-                    totalBoxes += data.boxes || 0;
-                    totalTrucks += data.trucks || 0;
-                    if(data.efficiency) { effSum += data.efficiency; effCount++; }
-                }
-            });
-
-            return {
-                sheets: totalSheets,
-                boxes: totalBoxes,
-                trucks: totalTrucks,
-                avgEff: effCount > 0 ? parseFloat((effSum / effCount).toFixed(1)) : 100
-            };
-        }
-
-        // เมธอดคำนวณและแสดงผล Workspace + Dashboard สรุปผล
-        function renderWorkspace() {
-            const sQuery = document.getElementById('search-input').value.toLowerCase();
-            const leftBox = document.getElementById('manual-rows-container');
-            leftBox.innerHTML = '';
-
-            const slideGrid = document.getElementById('slide-cards-grid');
-            slideGrid.innerHTML = '';
-
-            // ข้อ 5. รวบรวมข้อมูลสำหรับแดชบอร์ด Mini KPI
-            let globalSheets = 0, globalBoxes = 0, globalTrucks = 0, globalEffSum = 0, globalEffCount = 0;
-
-            // คัดกรองรายชื่อฝั่งซ้ายพร้อมรองรับการค้นหาประวัติตามข้อ 6
-            const filteredForLeft = employees.filter(e => e.name.toLowerCase().includes(sQuery) || e.phone.includes(sQuery));
-            document.getElementById('emp-count-badge').innerText = `${filteredForLeft.length} MEMBERS`;
-
-            filteredForLeft.forEach(e => {
-                const dayAttend = e.attendance[currentDayStr] || "";
-                const dayOT = e.ot[currentDayStr] || false;
+        function savePerformance() {
+            const id = document.getElementById('modal-target-id').value;
+            const idx = database.findIndex(e => e.id === id);
+            if(idx !== -1) {
+                database[idx].table = document.getElementById('input-table').value;
+                database[idx].yarn = document.getElementById('input-yarn').value;
+                database[idx].sheets = parseInt(document.getElementById('input-sheets').value) || 0;
+                database[idx].boxes = parseInt(document.getElementById('input-boxes').value) || 0;
+                database[idx].trucks = parseInt(document.getElementById('input-trucks').value) || 0;
                 
-                // ดึงข้อมูลตาม Scope การค้นหาประวัติ
-                const historyData = getScopeFilteredProductivity(e);
-                const curProd = e.productivity[currentDayStr] || { sheets: 0, table: "" };
+                closeModal();
+                renderApp();
+            }
+        }
 
+        // หน้าถัดไป / หน้าก่อนหน้า สำหรับสไลด์
+        function nextPage() {
+            if ((currentPage + 1) * pageSize < database.length) { currentPage++; renderApp(); }
+        }
+        function prevPage() {
+            if (currentPage > 0) { currentPage--; renderApp(); }
+        }
+
+        // ================= MAIN RENDER FUNCTION =================
+        function renderApp() {
+            const searchQuery = document.getElementById('emp-search').value.toLowerCase();
+            
+            // 1. เรนเดอร์ฝั่งซ้าย (แผงเช็คชื่อ + ปุ่มแก้ไขข้อมูลงาน)
+            const listContainer = document.getElementById('list-employees-box');
+            listContainer.innerHTML = "";
+
+            const filteredList = database.filter(e => e.name.toLowerCase().includes(searchQuery));
+            document.getElementById('total-members-badge').innerText = `${filteredList.length} MEMBERS`;
+
+            filteredList.forEach(e => {
                 const row = document.createElement('div');
-                row.className = 'p-2.5 flex items-center justify-between hover:bg-white/5 transition duration-150 gap-2';
+                row.className = "py-2.5 flex items-center justify-between gap-2 hover:bg-slate-900/40 px-1 rounded-lg transition";
                 
-                const picNode = e.avatar ? 
-                    `<img src="${e.avatar}" class="w-8 h-8 rounded-full object-cover border border-slate-700">` :
-                    `<div class="w-8 h-8 rounded-full bg-slate-800 text-slate-400 font-bold flex items-center justify-center text-[10px]">${e.name.substring(0,1)}</div>`;
+                let btnText = "-";
+                if(e.attendance === "✓") btnText = "เช้า";
+                if(e.attendance === "✅") btnText = "ดึก";
+                if(e.attendance === "สาย") btnText = "สาย";
+                if(e.attendance === "H") btnText = "หยุด";
+                if(e.attendance === "❌") btnText = "ขาด";
 
                 row.innerHTML = `
-                    <div class="flex items-center gap-2 min-w-0 flex-1 cursor-pointer" onclick="openEditModal('${e.id}')">
-                        <div class="relative flex-shrink-0">${picNode}</div>
-                        <div class="min-w-0 flex-1">
-                            <span class="font-bold text-white text-xs block truncate hover:text-sky-400 transition">${e.name}</span>
-                            <span class="text-[9px] text-slate-400 block font-mono">🔍 ประวัติช่วงนี้: ${historyData.sheets} แผ่น | Eff: ${historyData.avgEff}%</span>
+                    <div class="flex items-center gap-2 min-w-0">
+                        <div class="w-8 h-8 rounded-full bg-slate-800 border border-slate-700/60 flex items-center justify-center text-[11px] font-bold text-slate-400 flex-shrink-0">
+                            ${e.name.substring(0,2)}
                         </div>
-                        <i class="fa-solid fa-user-pen text-[10px] text-slate-600 hover:text-sky-400 mr-1"></i>
+                        <div class="min-w-0">
+                            <span class="text-xs font-bold text-white block truncate">${e.name}</span>
+                            <span class="text-[9px] text-slate-500 font-mono">${e.phone}</span>
+                        </div>
                     </div>
-                    <div class="flex items-center gap-1.5 flex-shrink-0">
-                        <button onclick="tickAttendanceManual('${e.id}')" class="w-10 h-7 rounded-lg text-[9px] font-black transition ${getBtnStyle(dayAttend)}">
-                            ${dayAttend === '✓' ? 'เช้า' : dayAttend === '✅' ? 'ดึก' : dayAttend === 'สาย' ? 'สาย' : dayAttend || "-"}
+                    
+                    <div class="flex items-center gap-2 flex-shrink-0">
+                        <!-- ปุ่มเปิดหน้าต่างกรอกข้อมูลประสิทธิภาพตามส่วนที่ 2 -->
+                        <button onclick="openModal('${e.id}')" title="ลงข้อมูลประสิทธิภาพ" class="p-1 text-slate-500 hover:text-sky-400 transition text-xs">
+                            <i class="fa-solid fa-user-pen"></i>
                         </button>
-                        <button onclick="toggleOTManual('${e.id}')" class="w-8 h-7 rounded-lg text-[10px] font-mono transition ${dayOT ? 'bg-sky-500 text-slate-950 font-black' : 'bg-slate-900 text-slate-600 border border-slate-800'}">
-                            ${dayOT ? 'OT' : '💤'}
+                        <!-- ปุ่มติ๊กสถานะมาทำงานสลับเวียนตามรูปภาพ -->
+                        <button onclick="cycleAttendance('${e.id}')" class="w-12 h-7 rounded-lg text-[10px] transition font-mono ${getBtnStyle(e.attendance)}">
+                            ${btnText}
+                        </button>
+                        <!-- ปุ่มติ๊กโอที -->
+                        <button onclick="toggleOT('${e.id}')" class="w-8 h-7 rounded-lg text-[10px] font-mono transition ${e.ot ? 'bg-sky-500 text-slate-950 font-black' : 'bg-slate-900 text-slate-600 border border-slate-800'}">
+                            ${e.ot ? 'OT' : '💤'}
                         </button>
                     </div>
                 `;
-                leftBox.appendChild(row);
+                listContainer.appendChild(row);
             });
 
-            // คำนวณภาพรวม Mini KPI ทั่วทั้งโรงงาน
-            employees.forEach(e => {
-                const prod = e.productivity[currentDayStr];
-                if (prod) {
-                    globalSheets += prod.sheets || 0;
-                    globalBoxes += prod.boxes || 0;
-                    globalTrucks += prod.trucks || 0;
-                    if (prod.efficiency) {
-                        globalEffSum += prod.efficiency;
-                        globalEffCount++;
-                    }
-                }
-            });
+            // 2. คำนวณเคาน์เตอร์แถบขวาบนของแดชบอร์ดสไลด์
+            let totalPresent = database.filter(e => e.attendance === "✓" || e.attendance === "✅").length;
+            let totalOT = database.filter(e => e.ot === true).length;
+            let totalLate = database.filter(e => e.attendance === "สาย").length;
+            let totalAbsent = database.filter(e => e.attendance === "❌").length;
 
-            // อัปเดตข้อมูลขึ้นหน้า Dashboard (ตามข้อ 5)
-            document.getElementById('kpi-total-sheets').innerText = globalSheets.toLocaleString();
-            document.getElementById('kpi-total-boxes').innerText = globalBoxes.toLocaleString();
-            document.getElementById('kpi-total-trucks').innerText = globalTrucks.toLocaleString();
-            document.getElementById('kpi-avg-efficiency').innerText = globalEffCount > 0 ? `${(globalEffSum / globalEffCount).toFixed(1)}%` : "100%";
+            document.getElementById('count-present').innerText = totalPresent;
+            document.getElementById('count-ot').innerText = totalOT;
+            document.getElementById('count-late').innerText = totalLate;
+            document.getElementById('count-absent').innerText = totalAbsent;
 
-            // แบ่งหน้าจัดการสไลด์หน้าจอหลัก
-            const totalSlides = Math.ceil(employees.length / itemsPerSlide);
-            if (currentSlidePage >= totalSlides && totalSlides > 0) currentSlidePage = totalSlides - 1;
+            // 3. เรนเดอร์ช่องข้อมูลสไลด์โรงละคร 4 ช่อง (สไลด์หน้าปัจจุบัน)
+            const slideContainer = document.getElementById('slide-grid-container');
+            slideContainer.innerHTML = "";
 
-            const startIndex = currentSlidePage * itemsPerSlide;
-            const endIndex = Math.min(startIndex + itemsPerSlide, employees.length);
-            const activePageItems = employees.slice(startIndex, endIndex);
+            const totalPages = Math.ceil(database.length / pageSize);
+            if(currentPage >= totalPages && totalPages > 0) currentPage = totalPages - 1;
 
-            document.getElementById('slide-page-indicator').innerText = `PAGE: ${currentSlidePage + 1} / ${totalSlides || 1}`;
-            document.getElementById('txt-slide-summary-node').innerText = `กำลังแสดงคนที่ ${startIndex + 1} - ${endIndex} (รวมทั้งหมด ${employees.length} คน)`;
+            const startIdx = currentPage * pageSize;
+            const endIdx = Math.min(startIdx + pageSize, database.length);
+            const activeSlideItems = database.slice(startIdx, endIdx);
 
-            activePageItems.forEach(e => {
-                const dayAttend = e.attendance[currentDayStr] || "";
-                const dayOT = e.ot[currentDayStr] || false;
-                const prod = e.productivity[currentDayStr] || { table: "-", yarn: "-", sheets: 0, boxes: 0, trucks: 0, remark: "", efficiency: 100 };
+            document.getElementById('page-badge').innerText = `PAGE: ${currentPage + 1} / ${totalPages || 1}`;
+            document.getElementById('txt-pagination-info').innerText = `กำลังแสดงคนที่ ${startIdx + 1} - ${endIdx} (รวมทั้งหมด ${database.length} คน)`;
 
+            activeSlideItems.forEach(e => {
                 const card = document.createElement('div');
-                card.className = `p-4 rounded-xl border transition ${dayAttend ? 'bg-slate-900/90 border-slate-800' : 'bg-slate-950/40 border-slate-900 text-slate-500'}`;
+                card.className = "p-4 rounded-xl bg-slate-950/60 border border-slate-900/80 flex flex-col justify-between space-y-3";
                 
-                const imgAvatar = e.avatar ? `<img src="${e.avatar}" class="w-12 h-12 rounded-full object-cover border-2 border-slate-700">` : 
-                    `<div class="w-12 h-12 rounded-full bg-slate-800 text-slate-300 flex items-center justify-center font-black text-sm">${e.name.substring(0,2)}</div>`;
-
                 card.innerHTML = `
                     <div class="flex items-start gap-3">
-                        ${imgAvatar}
+                        <div class="w-10 h-10 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-center font-bold text-xs text-sky-400 flex-shrink-0">
+                            ${e.name.substring(0,2)}
+                        </div>
                         <div class="min-w-0 flex-1">
-                            <div class="flex items-center justify-between">
+                            <div class="flex flex-col space-y-1">
                                 <h4 class="text-xs font-bold text-white truncate">${e.name}</h4>
-                                ${translateToBadge(dayAttend, e.productivity[currentDayStr])}
+                                <span class="text-[10px] font-mono text-slate-500">${e.phone} ${e.ot ? '• <span class="text-sky-400 font-bold">ทำโอที</span>':''}</span>
                             </div>
-                            <p class="text-[9px] text-slate-500 font-mono mt-0.5">${e.phone} ${dayOT ? '🔥 ทำโอที' : ''}</p>
-                            
-                            <div class="mt-2 pt-2 border-t border-slate-800 grid grid-cols-3 gap-1 text-[10px] bg-slate-950/60 p-1.5 rounded-lg font-mono text-center">
-                                <div>
-                                    <span class="block text-[8px] text-slate-500">แผ่น</span>
-                                    <span class="font-bold text-emerald-400">${prod.sheets}</span>
-                                </div>
-                                <div>
-                                    <span class="block text-[8px] text-slate-500">ลัง</span>
-                                    <span class="font-bold text-sky-400">${prod.boxes}</span>
-                                </div>
-                                <div>
-                                    <span class="block text-[8px] text-slate-500">คันรถ</span>
-                                    <span class="font-bold text-amber-400">${prod.trucks}</span>
-                                </div>
-                            </div>
-                            ${prod.remark ? `<p class="text-[9px] text-yellow-500 italic mt-1">📌 หมายเหตุ: ${prod.remark}</p>` : ''}
+                        </div>
+                    </div>
+
+                    <!-- แท็บสถานะการเข้ากะตามสั่ง -->
+                    <div class="pt-1">
+                        ${getStatusBadge(e.attendance, e.table, e.yarn)}
+                    </div>
+
+                    <!-- ผลงานประสิทธิภาพส่วนที่ 2 ที่กรอกจะมาโชว์ตรงนี้เรียลไทม์ -->
+                    <div class="pt-2 border-t border-slate-900 grid grid-cols-3 gap-1 text-center font-mono text-[10px]">
+                        <div class="bg-slate-900/60 p-1.5 rounded-lg border border-slate-900">
+                            <span class="block text-[8px] text-slate-500">จำนวนแผ่น</span>
+                            <span class="font-bold text-emerald-400">${e.sheets || 0}</span>
+                        </div>
+                        <div class="bg-slate-900/60 p-1.5 rounded-lg border border-slate-900">
+                            <span class="block text-[8px] text-slate-500">จำนวนลัง</span>
+                            <span class="font-bold text-sky-400">${e.boxes || 0}</span>
+                        </div>
+                        <div class="bg-slate-900/60 p-1.5 rounded-lg border border-slate-900">
+                            <span class="block text-[8px] text-slate-500">คันรถอีแปะ</span>
+                            <span class="font-bold text-amber-400">${e.trucks || 0}</span>
                         </div>
                     </div>
                 `;
-                slideGrid.appendChild(card);
-            });
-
-            // อัปเดตกราฟสถิติวิเคราะห์ใหม่แบบ Real-time
-            renderCharts();
-        }
-
-        // ข้อ 7. ติดตั้งระบบกราฟ Chart.js สามรูปแบบตามเงื่อนไข
-        function renderCharts() {
-            // กราฟที่ 1: ผลผลิตรวมรายวันแยกตามวัน (Bar Chart)
-            const ctxDaily = document.getElementById('chartDailyProductivity').getContext('2d');
-            if(chartDailyInstance) chartDailyInstance.destroy();
-            
-            // ประมวลผลดึงค่าชิ้นงานของสัปดาห์นี้
-            chartDailyInstance = new Chart(ctxDaily, {
-                type: 'bar',
-                data: {
-                    labels: ['จันทร์', 'อังคาร', 'พุธ', 'พฤหัสฯ', 'ศุกร์', 'เสาร์', 'อาทิตย์'],
-                    datasets: [{
-                        label: 'จำนวนแผ่นที่ผลิตได้',
-                        data: [450, 470, 430, 490, 520, 410, 390], // ข้อมูลตัวอย่างทดสอบเสถียรภาพสอดคล้องกับบรีฟข้อ 7
-                        backgroundColor: 'rgba(14, 165, 233, 0.4)',
-                        borderColor: '#0ea5e9',
-                        borderWidth: 2,
-                        borderRadius: 6
-                    }]
-                },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
-            });
-
-            // กราฟที่ 2: Top 5 พนักงานทำผลงานสูงสุด (Doughnut Chart)
-            const ctxTop = document.getElementById('chartTopPerformers').getContext('2d');
-            if(chartTopInstance) chartTopInstance.destroy();
-
-            // ดึงรายชื่อผู้ทำคะแนนสูงสุดของวันงานปัจจุบัน
-            let sortedEmps = [...employees].map(e => ({
-                name: e.name,
-                sheets: e.productivity[currentDayStr] ? e.productivity[currentDayStr].sheets : 0
-            })).filter(x => x.sheets > 0).sort((a,b) => b.sheets - a.sheets).slice(0, 5);
-
-            if(sortedEmps.length === 0) sortedEmps = [{name: 'ไม่มีข้อมูลผลงาน', sheets: 1}];
-
-            chartTopInstance = new Chart(ctxTop, {
-                type: 'doughnut',
-                data: {
-                    labels: sortedEmps.map(x => x.name),
-                    datasets: [{
-                        data: sortedEmps.map(x => x.sheets),
-                        backgroundColor: ['#f43f5e', '#3b82f6', '#eab308', '#10b981', '#6366f1']
-                    }]
-                },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { color: '#cbd5e1', font: { size: 9 } } } } }
-            });
-
-            // กราฟที่ 3: แนวโน้มประสิทธิภาพเฉลี่ยรายเดือน (Line Chart)
-            const ctxTrend = document.getElementById('chartMonthlyTrend').getContext('2d');
-            if(chartTrendInstance) chartTrendInstance.destroy();
-
-            chartTrendInstance = new Chart(ctxTrend, {
-                type: 'line',
-                data: {
-                    labels: ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'],
-                    datasets: [{
-                        label: 'Trend ประสิทธิภาพ (%)',
-                        data: [92, 94, 91, 95, 98, 96, 93, 95, 97, 99, 94, 96],
-                        borderColor: '#6366f1',
-                        backgroundColor: 'rgba(99, 102, 241, 0.1)',
-                        tension: 0.3,
-                        fill: true
-                    }]
-                },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+                slideContainer.appendChild(card);
             });
         }
 
-        // ข้อ 10. พัฒนาระบบส่งออกไฟล์ด่วน Excel, PDF, CSV ทันที
-        function exportData(type) {
-            const dataReport = employees.map(e => {
-                const prod = e.productivity[currentDayStr] || {};
-                return {
-                    "รหัส": e.id,
-                    "ชื่อพนักงาน": e.name,
-                    "เบอร์โทรศัพท์": e.phone,
-                    "สถานะเข้ากะ": e.attendance[currentDayStr] || "ไม่ระบุ",
-                    "ทำโอที": e.ot[currentDayStr] ? "ใช่" : "ไม่",
-                    "โต๊ะกรอ": prod.table || "-",
-                    "เบอร์ใย": prod.yarn || "-",
-                    "จำนวนแผ่น": prod.sheets || 0,
-                    "จำนวนลัง": prod.boxes || 0,
-                    "จำนวนคันรถ": prod.trucks || 0,
-                    "ประสิทธิภาพ (%)": prod.efficiency ? `${prod.efficiency}%` : "100%",
-                    "หมายเหตุ": prod.remark || "-"
-                };
-            });
-
-            if (type === 'excel') {
-                const worksheet = XLSX.utils.json_to_sheet(dataReport);
-                const workbook = XLSX.utils.book_new();
-                XLSX.utils.book_append_sheet(workbook, worksheet, "Production_Report");
-                XLSX.writeFile(workbook, `EPAE_Production_${currentDayStr}.xlsx`);
-                showToast("🟢 ส่งออกไฟล์ Excel สำเร็จ!");
-            } 
-            else if (type === 'csv') {
-                const worksheet = XLSX.utils.json_to_sheet(dataReport);
-                const csvOutput = XLSX.utils.sheet_to_csv(worksheet);
-                const blob = new Blob([csvOutput], { type: 'text/csv;charset=utf-8;' });
-                const link = document.createElement("a");
-                link.href = URL.createObjectURL(blob);
-                link.setAttribute("download", `EPAE_Production_${currentDayStr}.csv`);
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                showToast("🟡 ส่งออกไฟล์ CSV สำเร็จ!");
-            } 
-            else if (type === 'pdf') {
-                const { jsPDF } = window.jspdf;
-                const doc = new jsPDF();
-                doc.text(`EPAE Production Report: ${currentDayStr}`, 14, 15);
-                
-                const rows = dataReport.map(item => Object.values(item));
-                const headers = Object.keys(dataReport[0]);
-
-                doc.autoTable({
-                    head: [headers],
-                    body: rows,
-                    startY: 22,
-                    styles: { fontSize: 8 }
-                });
-                doc.save(`EPAE_Production_${currentDayStr}.pdf`);
-                showToast("🔴 ส่งออกไฟล์ PDF สำเร็จ!");
-            }
-        }
-
-        // ฟังก์ชันถ่ายภาพหน้าจอสไลด์แบบคมชัดเพื่อส่งกลุ่ม LINE
-        function exportSlideAsImage() {
-            showToast("📸 กำลังประมวลผลแปลงสไลด์เป็นรูปภาพ...");
-            const theater = document.getElementById('presentation-theater');
-            html2canvas(theater, { backgroundColor: '#05070f', scale: 2 }).then(canvas => {
-                const link = document.createElement('a');
-                link.download = `EPAE_Slide_Report_${currentDayStr}_Page_${currentSlidePage+1}.png`;
-                link.href = canvas.toDataURL('image/png');
-                link.click();
-                showToast("✨ แปลงเป็นรูปภาพสำเร็จ ดาวน์โหลดแล้วพร้อมส่ง LINE");
-            });
-        }
-
-        function showToast(msg) {
-            const el = document.getElementById('toast-el');
-            document.getElementById('toast-text-node').innerText = msg;
-            el.classList.remove('translate-y-20', 'opacity-0');
-            setTimeout(() => el.classList.add('translate-y-20', 'opacity-0'), 3000);
-        }
-
-        // เริ่มต้นระบบเมื่อโหลดหน้าเสร็จสิ้น
-        window.onload = () => {
-            initDatabase();
-            renderWorkspace();
+        // เริ่มต้นแอปพลิเคชันเมื่อโหลดเสร็จ
+        window.onload = function() {
+            renderApp();
         };
     </script>
 </body>
