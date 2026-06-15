@@ -3,12 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>โปรแกรมอัจฉริยะ คำนวณประสิทธิภาพการทำงานและเช็คชื่อของสมาชิก กรออีแปะแผนกทอ E v6.0</title>
+    <title>โปรแกรมอัจฉริยะ คำนวณประสิทธิภาพการทำงานและเช็คชื่อของสมาชิก กรออีแปะแผนกทอ E v6.1</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- html2canvas สำหรับเซฟภาพ -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
     <style>
@@ -48,6 +52,7 @@
 
     <div class="max-w-[1400px] mx-auto space-y-4">
         
+        <!-- ================= TOP BAR & NAVIGATION ================= -->
         <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 pb-3 border-b border-slate-800/60">
             <div>
                 <h1 class="text-sm md:text-base font-black text-white tracking-wide flex items-center gap-2">
@@ -62,12 +67,14 @@
                 </div>
             </div>
 
+            <!-- 📅 โซนเลือกวันที่กรอก/ดูข้อมูลย้อนหลัง -->
             <div class="flex items-center gap-2 bg-slate-900/90 border border-slate-800 px-3 py-1.5 rounded-xl flex-shrink-0">
                 <i class="fa-solid fa-calendar-days text-sky-400 text-sm"></i>
                 <label class="text-xs text-slate-400 font-bold hidden sm:inline">วันที่บันทึก/ดูย้อนหลัง:</label>
                 <input type="date" id="working-date-picker" onchange="handleDateChange()" class="bg-slate-950 text-white text-xs font-mono font-bold rounded-lg px-2 py-1 border border-slate-700 focus:outline-none focus:border-sky-500 cursor-pointer">
             </div>
             
+            <!-- แถบเมนูกดสลับหน้า -->
             <div class="flex flex-wrap items-center gap-2 bg-slate-900/80 p-1 rounded-xl border border-slate-800 flex-shrink-0">
                 <button onclick="switchPage('dashboard')" id="tab-dashboard" class="nav-tab active px-4 py-2 text-xs font-bold rounded-lg transition flex items-center gap-2 text-slate-400 hover:text-white">
                     <i class="fa-solid fa-chart-pie"></i> หน้าหลัก (ภาพรวมสรุป)
@@ -81,15 +88,16 @@
             </div>
         </div>
 
+        <!-- ================= PAGE 1: หน้าหลัก (ภาพรวมสรุป) ================= -->
         <div id="page-dashboard" class="page-content space-y-4">
             <div class="grid grid-cols-1 xl:grid-cols-12 gap-5 items-start">
                 
+                <!-- ฝั่งซ้ายของหน้าหลัก -->
                 <div class="xl:col-span-4 space-y-4">
                     <div class="cyber-panel rounded-xl p-4 space-y-4">
                         <h3 class="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-1.5">
                             <i class="fa-solid fa-users text-sky-400"></i> สรุปสถานะกำลังพลวันนี้
                         </h3>
-                        
                         <div class="space-y-2 text-xs">
                             <div class="flex justify-between p-2 bg-slate-900/40 rounded-lg">
                                 <span class="text-slate-400">จำนวนพนักงานทั้งหมด</span>
@@ -114,8 +122,6 @@
                         <h3 class="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-1.5">
                             <i class="fa-solid fa-sliders text-amber-400"></i> ตั้งเป้าหมายผลผลิตประจำวัน
                         </h3>
-                        <p class="text-[10px] text-slate-400">เป้าหมายจะถูกผูกบันทึกแยกไว้รายวันตามปฏิทิน</p>
-                        
                         <div class="space-y-2 text-xs">
                             <div>
                                 <label class="text-[11px] text-slate-400 block mb-1">เป้าหมายแผ่นอีแปะทั้งหมด (แผ่น)</label>
@@ -133,19 +139,21 @@
                     </div>
                 </div>
 
+                <!-- ฝั่งขวาของหน้าหลัก: บอร์ดแสดงผล แผ่น / ลัง / คันรถ ของแต่ละท่านแยกรายคน -->
                 <div class="xl:col-span-8 space-y-4">
                     <div class="cinema-card rounded-2xl p-6 shadow-2xl space-y-6" id="presentation-view">
                         
                         <div class="flex justify-between items-center border-b border-slate-800/80 pb-4">
                             <div>
                                 <h2 class="text-xs md:text-sm font-bold text-white tracking-wide">รายงานสถานะกำลังพลและประสิทธิภาพประจำวัน แผนกทอ E</h2>
-                                <p class="text-[11px] text-slate-400">แสดงผลครั้งละ 4 ท่าน เพื่อความชัดเจนในการส่งเข้ากลุ่ม LINE</p>
+                                <p class="text-[11px] text-slate-400">แสดงข้อมูลแผ่น ลัง คันรถ แยกรายบุคคล (ครั้งละ 4 ท่าน เพื่อส่งเข้ากลุ่ม LINE ชัดๆ)</p>
                             </div>
                             <div class="text-xs font-mono font-bold text-sky-400 bg-sky-950/40 border border-sky-800/60 px-3 py-1 rounded-md" id="slide-date-label">
                                 -
                             </div>
                         </div>
 
+                        <!-- ยอดรวมรวมภาพรวมทั้งแผนกประจำวัน -->
                         <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 text-center">
                             <div class="bg-emerald-950/20 border border-emerald-900/40 p-3 rounded-xl flex flex-col justify-between">
                                 <span class="block text-[9px] font-bold text-slate-400 leading-tight">จำนวนแผ่นอีแปะภาพรวม</span>
@@ -184,8 +192,10 @@
                             </div>
                         </div>
 
+                        <!-- สไลด์ Grid พนักงานย่อยรายบุคคล (จะแสดงยอดแผ่น ลัง คันรถ ของแต่ละคนตรงนี้) -->
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" id="slide-grid-container">
-                            </div>
+                            <!-- เจนโดย JS -->
+                        </div>
 
                         <div class="flex justify-between items-center text-[10px] font-bold text-slate-500 pt-2 border-t border-slate-900">
                             <div class="flex gap-3">
@@ -215,14 +225,14 @@
             </div>
         </div>
 
+        <!-- ================= PAGE 2: ขาด ลา มาสาย เช็คชื่อ ================= -->
         <div id="page-attendance" class="page-content hidden space-y-4">
             <div class="cyber-panel rounded-xl p-4 space-y-4">
                 <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-2">
                     <div>
                         <h2 class="text-sm font-bold text-white flex items-center gap-2">
-                            <i class="fa-solid fa-user-check text-sky-400"></i> บันทึกข้อมูลพนักงาน ขาด ลา มาสาย เช็คชื่อ และ แก้ไขรายชื่อพนักงาน
+                            <i class="fa-solid fa-user-check text-sky-400"></i> บันทึกข้อมูลพนักงาน ขาด ลา มาสาย เช็คชื่อ และแก้ไขรายชื่อพนักงาน
                         </h2>
-                        <p class="text-[11px] text-slate-500 mt-0.5">💡 คุณสามารถคลิกพิมพ์ที่ช่อง "ชื่อพนักงาน" หรือ "เบอร์โทร" เพื่อเปลี่ยนรายชื่อได้โดยตรง ระบบจะเซฟให้อัตโนมัติ</p>
                     </div>
                     <input type="text" id="search-att" oninput="renderApp()" placeholder="🔍 ค้นหารายชื่อพนักงาน..." class="px-3 py-1.5 bg-slate-950 border border-slate-800 rounded-lg text-xs focus:outline-none focus:border-sky-500 text-white w-full sm:w-64">
                 </div>
@@ -242,6 +252,7 @@
             </div>
         </div>
 
+        <!-- ================= PAGE 3: กรอกประสิทธิภาพพนักงาน ================= -->
         <div id="page-performance" class="page-content hidden space-y-4">
             <div class="cyber-panel rounded-xl p-4 space-y-4">
                 <div>
@@ -286,8 +297,8 @@
 
     </div>
 
+    <!-- ================= CORE LOGIC JAVASCRIPT ================= -->
     <script>
-        // รายชื่อพนักงานเริ่มต้น
         const baseEmployees = [
             { id: "1", name: "สมบัติ แสทอง", phone: "081-765-4321", attendance: "✓", ot: false, table: "-", yarn: "-", sheets: 0, boxes: 0, trucks: 0 },
             { id: "2", name: "เยาวมาลย์ พันนา", phone: "082-123-4567", attendance: "✓", ot: false, table: "-", yarn: "-", sheets: 0, boxes: 0, trucks: 0 },
@@ -319,9 +330,19 @@
             localStorage.setItem('epae_archive_db_v6', JSON.stringify(archiveDatabase));
         }
 
+        // 🔗 ระบบเชื่อมต่อฐานข้อมูลข้ามเวอร์ชัน (ดึงข้อมูล v5.0 -> v6.0 อัตโนมัติ)
         function loadFromLocalStorage() {
-            const data = localStorage.getItem('epae_archive_db_v6');
-            if (data) { archiveDatabase = JSON.parse(data); }
+            const oldData = localStorage.getItem('epae_archive_db');
+            const newData = localStorage.getItem('epae_archive_db_v6');
+            
+            if (newData) {
+                // ถ้ามีข้อมูลเวอร์ชันใหม่แล้ว ให้ใช้ตัวใหม่เลย
+                archiveDatabase = JSON.parse(newData);
+            } else if (oldData) {
+                // ถ้ายังไม่มีเวอร์ชันใหม่ แต่มีข้อมูลเก่า v5 ค้างอยู่ ให้ก๊อปปี้สืบทอดมาทันที
+                archiveDatabase = JSON.parse(oldData);
+                saveToLocalStorage(); 
+            }
         }
 
         function startAutoSaveEngine() {
@@ -378,21 +399,16 @@
             renderApp();
         }
 
-        // 📝 ฟังก์ชันจัดการอัปเดตข้อมูลพนักงานเมื่อมีการพิมพ์แก้ไขชื่อหรือเบอร์โทรศัพท์แบบสดๆ (เพิ่มใหม่ใน v6.0)
         function editEmployeeData(id, field, value) {
             let activeDb = archiveDatabase[currentSelectedDate].employees;
             const idx = activeDb.findIndex(e => e.id === id);
             if(idx !== -1) {
                 activeDb[idx][field] = value;
-                
-                // หากกำลังเลือกแก้ไขคนนั้นคาไว้ในหน้าประสิทธิภาพ ให้ตัวหนังสืออัปเดตตามด้วยทันที
                 const activeIdForm = document.getElementById('perf-active-id') ? document.getElementById('perf-active-id').value : null;
                 if(activeIdForm === id) {
                     if(field === 'name') document.getElementById('perf-form-title-name').innerText = value;
                     if(field === 'phone') document.getElementById('perf-form-title-phone').innerText = value;
                 }
-                
-                // สั่งรีเซ็ตการวาดหน้าหลักแบบ Realtime แต่ไม่รีเฟรชหน้าเบราว์เซอร์
                 const currentTabActive = document.querySelector('.nav-tab.active').id;
                 if(currentTabActive !== 'tab-attendance') { renderApp(); }
             }
@@ -554,12 +570,13 @@
             document.getElementById('page-badge').innerText = `PAGE: ${currentPage + 1} / ${totalPages}`;
             document.getElementById('txt-pagination-info').innerText = `คนที่ ${currentPage * pageSize + 1} - ${Math.min((currentPage * pageSize) + pageSize, activeDb.length)}`;
 
+            // วาดบล็อกรายคนในหน้าหลักเพื่อแสดง แผ่น ลัง คันรถ แยกทีละท่าน
             activeItems.forEach(e => {
                 const card = document.createElement('div');
                 card.className = "p-4 rounded-xl bg-slate-950/60 border border-slate-900/80 flex flex-col justify-between space-y-3";
                 card.innerHTML = `
                     <div class="flex items-start gap-3">
-                        <div class="w-10 h-10 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-center font-bold text-xs text-sky-400">${e.name.substring(0,2)}</div>
+                        <div class="w-10 h-10 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-center font-bold text-xs text-sky-400">${e.name ? e.name.substring(0,2) : '??'}</div>
                         <div class="min-w-0 flex-1">
                             <h4 class="text-xs font-bold text-white truncate">${e.name}</h4>
                             <span class="text-[10px] font-mono text-slate-500">${e.phone} ${e.ot ? '• <span class="text-sky-400 font-bold">OT</span>':''}</span>
@@ -575,7 +592,6 @@
                 slideContainer.appendChild(card);
             });
 
-            // ตารางบันทึกเช็คชื่อ (เวอร์ชัน 6.0 ปรับให้ช่องรายชื่อและเบอร์โทรพิมพ์แก้ไขสดๆ ได้เลย)
             const attBody = document.getElementById('table-attendance-body');
             if(attBody) {
                 attBody.innerHTML = "";
@@ -616,9 +632,9 @@
         }
 
         window.onload = function() {
-            loadFromLocalStorage();
+            loadFromLocalStorage(); // บูตระบบเพื่อดึงข้อมูลเก่าข้ามเวอร์ชันก่อน
             initDatePicker();
-            handleDateChange();
+            handleDateChange();     // ค้นหาข้อมูลตามปฏิทิน
             renderApp();
             startAutoSaveEngine();
         };
