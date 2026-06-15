@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>โปรแกรมอัจฉริยะ คำนวณประสิทธิภาพการทำงานและเช็คชื่อของสมาชิก กรออีแปะแผนกทอ E v6.1</title>
+    <title>โปรแกรมอัจฉริยะ คำนวณประสิทธิภาพการทำงานและเช็คชื่อของสมาชิก กรออีแปะแผนกทอ E v6.4</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Fonts -->
@@ -101,7 +101,7 @@
                         <div class="space-y-2 text-xs">
                             <div class="flex justify-between p-2 bg-slate-900/40 rounded-lg">
                                 <span class="text-slate-400">จำนวนพนักงานทั้งหมด</span>
-                                <span class="font-bold text-white font-mono" id="dash-total">17 คน</span>
+                                <span class="font-bold text-white font-mono" id="dash-total">0 คน</span>
                             </div>
                             <div class="flex justify-between p-2 bg-emerald-950/20 rounded-lg">
                                 <span class="text-emerald-400">มาทำงานปกติ (เช้า/ดึก)</span>
@@ -139,7 +139,7 @@
                     </div>
                 </div>
 
-                <!-- ฝั่งขวาของหน้าหลัก: บอร์ดแสดงผล แผ่น / ลัง / คันรถ ของแต่ละท่านแยกรายคน -->
+                <!-- ฝั่งขวาของหน้าหลัก -->
                 <div class="xl:col-span-8 space-y-4">
                     <div class="cinema-card rounded-2xl p-6 shadow-2xl space-y-6" id="presentation-view">
                         
@@ -153,7 +153,6 @@
                             </div>
                         </div>
 
-                        <!-- ยอดรวมรวมภาพรวมทั้งแผนกประจำวัน -->
                         <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 text-center">
                             <div class="bg-emerald-950/20 border border-emerald-900/40 p-3 rounded-xl flex flex-col justify-between">
                                 <span class="block text-[9px] font-bold text-slate-400 leading-tight">จำนวนแผ่นอีแปะภาพรวม</span>
@@ -192,10 +191,8 @@
                             </div>
                         </div>
 
-                        <!-- สไลด์ Grid พนักงานย่อยรายบุคคล (จะแสดงยอดแผ่น ลัง คันรถ ของแต่ละคนตรงนี้) -->
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" id="slide-grid-container">
-                            <!-- เจนโดย JS -->
-                        </div>
+                        <!-- สไลด์รายคนแยกรายบุคคล -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" id="slide-grid-container"></div>
 
                         <div class="flex justify-between items-center text-[10px] font-bold text-slate-500 pt-2 border-t border-slate-900">
                             <div class="flex gap-3">
@@ -275,15 +272,33 @@
                                 <span class="text-[10px] font-mono text-slate-400" id="perf-form-title-phone">-</span>
                             </div>
                             <input type="hidden" id="perf-active-id">
+                            
+                            <!-- ⭐ โซนแก้ไข: เปลี่ยนเป็นช่องพิมพ์กรอกเองแบบอิสระ ไม่เป็นเมนูดรอปดาวน์แล้วครับ -->
                             <div class="grid grid-cols-2 gap-4">
-                                <div><label class="text-slate-400 block mb-1">โต๊ะที่กรอ</label><select id="p-input-table" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white"><option value="-">-</option><option value="T1">T1</option><option value="T2">T2</option></select></div>
-                                <div><label class="text-slate-400 block mb-1">เบอร์ใย</label><select id="p-input-yarn" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white"><option value="-">-</option><option value="210/3K91">210/3K91</option></select></div>
+                                <div>
+                                    <label class="text-slate-400 block mb-1 font-bold">✍️ พิมพ์โต๊ะที่กรอเอง</label>
+                                    <input type="text" id="p-input-table" placeholder="เช่น T1, โต๊ะ 5..." class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-white font-mono focus:border-sky-500 focus:outline-none">
+                                </div>
+                                <div>
+                                    <label class="text-slate-400 block mb-1 font-bold">✍️ พิมพ์เบอร์ใยเอง</label>
+                                    <input type="text" id="p-input-yarn" placeholder="เช่น 210/3K91..." class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-white font-mono focus:border-sky-500 focus:outline-none">
+                                </div>
                             </div>
-                            <div class="space-y-2">
-                                <div><label class="text-slate-400 block mb-1">จำนวนแผ่น</label><input type="number" id="p-input-sheets" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white font-mono"></div>
+
+                            <div class="space-y-2 pt-2">
+                                <div>
+                                    <label class="text-slate-400 block mb-1">จำนวนแผ่นที่ได้ (แผ่น)</label>
+                                    <input type="number" id="p-input-sheets" placeholder="พิมพ์จำนวนแผ่น..." class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white font-mono focus:border-sky-500 focus:outline-none">
+                                </div>
                                 <div class="grid grid-cols-2 gap-4">
-                                    <div><label class="text-slate-400 block mb-1">จำนวนลัง</label><input type="number" id="p-input-boxes" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white font-mono"></div>
-                                    <div><label class="text-slate-400 block mb-1">จำนวนคันรถ</label><input type="number" id="p-input-trucks" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white font-mono"></div>
+                                    <div>
+                                        <label class="text-slate-400 block mb-1">จำนวนลังที่ได้ (ลัง)</label>
+                                        <input type="number" id="p-input-boxes" placeholder="พิมพ์จำนวนลัง..." class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white font-mono focus:border-sky-500 focus:outline-none">
+                                    </div>
+                                    <div>
+                                        <label class="text-slate-400 block mb-1">จำนวนคันรถ (คัน)</label>
+                                        <input type="number" id="p-input-trucks" placeholder="พิมพ์จำนวนคันรถ..." class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white font-mono focus:border-sky-500 focus:outline-none">
+                                    </div>
                                 </div>
                             </div>
                             <div class="pt-2 flex justify-end">
@@ -321,27 +336,33 @@
 
         let archiveDatabase = {};
         let currentSelectedDate = "";
-
         let currentPage = 0;
         const pageSize = 4;
         const statusList = ["", "✓", "✅", "สาย", "H", "❌"];
 
         function saveToLocalStorage() {
-            localStorage.setItem('epae_archive_db_v6', JSON.stringify(archiveDatabase));
+            localStorage.setItem('epae_archive_db_v64', JSON.stringify(archiveDatabase));
         }
 
-        // 🔗 ระบบเชื่อมต่อฐานข้อมูลข้ามเวอร์ชัน (ดึงข้อมูล v5.0 -> v6.0 อัตโนมัติ)
         function loadFromLocalStorage() {
-            const oldData = localStorage.getItem('epae_archive_db');
-            const newData = localStorage.getItem('epae_archive_db_v6');
+            const v64Data = localStorage.getItem('epae_archive_db_v64');
+            const v63Data = localStorage.getItem('epae_archive_db_v63');
+            const v62Data = localStorage.getItem('epae_archive_db_v62');
+            const v6Data = localStorage.getItem('epae_archive_db_v6');
             
-            if (newData) {
-                // ถ้ามีข้อมูลเวอร์ชันใหม่แล้ว ให้ใช้ตัวใหม่เลย
-                archiveDatabase = JSON.parse(newData);
-            } else if (oldData) {
-                // ถ้ายังไม่มีเวอร์ชันใหม่ แต่มีข้อมูลเก่า v5 ค้างอยู่ ให้ก๊อปปี้สืบทอดมาทันที
-                archiveDatabase = JSON.parse(oldData);
-                saveToLocalStorage(); 
+            if (v64Data) {
+                archiveDatabase = JSON.parse(v64Data);
+            } else if (v63Data) {
+                archiveDatabase = JSON.parse(v63Data);
+                saveToLocalStorage();
+            } else if (v62Data) {
+                archiveDatabase = JSON.parse(v62Data);
+                saveToLocalStorage();
+            } else if (v6Data) {
+                archiveDatabase = JSON.parse(v6Data);
+                saveToLocalStorage();
+            } else {
+                archiveDatabase = {};
             }
         }
 
@@ -358,7 +379,7 @@
         }
 
         function checkAndInitDateData(dateStr) {
-            if (!archiveDatabase[dateStr]) {
+            if (!archiveDatabase[dateStr] || !archiveDatabase[dateStr].employees || archiveDatabase[dateStr].employees.length === 0) {
                 archiveDatabase[dateStr] = {
                     targets: { sheets: 1000, boxes: 100, trucks: 10 },
                     employees: JSON.parse(JSON.stringify(baseEmployees))
@@ -377,9 +398,9 @@
             document.getElementById('perf-actual-form').classList.add('hidden');
             
             const dayData = archiveDatabase[currentSelectedDate];
-            document.getElementById('target-sheets-input').value = dayData.targets.sheets;
-            document.getElementById('target-boxes-input').value = dayData.targets.boxes;
-            document.getElementById('target-trucks-input').value = dayData.targets.trucks;
+            document.getElementById('target-sheets-input').value = dayData.targets.sheets || 1000;
+            document.getElementById('target-boxes-input').value = dayData.targets.boxes || 100;
+            document.getElementById('target-trucks-input').value = dayData.targets.trucks || 10;
 
             renderApp();
         }
@@ -449,7 +470,8 @@
             else if (status === "❌") { labelText = "🔴 ขาดงาน"; colorClass = "bg-rose-500/10 text-rose-400 border-rose-500/30"; }
 
             let str = `<span class="px-2 py-0.5 rounded border text-[10px] font-bold ${colorClass}">${labelText}</span>`;
-            if(table !== "-") str += ` <span class="bg-indigo-950/60 border border-indigo-900 text-indigo-300 px-1.5 py-0.5 rounded text-[9px] font-mono">โต๊ะ ${table}</span>`;
+            if(table && table !== "-") str += ` <span class="bg-indigo-950/60 border border-indigo-900 text-indigo-300 px-1.5 py-0.5 rounded text-[9px] font-mono">${table}</span>`;
+            if(yarn && yarn !== "-") str += ` <span class="bg-slate-900 border border-slate-800 text-slate-400 px-1.5 py-0.5 rounded text-[9px] font-mono">${yarn}</span>`;
             return str;
         }
 
@@ -471,8 +493,11 @@
             document.getElementById('perf-active-id').value = emp.id;
             document.getElementById('perf-form-title-name').innerText = emp.name;
             document.getElementById('perf-form-title-phone').innerText = emp.phone;
-            document.getElementById('p-input-table').value = emp.table;
-            document.getElementById('p-input-yarn').value = emp.yarn;
+            
+            // ตั้งค่าค่าเดิมลงช่องกรอก ถ้าเป็นขีดลบว่างๆ ให้เคลียร์เป็นช่องว่างเพื่อให้พิมพ์สะดวกขึ้นครับ
+            document.getElementById('p-input-table').value = emp.table === "-" ? "" : emp.table;
+            document.getElementById('p-input-yarn').value = emp.yarn === "-" ? "" : emp.yarn;
+            
             document.getElementById('p-input-sheets').value = emp.sheets || "";
             document.getElementById('p-input-boxes').value = emp.boxes || "";
             document.getElementById('p-input-trucks').value = emp.trucks || "";
@@ -484,8 +509,11 @@
             let activeDb = archiveDatabase[currentSelectedDate].employees;
             const idx = activeDb.findIndex(e => e.id === id);
             if(idx !== -1) {
-                activeDb[idx].table = document.getElementById('p-input-table').value;
-                activeDb[idx].yarn = document.getElementById('p-input-yarn').value;
+                const tableVal = document.getElementById('p-input-table').value.trim();
+                const yarnVal = document.getElementById('p-input-yarn').value.trim();
+                
+                activeDb[idx].table = tableVal === "" ? "-" : tableVal;
+                activeDb[idx].yarn = yarnVal === "" ? "-" : yarnVal;
                 activeDb[idx].sheets = parseInt(document.getElementById('p-input-sheets').value) || 0;
                 activeDb[idx].boxes = parseInt(document.getElementById('p-input-boxes').value) || 0;
                 activeDb[idx].trucks = parseInt(document.getElementById('p-input-trucks').value) || 0;
@@ -498,7 +526,7 @@
             let id = document.getElementById('perf-active-id').value;
             let activeDb = archiveDatabase[currentSelectedDate].employees;
             let emp = activeDb.find(e => e.id === id);
-            alert(`[บันทึกสำเร็จ] อัปเดตยอดของ ${emp.name} ประจำวันที่ ${formatThaiDate(currentSelectedDate)} เรียบร้อยแล้ว!`);
+            alert(`[บันทึกสำเร็จ] อัปเดตยอดของ ${emp.name} เรียบร้อยแล้ว!`);
             renderApp();
         }
 
@@ -515,11 +543,11 @@
             });
         }
 
-        // ================= CORE RENDER APPLICATION =================
         function renderApp() {
             let dayData = archiveDatabase[currentSelectedDate];
-            let activeDb = dayData.employees;
-            let currentTargets = dayData.targets;
+            if(!dayData) return;
+            let activeDb = dayData.employees || [];
+            let currentTargets = dayData.targets || { sheets: 1000, boxes: 100, trucks: 10 };
 
             const activeId = document.getElementById('perf-active-id') ? document.getElementById('perf-active-id').value : null;
             if(activeId && !document.getElementById('perf-actual-form').classList.contains('hidden')) {
@@ -564,13 +592,12 @@
 
             const slideContainer = document.getElementById('slide-grid-container');
             slideContainer.innerHTML = "";
-            const totalPages = Math.ceil(activeDb.length / pageSize);
+            const totalPages = Math.ceil(activeDb.length / pageSize) || 1;
             const activeItems = activeDb.slice(currentPage * pageSize, (currentPage * pageSize) + pageSize);
             
             document.getElementById('page-badge').innerText = `PAGE: ${currentPage + 1} / ${totalPages}`;
-            document.getElementById('txt-pagination-info').innerText = `คนที่ ${currentPage * pageSize + 1} - ${Math.min((currentPage * pageSize) + pageSize, activeDb.length)}`;
+            document.getElementById('txt-pagination-info').innerText = `คนที่ ${activeDb.length > 0 ? (currentPage * pageSize + 1) : 0} - ${Math.min((currentPage * pageSize) + pageSize, activeDb.length)}`;
 
-            // วาดบล็อกรายคนในหน้าหลักเพื่อแสดง แผ่น ลัง คันรถ แยกทีละท่าน
             activeItems.forEach(e => {
                 const card = document.createElement('div');
                 card.className = "p-4 rounded-xl bg-slate-950/60 border border-slate-900/80 flex flex-col justify-between space-y-3";
@@ -624,7 +651,7 @@
                 activeDb.forEach(e => {
                     const b = document.createElement('button');
                     b.onclick = () => selectEmpForPerf(e.id);
-                    b.className = "w-full text-left p-2 rounded-xl bg-slate-900/30 hover:bg-slate-900 border border-slate-850 block text-xs mb-1";
+                    b.className = "w-full text-left p-2 rounded-xl bg-slate-900/30 hover:bg-slate-900 border border-slate-800 block text-xs mb-1 focus:outline-none focus:border-sky-500 border-transparent";
                     b.innerHTML = `<span class="font-bold text-white block">${e.name}</span><span class="text-[9px] text-slate-500">แผ่น: ${e.sheets} | ลัง: ${e.boxes} | คันรถ: ${e.trucks}</span>`;
                     perfList.appendChild(b);
                 });
@@ -632,9 +659,9 @@
         }
 
         window.onload = function() {
-            loadFromLocalStorage(); // บูตระบบเพื่อดึงข้อมูลเก่าข้ามเวอร์ชันก่อน
+            loadFromLocalStorage();
             initDatePicker();
-            handleDateChange();     // ค้นหาข้อมูลตามปฏิทิน
+            handleDateChange();
             renderApp();
             startAutoSaveEngine();
         };
