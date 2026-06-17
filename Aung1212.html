@@ -252,8 +252,8 @@
                             </div>
                             <input type="hidden" id="perf-active-id">
                             <div class="grid grid-cols-2 gap-4">
-                                <div><label class="text-slate-400 block mb-1">โต๊ะที่กรอ</label><select id="p-input-table" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white"><option value="-">-</option><option value="T1">T1</option><option value="T2">T2</option></select></div>
-                                <div><label class="text-slate-400 block mb-1">เบอร์ใย</label><select id="p-input-yarn" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white"><option value="-">-</option><option value="210/3K91">210/3K91</option></select></div>
+                                <div><label class="text-slate-400 block mb-1">โต๊ะที่กรอ</label><input type="text" id="p-input-table" placeholder="กรอกหมายเลขโต๊ะ..." class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white focus:outline-none focus:border-sky-500"></div>
+                                <div><label class="text-slate-400 block mb-1">เบอร์ใย</label><input type="text" id="p-input-yarn" placeholder="กรอกเบอร์ใย..." class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white focus:outline-none focus:border-sky-500"></div>
                             </div>
                             <div class="space-y-2">
                                 <div><label class="text-slate-400 block mb-1">จำนวนแผ่น</label><input type="number" id="p-input-sheets" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white font-mono"></div>
@@ -399,6 +399,7 @@
 
             let str = `<span class="px-2 py-0.5 rounded border text-[10px] font-bold ${colorClass}">${labelText}</span>`;
             if(table !== "-") str += ` <span class="bg-indigo-950/60 border border-indigo-900 text-indigo-300 px-1.5 py-0.5 rounded text-[9px] font-mono">โต๊ะ ${table}</span>`;
+            if(yarn !== "-") str += ` <span class="bg-teal-950/60 border border-teal-900 text-teal-300 px-1.5 py-0.5 rounded text-[9px] font-mono">ใย ${yarn}</span>`;
             return str;
         }
 
@@ -420,8 +421,8 @@
             document.getElementById('perf-active-id').value = emp.id;
             document.getElementById('perf-form-title-name').innerText = emp.name;
             document.getElementById('perf-form-title-phone').innerText = emp.phone;
-            document.getElementById('p-input-table').value = emp.table;
-            document.getElementById('p-input-yarn').value = emp.yarn;
+            document.getElementById('p-input-table').value = emp.table === "-" ? "" : emp.table;
+            document.getElementById('p-input-yarn').value = emp.yarn === "-" ? "" : emp.yarn;
             document.getElementById('p-input-sheets').value = emp.sheets || "";
             document.getElementById('p-input-boxes').value = emp.boxes || "";
             document.getElementById('p-input-trucks').value = emp.trucks || "";
@@ -432,8 +433,8 @@
             const id = document.getElementById('perf-active-id').value;
             const idx = activeDb.findIndex(e => e.id === id);
             if(idx !== -1) {
-                activeDb[idx].table = document.getElementById('p-input-table').value;
-                activeDb[idx].yarn = document.getElementById('p-input-yarn').value;
+                activeDb[idx].table = document.getElementById('p-input-table').value.trim() || "-";
+                activeDb[idx].yarn = document.getElementById('p-input-yarn').value.trim() || "-";
                 activeDb[idx].sheets = parseInt(document.getElementById('p-input-sheets').value) || 0;
                 activeDb[idx].boxes = parseInt(document.getElementById('p-input-boxes').value) || 0;
                 activeDb[idx].trucks = parseInt(document.getElementById('p-input-trucks').value) || 0;
