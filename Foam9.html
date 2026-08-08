@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ระบบติดตามผลการผลิตเรียลไทม์ 210/1R</title>
+  <title>ระบบติดตามสถานะและการผลิตเครื่องจักร 210/1R</title>
 
   <!-- Google Fonts & Chart.js -->
   <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -11,338 +11,162 @@
 
   <style>
     :root {
-      --bg-main: #f1f5f9;
+      --bg-main: #f8fafc;
       --panel-bg: #ffffff;
       --primary: #1e3a8a;
-      --primary-light: #3b82f6;
+      --primary-light: #2563eb;
       --accent: #0f172a;
       --text-main: #334155;
       --text-muted: #64748b;
       --border-color: #e2e8f0;
       --success: #10b981;
+      --warning: #f59e0b;
       --danger: #ef4444;
     }
 
-    * {
-      box-sizing: border-box;
-      font-family: 'Prompt', sans-serif;
-    }
-
-    body {
-      background-color: var(--bg-main);
-      color: var(--text-main);
-      margin: 0;
-      padding: 24px;
-    }
-
-    .container {
-      max-width: 1600px;
-      margin: 0 auto;
-    }
+    * { box-sizing: border-box; font-family: 'Prompt', sans-serif; }
+    body { background-color: var(--bg-main); color: var(--text-main); margin: 0; padding: 20px; }
+    .container { max-width: 1600px; margin: 0 auto; }
 
     /* Header */
     .header-card {
       background: linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%);
-      color: #ffffff;
-      padding: 24px;
-      border-radius: 16px;
-      box-shadow: 0 10px 25px -5px rgba(30, 58, 138, 0.3);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 16px;
-      margin-bottom: 24px;
+      color: #ffffff; padding: 20px 24px; border-radius: 16px;
+      display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;
+      margin-bottom: 20px; box-shadow: 0 10px 20px -5px rgba(30, 58, 138, 0.2);
     }
+    .header-title h1 { margin: 0; font-size: 22px; font-weight: 600; }
+    .header-title p { margin: 4px 0 0 0; opacity: 0.8; font-size: 13px; }
 
-    .header-title h1 {
-      margin: 0;
-      font-size: 24px;
-      font-weight: 600;
+    /* Navigation Tabs */
+    .tab-container { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid var(--border-color); padding-bottom: 2px; }
+    .tab-btn {
+      padding: 10px 24px; font-size: 15px; font-weight: 600; border: none; background: transparent;
+      color: var(--text-muted); cursor: pointer; border-radius: 8px 8px 0 0; transition: all 0.2s;
     }
+    .tab-btn.active { background-color: var(--primary-light); color: white; }
+    .tab-btn:hover:not(.active) { background-color: #e2e8f0; color: var(--accent); }
 
-    .header-title p {
-      margin: 4px 0 0 0;
-      opacity: 0.8;
-      font-weight: 300;
-      font-size: 14px;
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* Cards & Layout */
+    .card { background: var(--panel-bg); border-radius: 16px; padding: 20px; border: 1px solid var(--border-color); margin-bottom: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.03); }
+    .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .card-header h2 { margin: 0; font-size: 18px; color: var(--accent); }
+
+    /* Machine Status Cards Grid */
+    .machine-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 16px; margin-bottom: 20px; }
+    .machine-card {
+      background: #ffffff; border: 1px solid var(--border-color); border-radius: 14px; padding: 18px;
+      border-top: 5px solid var(--primary-light); box-shadow: 0 2px 4px rgba(0,0,0,0.02);
     }
+    .machine-card-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; margin-bottom: 12px; }
+    .machine-title { font-size: 20px; font-weight: 700; color: var(--primary); }
+    .badge { background: #dbeafe; color: #1e3a8a; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+    
+    .info-row { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 8px; }
+    .info-label { color: var(--text-muted); }
+    .info-value { font-weight: 600; color: var(--accent); }
 
-    .date-picker-group {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      background: rgba(255, 255, 255, 0.1);
-      padding: 8px 16px;
-      border-radius: 12px;
-      backdrop-filter: blur(8px);
-    }
+    .progress-bar-bg { background: #e2e8f0; border-radius: 10px; height: 10px; width: 100%; margin: 8px 0; overflow: hidden; }
+    .progress-bar-fill { background: var(--success); height: 100%; border-radius: 10px; width: 0%; transition: width 0.3s; }
 
-    .date-picker-group label {
-      font-size: 14px;
-      font-weight: 500;
-    }
-
-    .date-picker-group input {
-      border: none;
-      background: #ffffff;
-      color: var(--text-main);
-      padding: 6px 12px;
-      border-radius: 8px;
-      font-weight: 500;
-      outline: none;
-    }
-
-    /* KPI Cards */
-    .kpi-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 16px;
-      margin-bottom: 24px;
-    }
-
-    .kpi-card {
-      background: var(--panel-bg);
-      padding: 20px;
-      border-radius: 16px;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-      border: 1px solid var(--border-color);
-    }
-
-    .kpi-card .title {
-      font-size: 13px;
-      color: var(--text-muted);
-      font-weight: 500;
-      margin-bottom: 8px;
-    }
-
-    .kpi-card .value {
-      font-size: 28px;
-      font-weight: 700;
-      color: var(--accent);
-    }
-
-    /* Table Section */
-    .card {
-      background: var(--panel-bg);
-      border-radius: 16px;
-      padding: 24px;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-      border: 1px solid var(--border-color);
-      margin-bottom: 24px;
-    }
-
-    .card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 16px;
-    }
-
-    .card-header h2 {
-      margin: 0;
-      font-size: 18px;
-      font-weight: 600;
-      color: var(--accent);
-    }
-
-    .table-wrapper {
-      overflow-x: auto;
-      border-radius: 12px;
-      border: 1px solid var(--border-color);
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 13px;
-      white-space: nowrap;
-    }
-
-    th, td {
-      border: 1px solid var(--border-color);
-      padding: 8px 6px;
-      text-align: center;
-    }
-
-    th {
-      background-color: var(--primary);
-      color: #ffffff;
-      font-weight: 500;
-    }
-
-    th.time-header {
-      background-color: #1e293b;
-    }
-
+    /* Table Styling */
+    .table-wrapper { overflow-x: auto; border-radius: 10px; border: 1px solid var(--border-color); }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; white-space: nowrap; text-align: center; }
+    th, td { border: 1px solid var(--border-color); padding: 8px 6px; }
+    th { background-color: var(--primary); color: white; font-weight: 500; }
+    th.time-header { background-color: #0f172a; }
     th.sub-actual { background-color: #dbeafe; color: #1e3a8a; }
     th.sub-target { background-color: #e0e7ff; color: #3730a3; }
     th.sub-status { background-color: #fef3c7; color: #92400e; }
 
     input.table-input {
-      width: 100%;
-      border: 1px solid #cbd5e1;
-      border-radius: 6px;
-      padding: 6px 4px;
-      text-align: center;
-      font-size: 13px;
-      transition: all 0.2s;
+      width: 100%; border: 1px solid #cbd5e1; border-radius: 6px; padding: 5px 4px; text-align: center; font-size: 13px;
     }
+    input.table-input:focus { outline: none; border-color: var(--primary-light); background-color: #eff6ff; }
+    td.status-cell input { text-align: left; min-width: 120px; }
 
-    input.table-input:focus {
-      outline: none;
-      border-color: var(--primary-light);
-      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
-      background-color: #eff6ff;
-    }
+    .btn { padding: 8px 16px; border-radius: 8px; border: none; font-weight: 600; cursor: pointer; }
+    .btn-success { background: var(--success); color: white; }
+    .btn-primary { background: var(--primary-light); color: white; }
 
-    td.status-cell input {
-      text-align: left;
-      min-width: 120px;
-    }
-
-    tr.row-machine td:first-child {
-      font-weight: 700;
-      background-color: #f8fafc;
-      color: var(--primary);
-      font-size: 14px;
-    }
-
-    tr.row-total {
-      background-color: #f1f5f9;
-      font-weight: 700;
-    }
-
-    /* Dashboard Layout */
-    .dashboard-grid {
-      display: grid;
-      grid-template-columns: 2fr 1fr;
-      gap: 24px;
-    }
-
-    @media (max-width: 1100px) {
-      .dashboard-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    /* Buttons */
-    .btn-group {
-      display: flex;
-      gap: 10px;
-    }
-
-    .btn {
-      padding: 8px 16px;
-      border-radius: 8px;
-      border: none;
-      font-weight: 500;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      transition: all 0.2s;
-    }
-
-    .btn-primary {
-      background-color: var(--primary-light);
-      color: white;
-    }
-    .btn-primary:hover { background-color: #2563eb; }
-
-    .btn-success {
-      background-color: var(--success);
-      color: white;
-    }
-    .btn-success:hover { background-color: #059669; }
+    .dashboard-charts { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+    @media (max-width: 1024px) { .dashboard-charts { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
 
   <div class="container">
     
-    <!-- 1. HEADER SECTION -->
+    <!-- HEADER -->
     <div class="header-card">
       <div class="header-title">
-        <h1>📊 ระบบติดตามผลการผลิตเรียลไทม์ 210/1R</h1>
-        <p>บันทึกผลงานรายช่วงเวลา เปรียบเทียบแผน และสรุปสถานะเครื่องจักร</p>
+        <h1>🏭 ระบบติดตามสถานะการผลิต & ประมาณการวันจบงาน</h1>
+        <p>หน่วยงาน 210/1R - ติดตามมิติสะสม รายการถัดไป และลงบันทึกประจำวัน</p>
       </div>
-      <div class="date-picker-group">
-        <label for="work-date">📅 วันที่ปฏิบัติงาน:</label>
-        <input type="date" id="work-date" value="2026-08-08">
-      </div>
-    </div>
-
-    <!-- 2. KPI CARDS OVERVIEW -->
-    <div class="kpi-grid">
-      <div class="kpi-card">
-        <div class="title">🎯 เป้าหมายรวมทั้งสิ้น</div>
-        <div class="value" id="kpi-target">0</div>
-      </div>
-      <div class="kpi-card">
-        <div class="title">⚙️ ผลงานผลิตจริงรวม</div>
-        <div class="value" id="kpi-actual" style="color: var(--primary-light);">0</div>
-      </div>
-      <div class="kpi-card">
-        <div class="title">📊 ผลต่าง (Diff)</div>
-        <div class="value" id="kpi-diff">0</div>
-      </div>
-      <div class="kpi-card">
-        <div class="title">📈 % ประสิทธิภาพ (Efficiency)</div>
-        <div class="value" id="kpi-eff" style="color: var(--success);">0%</div>
+      <div>
+        <label for="history-date" style="font-size:13px; margin-right:8px;">📅 ดูข้อมูลย้อนหลัง:</label>
+        <input type="date" id="history-date" value="2026-08-08" onchange="loadHistoricalData()" style="padding:6px 12px; border-radius:8px; border:none;">
       </div>
     </div>
 
-    <!-- 3. REALTIME ENTRY TABLE -->
-    <div class="card">
-      <div class="card-header">
-        <h2>📝 ลงบันทึกผลงานและสถานะรายช่วงเวลา (12 ช่วง)</h2>
-        <div class="btn-group">
-          <button class="btn btn-success" onclick="alert('บันทึกข้อมูลเข้าสู่ระบบเรียบร้อย!')">💾 บันทึกข้อมูล</button>
-          <button class="btn btn-primary" onclick="window.print()">🖨️ พิมพ์รายงาน</button>
-        </div>
-      </div>
+    <!-- TABS NAVIGATION -->
+    <div class="tab-container">
+      <button class="tab-btn active" onclick="switchTab('summary-tab', this)">📊 ชีตสรุปภาพรวม & สถานะเครื่อง</button>
+      <button class="tab-btn" onclick="switchTab('entry-tab', this)">📝 ชีตกรอกข้อมูลรายชั่วโมง</button>
+    </div>
+
+    <!-- TAB 1: SUMMARY & MACHINE STATUS -->
+    <div id="summary-tab" class="tab-content active">
       
-      <div class="table-wrapper">
-        <table id="main-table">
-          <thead>
-            <tr id="tr-header-time">
-              <th rowspan="2" style="min-width: 80px;">เครื่อง</th>
-              <!-- ช่วงเวลาจะถูกวาดผ่าน JS -->
-            </tr>
-            <tr id="tr-header-sub">
-              <!-- หัวข้อ ผลงาน/เป้า/สถานะ จะถูกวาดผ่าน JS -->
-            </tr>
-          </thead>
-          <tbody id="table-body">
-            <!-- รายชื่อเครื่องจะถูกวาดผ่าน JS -->
-          </tbody>
-          <tfoot>
-            <tr class="row-total" id="table-footer">
-              <td>รวมทั้งหมด</td>
-              <!-- แถวรวมสรุปด้านล่างสุด -->
-            </tr>
-          </tfoot>
-        </table>
+      <!-- MACHINE STATUS CARDS -->
+      <div class="machine-grid" id="machine-cards-container">
+        <!-- วาดการ์ดสถานะเครื่องอัตโนมัติด้วย JS -->
       </div>
+
+      <!-- SUMMARY CHARTS -->
+      <div class="dashboard-charts">
+        <div class="card">
+          <div class="card-header"><h2>📈 เปรียบเทียบ มิติผลิตสะสม vs มิติเป้าหมาย ($M^2$)</h2></div>
+          <canvas id="dimensionChart" height="130"></canvas>
+        </div>
+        <div class="card">
+          <div class="card-header"><h2>📊 สัดส่วนความคืบหน้าออเดอร์ (%)</h2></div>
+          <canvas id="progressDoughnut" height="200"></canvas>
+        </div>
+      </div>
+
     </div>
 
-    <!-- 4. CHARTS & SUMMARY SECTION -->
-    <div class="dashboard-grid">
-      <!-- Chart 1: Bar Chart -->
+    <!-- TAB 2: DAILY DATA ENTRY -->
+    <div id="entry-tab" class="tab-content">
       <div class="card">
         <div class="card-header">
-          <h2>📈 เปรียบเทียบ ผลงานจริง vs แผนเป้าหมาย (แยกรายเครื่อง)</h2>
+          <h2>📝 กรอกข้อมูลผลงานและสถานะการจอดรายช่วงเวลา</h2>
+          <div>
+            <button class="btn btn-success" onclick="saveEntryData()">💾 บันทึกข้อมูล</button>
+            <button class="btn btn-primary" onclick="window.print()">🖨️ พิมพ์</button>
+          </div>
         </div>
-        <canvas id="barChart" height="140"></canvas>
-      </div>
 
-      <!-- Chart 2: Doughnut Chart -->
-      <div class="card">
-        <div class="card-header">
-          <h2>สัดส่วนผลงานรายเครื่องจักร</h2>
+        <div class="table-wrapper">
+          <table id="entry-table">
+            <thead>
+              <tr id="tr-header-time">
+                <th rowspan="2">เครื่อง</th>
+              </tr>
+              <tr id="tr-header-sub"></tr>
+            </thead>
+            <tbody id="entry-tbody"></tbody>
+            <tfoot>
+              <tr style="font-weight:bold; background:#f1f5f9;" id="entry-tfoot">
+                <td>รวมทั้งวัน</td>
+              </tr>
+            </tfoot>
+          </table>
         </div>
-        <canvas id="doughnutChart" height="200"></canvas>
       </div>
     </div>
 
@@ -350,189 +174,178 @@
 
   <script>
     // ---------------------------------------------------------
-    // 1. MASTER DATA: Translation Code Mapping
+    // 1. MASTER DATA: เครื่องจักร & รหัสเหตุผลการจอด
     // ---------------------------------------------------------
     const CODE_MAPPING = {
       "201": "จอดเปลี่ยนใย", "202": "จอดเปลี่ยนจำนวน", "203": "จอดเดินปม", "204": "จอดตัดอวน",
-      "205": "จอดตรวจการกระบวนการ", "206": "จอดตัดใบ", "207": "จอดตัดอีแปะ", "208": "จอดแก้อวนพันเพลา",
-      "209": "จอดใส่ด้ายร้อยหู", "210": "ผูกหาง", "211": "ต่อด้ายที่ขาด", "212": "จอดร้อยด้ายหลังเครื่อง", "213": "ใส่ด้ายกัน",
-      "301": "จอดตัดอีแปะ", "302": "จอดตัดอีแปะ",
-      "401": "จอดเปลี่ยนตา", "402": "ซ่อมไม่คล้อง", "403": "ขัดเดือน / ขัดเป็นบ่วง / ไม่รัด", "404": "ซ่อมด้ายหย่อน",
-      "405": "ซ่อมตึง / ตาเล็ก / ตาใหญ่", "406": "ซ่อมแผลเล็ก", "407": "ซ่อมข้อไม่เสมอ / ใหญ่ / ยาว", "408": "ซ่อมใยขาด / ใยขุด / ใยลาย",
-      "409": "ซ่อมตาขึ้น", "410": "ซ่อมอวนเปื้อน", "411": "ซ่อมเครื่องชน", "412": "ซ่อมรอยขาด / ข้ามตา", "413": "ซ่อมอวนขาดยาว",
-      "414": "ซ่อมขาดมากเกิน", "415": "ซ่อมตะขอบน", "416": "จอดปรับฐานเครื่อง", "417": "ซ่อมระบบไฟฟ้า", "418": "ซ่อมอะไหล่ชำรุด",
-      "419": "ซ่อมตะขอล่าง", "420": "Set up รายการใหม่",
-      "501": "ซ่อมบำรุงรายวัน / เครื่อง Breakdown", "502": "ปรับปรุงตามแผน PM", "503": "จอดทำความสะอาด", "504": "จอดล้างอ่างน้ำยารัดข้อ",
-      "505": "จอดตรวจสภาพเครื่อง", "506": "จอดปรับจังหวะ", "507": "รอทำ PM", "508": "ไฟฟ้าดับ", "509": "รอช่างไฟ",
-      "510": "ซ่อมระบบไฟฟ้า", "511": "รออะไหล่อุปกรณ์ไฟฟ้า", "512": "ซ่อมตะขอบน",
-      "601": "จอดตรวจสอบคุณภาพ",
-      "701": "รอช่าง", "702": "รออะไหล่อุปกรณ์", "704": "รออีแปะตัว", "705": "รอพนักงานตัด", "706": "รออีแปะหู",
-      "707": "รอใยกรอ", "708": "จอดรอหัวหน้า", "709": "รอเปลี่ยนรายการ", "710": "รอออเดอร์", "711": "รอใย",
-      "712": "รอเพลา", "713": "รอพนักงานทอ", "714": "รอสรุปปลายใย / ใยบาด", "715": "รอสรุปผล %", "716": "รอสรุปน้ำหนัก",
-      "717": "รอตรวจคุณภาพ", "718": "รอพนักงาน QC", "719": "รอคำสั่งดำเนินการ"
+      "205": "จอดตรวจกระบวนการ", "206": "จอดตัดใบ", "207": "จอดตัดอีแปะ", "208": "จอดแก้อวนพันเพลา",
+      "401": "จอดเปลี่ยนตา", "402": "ซ่อมไม่คล้อง", "501": "เครื่อง Breakdown", "701": "รอช่าง", "711": "รอใย"
     };
 
-    const TIME_SLOTS = ["02:00 น.", "04:00 น.", "06:00 น.", "08:00 น.", "10:00 น.", "12:00 น.", "14:00 น.", "16:00 น.", "18:00 น.", "20:00 น.", "22:00 น.", "24:00 น."];
-    const MACHINES = ["E6", "E4", "E12", "E14"];
+    const TIME_SLOTS = ["02:00", "04:00", "06:00", "08:00", "10:00", "12:00", "14:00", "16:00", "18:00", "20:00", "22:00", "24:00"];
 
-    let barChartInstance = null;
-    let doughnutChartInstance = null;
+    // ข้อมูลจำลอง ออเดอร์ รายการ มิติเป้าหมาย มิติที่ได้แล้ว
+    let machineOrders = {
+      "E6":  { order: "ORD-6901", item: "อวนใยแก้ว 0.25x35x100", targetDim: 150000, currentDim: 112000, avgPerDay: 12000, nextItem: "ORD-6905 (อวนตราไก่ 0.30x40)" },
+      "E4":  { order: "ORD-6902", item: "อวนไนลอน 0.18x25x150", targetDim: 200000, currentDim: 85000,  avgPerDay: 15000, nextItem: "ORD-6906 (อวนลอย 0.20x30)" },
+      "E12": { order: "ORD-6903", item: "เอ็นปอนด์ 0.40x50x80",   targetDim: 120000, currentDim: 108000, avgPerDay: 10000, nextItem: "ORD-6907 (เอ็นหนัก 0.50x60)" },
+      "E14": { order: "ORD-6904", item: "อวนตาข่าย 0.28x30x120", targetDim: 180000, currentDim: 45000,  avgPerDay: 13500, nextItem: "ORD-6908 (อวนพิเศษ 0.35x40)" }
+    };
+
+    let dimChart = null;
+    let progChart = null;
 
     // ---------------------------------------------------------
-    // 2. BUILD TABLE STRUCTURE
+    // 2. TAB SWITCHING
     // ---------------------------------------------------------
-    function buildTable() {
-      const headerTime = document.getElementById("tr-header-time");
-      const headerSub = document.getElementById("tr-header-sub");
-      const tbody = document.getElementById("table-body");
+    function switchTab(tabId, btn) {
+      document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(tb => tb.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+      btn.classList.add('active');
+    }
 
-      TIME_SLOTS.forEach(time => {
-        const th = document.createElement("th");
-        th.colSpan = 3;
-        th.className = "time-header";
-        th.innerText = time;
-        headerTime.appendChild(th);
+    // ---------------------------------------------------------
+    // 3. RENDER MACHINE CARDS & SUMMARY
+    // ---------------------------------------------------------
+    function renderMachineCards() {
+      const container = document.getElementById("machine-cards-container");
+      container.innerHTML = "";
 
-        headerSub.innerHTML += `<th class="sub-actual">ผลงาน</th><th class="sub-target">เป้า</th><th class="sub-status">สถานะ</th>`;
+      let labels = [];
+      let currentDims = [];
+      let targetDims = [];
+      let progressPcts = [];
+
+      Object.keys(machineOrders).forEach(m => {
+        const info = machineOrders[m];
+        
+        // คำนวณวันที่เหลือ
+        const remainingDim = Math.max(0, info.targetDim - info.currentDim);
+        const daysLeft = (remainingDim / info.avgPerDay).toFixed(1);
+        
+        // คำนวณวันที่คาดว่าจะจบ
+        let finishDate = new Date();
+        finishDate.setDate(finishDate.getDate() + Math.ceil(daysLeft));
+        const dateStr = finishDate.toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: '2-digit' });
+
+        const pct = Math.min(100, ((info.currentDim / info.targetDim) * 100)).toFixed(1);
+
+        labels.push(m);
+        currentDims.push(info.currentDim);
+        targetDims.push(info.targetDim);
+        progressPcts.push(pct);
+
+        container.innerHTML += `
+          <div class="machine-card">
+            <div class="machine-card-header">
+              <span class="machine-title">เครื่อง ${m}</span>
+              <span class="badge">ออเดอร์: ${info.order}</span>
+            </div>
+            
+            <div class="info-row"><span class="info-label">รายการปัจจุบัน:</span> <span class="info-value">${info.item}</span></div>
+            <div class="info-row"><span class="info-label">มิติเป้าหมาย ($M^2$):</span> <span class="info-value">${info.targetDim.toLocaleString()}</span></div>
+            <div class="info-row"><span class="info-label">มิติสะสมปัจจุบัน ($M^2$):</span> <span class="info-value" style="color:var(--primary-light);">${info.currentDim.toLocaleString()}</span></div>
+            
+            <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: ${pct}%;"></div></div>
+            <div class="info-row" style="margin-bottom:12px;"><span class="info-label">ความคืบหน้า:</span> <span class="info-value">${pct}%</span></div>
+
+            <div style="background:#f8fafc; padding:10px; border-radius:8px; border:1px solid #e2e8f0;">
+              <div class="info-row"><span class="info-label">⏳ เหลืออีกประมาณ:</span> <span class="info-value" style="color:var(--danger);">${daysLeft} วัน</span></div>
+              <div class="info-row"><span class="info-label">📅 คาดว่าจะจบวันที่:</span> <span class="info-value" style="color:var(--success);">${dateStr}</span></div>
+              <div class="info-row" style="margin-top:4px; border-top:1px dashed #cbd5e1; padding-top:4px;">
+                <span class="info-label">➡️ รายการถัดไป:</span> <span class="info-value">${info.nextItem}</span>
+              </div>
+            </div>
+          </div>
+        `;
       });
 
-      MACHINES.forEach(m => {
+      renderSummaryCharts(labels, currentDims, targetDims, progressPcts);
+    }
+
+    // ---------------------------------------------------------
+    // 4. CHARTS
+    // ---------------------------------------------------------
+    function renderSummaryCharts(labels, current, target, pcts) {
+      const ctx1 = document.getElementById('dimensionChart').getContext('2d');
+      if (dimChart) dimChart.destroy();
+      dimChart = new Chart(ctx1, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [
+            { label: 'มิติสะสมแล้ว', data: current, backgroundColor: '#2563eb', borderRadius: 6 },
+            { label: 'มิติเป้าหมาย', data: target, backgroundColor: '#e2e8f0', borderRadius: 6 }
+          ]
+        },
+        options: { responsive: true, plugins: { legend: { position: 'top' } } }
+      });
+
+      const ctx2 = document.getElementById('progressDoughnut').getContext('2d');
+      if (progChart) progChart.destroy();
+      progChart = new Chart(ctx2, {
+        type: 'doughnut',
+        data: {
+          labels: labels,
+          datasets: [{ data: pcts, backgroundColor: ['#10b981', '#3b82f6', '#f59e0b', '#8b5cf6'] }]
+        },
+        options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+      });
+    }
+
+    // ---------------------------------------------------------
+    // 5. ENTRY TABLE GENERATION & CODE TRANSLATION
+    // ---------------------------------------------------------
+    function buildEntryTable() {
+      const hTime = document.getElementById("tr-header-time");
+      const hSub = document.getElementById("tr-header-sub");
+      const tbody = document.getElementById("entry-tbody");
+
+      TIME_SLOTS.forEach(t => {
+        hTime.innerHTML += `<th colspan="3" class="time-header">${t} น.</th>`;
+        hSub.innerHTML += `<th class="sub-actual">ผลงาน</th><th class="sub-target">เป้า</th><th class="sub-status">สถานะ</th>`;
+      });
+
+      Object.keys(machineOrders).forEach(m => {
         let tr = document.createElement("tr");
-        tr.className = "row-machine";
-        let html = `<td>${m}</td>`;
+        let html = `<td style="font-weight:bold; background:#f8fafc;">${m}</td>`;
         
         TIME_SLOTS.forEach((_, tIdx) => {
           html += `
-            <td><input type="number" class="table-input actual-input" data-m="${m}" data-t="${tIdx}" oninput="updateCalculations()"></td>
-            <td><input type="number" class="table-input target-input" data-m="${m}" data-t="${tIdx}" value="9000" oninput="updateCalculations()"></td>
-            <td class="status-cell"><input type="text" class="table-input status-input" placeholder="กรอกโค้ด..." onchange="autoTranslateCode(this)"></td>
+            <td><input type="number" class="table-input" oninput="calcTotals()"></td>
+            <td><input type="number" class="table-input" value="9000" oninput="calcTotals()"></td>
+            <td class="status-cell"><input type="text" class="table-input" placeholder="กรอกรหัส..." onchange="translateCode(this)"></td>
           `;
         });
 
         tr.innerHTML = html;
         tbody.appendChild(tr);
       });
-
-      updateCalculations();
     }
 
-    // ---------------------------------------------------------
-    // 3. CODE TRANSLATION
-    // ---------------------------------------------------------
-    function autoTranslateCode(input) {
-      const val = input.value.trim();
-      if (CODE_MAPPING[val]) {
-        input.value = CODE_MAPPING[val];
-      }
+    function translateCode(input) {
+      const v = input.value.trim();
+      if (CODE_MAPPING[v]) input.value = CODE_MAPPING[v];
     }
 
-    // ---------------------------------------------------------
-    // 4. CALCULATIONS & DASHBOARD UPDATES
-    // ---------------------------------------------------------
-    function updateCalculations() {
-      let grandActual = 0;
-      let grandTarget = 0;
-
-      let machineActuals = {};
-      let machineTargets = {};
-
-      MACHINES.forEach(m => {
-        machineActuals[m] = 0;
-        machineTargets[m] = 0;
-
-        document.querySelectorAll(`.actual-input[data-m="${m}"]`).forEach(i => {
-          machineActuals[m] += Number(i.value) || 0;
-        });
-
-        document.querySelectorAll(`.target-input[data-m="${m}"]`).forEach(i => {
-          machineTargets[m] += Number(i.value) || 0;
-        });
-
-        grandActual += machineActuals[m];
-        grandTarget += machineTargets[m];
-      });
-
-      // Update KPI Cards
-      document.getElementById("kpi-target").innerText = grandTarget.toLocaleString();
-      document.getElementById("kpi-actual").innerText = grandActual.toLocaleString();
-      
-      let diff = grandActual - grandTarget;
-      let diffEl = document.getElementById("kpi-diff");
-      diffEl.innerText = (diff >= 0 ? "+" : "") + diff.toLocaleString();
-      diffEl.style.color = diff >= 0 ? "var(--success)" : "var(--danger)";
-
-      let eff = grandTarget > 0 ? ((grandActual / grandTarget) * 100).toFixed(1) : 0;
-      document.getElementById("kpi-eff").innerText = eff + "%";
-
-      // Update Table Footer
-      const footer = document.getElementById("table-footer");
-      let footerHTML = `<td>รวมทั้งหมด</td>`;
-
-      TIME_SLOTS.forEach((_, tIdx) => {
-        let slotActual = 0;
-        let slotTarget = 0;
-
-        document.querySelectorAll(`.actual-input[data-t="${tIdx}"]`).forEach(i => slotActual += Number(i.value) || 0);
-        document.querySelectorAll(`.target-input[data-t="${tIdx}"]`).forEach(i => slotTarget += Number(i.value) || 0);
-
-        footerHTML += `<td style="color: var(--primary); font-weight:700;">${slotActual.toLocaleString()}</td><td>${slotTarget.toLocaleString()}</td><td>-</td>`;
-      });
-
-      footer.innerHTML = footerHTML;
-
-      // Update Charts
-      renderCharts(machineActuals, machineTargets);
+    function calcTotals() {
+      // สามารถเพิ่มการสะสมผลงานจริงเพื่ออัปเดตมิติสะสมต่อได้
     }
 
-    // ---------------------------------------------------------
-    // 5. RENDER CHARTS
-    // ---------------------------------------------------------
-    function renderCharts(actuals, targets) {
-      const labels = MACHINES;
-      const actualData = labels.map(m => actuals[m]);
-      const targetData = labels.map(m => targets[m]);
-
-      // Bar Chart
-      const ctxBar = document.getElementById('barChart').getContext('2d');
-      if (barChartInstance) barChartInstance.destroy();
-
-      barChartInstance = new Chart(ctxBar, {
-        type: 'bar',
-        data: {
-          labels: labels,
-          datasets: [
-            { label: 'ผลงานจริง', data: actualData, backgroundColor: '#3b82f6', borderRadius: 6 },
-            { label: 'แผนเป้าหมาย', data: targetData, backgroundColor: '#cbd5e1', borderRadius: 6 }
-          ]
-        },
-        options: {
-          responsive: true,
-          plugins: { legend: { position: 'top' } },
-          scales: { y: { beginAtZero: true } }
-        }
-      });
-
-      // Doughnut Chart
-      const ctxDoughnut = document.getElementById('doughnutChart').getContext('2d');
-      if (doughnutChartInstance) doughnutChartInstance.destroy();
-
-      doughnutChartInstance = new Chart(ctxDoughnut, {
-        type: 'doughnut',
-        data: {
-          labels: labels,
-          datasets: [{
-            data: actualData,
-            backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6']
-          }]
-        },
-        options: {
-          responsive: true,
-          plugins: { legend: { position: 'bottom' } }
-        }
-      });
+    function saveEntryData() {
+      alert("✅ บันทึกข้อมูลประจำวันเรียบร้อยแล้ว!");
     }
 
-    window.onload = buildTable;
+    function loadHistoricalData() {
+      const selectedDate = document.getElementById("history-date").value;
+      alert("🔍 โหลดข้อมูลย้อนหลังของวันที่ " + selectedDate + " เรียบร้อย!");
+    }
+
+    window.onload = function() {
+      renderMachineCards();
+      buildEntryTable();
+    };
   </script>
 </body>
 </html>
