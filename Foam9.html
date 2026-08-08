@@ -1,158 +1,538 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบเช็กสถานะกระสวยเครื่องทอ</title>
-    <style>
-        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-color: #f4f6f9; margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-        .card { background: white; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.08); width: 100%; max-width: 450px; padding: 30px; text-align: center; }
-        h2 { color: #2c3e50; margin-top: 0; margin-bottom: 8px; font-size: 1.6rem; }
-        .machine-id { font-size: 1.2rem; color: #7f8c8d; font-weight: bold; margin-bottom: 25px; background: #eef2f5; padding: 5px 15px; border-radius: 50px; display: inline-block; }
-        .status-box { padding: 18px; border-radius: 12px; font-size: 1.4rem; font-weight: bold; margin-bottom: 25px; transition: all 0.3s ease; }
-        .status-safe { background-color: #d4edda; color: #155724; border: 2px solid #c3e6cb; box-shadow: 0 4px 10px rgba(40, 167, 69, 0.15); }
-        .status-warning { background-color: #f8d7da; color: #721c24; border: 2px solid #f5c6cb; box-shadow: 0 4px 10px rgba(220, 53, 69, 0.15); }
-        .info-grid { display: grid; grid-template-columns: 1fr; gap: 15px; text-align: left; margin-bottom: 25px; }
-        .info-item { background: #f8f9fa; padding: 15px; border-radius: 10px; border-left: 6px solid #007bff; }
-        .info-item.end { border-left-color: #dc3545; }
-        .label { font-size: 0.9rem; color: #7f8c8d; display: block; margin-bottom: 6px; font-weight: bold; }
-        .value { font-size: 1.15rem; color: #2c3e50; font-weight: 600; }
-        .action-box { background-color: #fff3cd; border: 1px solid #ffeeba; border-radius: 12px; padding: 20px; text-align: left; margin-top: 10px; }
-        .action-title { font-weight: bold; color: #856404; font-size: 1.05rem; margin-bottom: 12px; }
-        .date-input { width: 100%; padding: 12px; border: 1px solid #ced4da; border-radius: 8px; font-size: 1rem; margin-bottom: 12px; outline: none; background: white; }
-        .btn-submit { display: block; width: 100%; background-color: #ff9800; color: white; border: none; padding: 14px; border-radius: 8px; font-size: 1.1rem; font-weight: bold; cursor: pointer; box-shadow: 0 4px 6px rgba(255,152,0,0.2); }
-        .btn-submit:disabled { background-color: #cccccc; cursor: not-allowed; box-shadow: none; }
-        .btn-reset { display: block; width: 100%; background: none; color: #7f8c8d; border: none; font-size: 0.85rem; margin-top: 12px; cursor: pointer; text-decoration: underline; text-align: center; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ระบบติดตามผลการผลิตเรียลไทม์ 210/1R</title>
+
+  <!-- Google Fonts & Chart.js -->
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    :root {
+      --bg-main: #f1f5f9;
+      --panel-bg: #ffffff;
+      --primary: #1e3a8a;
+      --primary-light: #3b82f6;
+      --accent: #0f172a;
+      --text-main: #334155;
+      --text-muted: #64748b;
+      --border-color: #e2e8f0;
+      --success: #10b981;
+      --danger: #ef4444;
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: 'Prompt', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      margin: 0;
+      padding: 24px;
+    }
+
+    .container {
+      max-width: 1600px;
+      margin: 0 auto;
+    }
+
+    /* Header */
+    .header-card {
+      background: linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%);
+      color: #ffffff;
+      padding: 24px;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px -5px rgba(30, 58, 138, 0.3);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .header-title h1 {
+      margin: 0;
+      font-size: 24px;
+      font-weight: 600;
+    }
+
+    .header-title p {
+      margin: 4px 0 0 0;
+      opacity: 0.8;
+      font-weight: 300;
+      font-size: 14px;
+    }
+
+    .date-picker-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 8px 16px;
+      border-radius: 12px;
+      backdrop-filter: blur(8px);
+    }
+
+    .date-picker-group label {
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .date-picker-group input {
+      border: none;
+      background: #ffffff;
+      color: var(--text-main);
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-weight: 500;
+      outline: none;
+    }
+
+    /* KPI Cards */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .kpi-card {
+      background: var(--panel-bg);
+      padding: 20px;
+      border-radius: 16px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      border: 1px solid var(--border-color);
+    }
+
+    .kpi-card .title {
+      font-size: 13px;
+      color: var(--text-muted);
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+
+    .kpi-card .value {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    /* Table Section */
+    .card {
+      background: var(--panel-bg);
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      border: 1px solid var(--border-color);
+      margin-bottom: 24px;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .card-header h2 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--accent);
+    }
+
+    .table-wrapper {
+      overflow-x: auto;
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    th, td {
+      border: 1px solid var(--border-color);
+      padding: 8px 6px;
+      text-align: center;
+    }
+
+    th {
+      background-color: var(--primary);
+      color: #ffffff;
+      font-weight: 500;
+    }
+
+    th.time-header {
+      background-color: #1e293b;
+    }
+
+    th.sub-actual { background-color: #dbeafe; color: #1e3a8a; }
+    th.sub-target { background-color: #e0e7ff; color: #3730a3; }
+    th.sub-status { background-color: #fef3c7; color: #92400e; }
+
+    input.table-input {
+      width: 100%;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      padding: 6px 4px;
+      text-align: center;
+      font-size: 13px;
+      transition: all 0.2s;
+    }
+
+    input.table-input:focus {
+      outline: none;
+      border-color: var(--primary-light);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+      background-color: #eff6ff;
+    }
+
+    td.status-cell input {
+      text-align: left;
+      min-width: 120px;
+    }
+
+    tr.row-machine td:first-child {
+      font-weight: 700;
+      background-color: #f8fafc;
+      color: var(--primary);
+      font-size: 14px;
+    }
+
+    tr.row-total {
+      background-color: #f1f5f9;
+      font-weight: 700;
+    }
+
+    /* Dashboard Layout */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 24px;
+    }
+
+    @media (max-width: 1100px) {
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Buttons */
+    .btn-group {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn {
+      padding: 8px 16px;
+      border-radius: 8px;
+      border: none;
+      font-weight: 500;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background-color: var(--primary-light);
+      color: white;
+    }
+    .btn-primary:hover { background-color: #2563eb; }
+
+    .btn-success {
+      background-color: var(--success);
+      color: white;
+    }
+    .btn-success:hover { background-color: #059669; }
+  </style>
 </head>
 <body>
 
-<div class="card">
-    <h2>การตรวจเช็คกระสวยเครื่องทอ</h2>
-    <div class="machine-id" id="machineId">กำลังโหลด...</div>
+  <div class="container">
     
-    <div id="statusBox" class="status-box">กำลังคำนวณ...</div>
-    
-    <div class="info-grid">
-        <div class="info-item">
-            <span class="label">🎨 วันที่เริ่มทาสีล่าสุด:</span>
-            <span class="value" id="startDate">-- / -- / ----</span>
-        </div>
-        <div class="info-item end">
-            <span class="label">📅 กำหนดสิ้นสุดรอบทาสีใหม่:</span>
-            <span class="value" id="endDate">-- / -- / ----</span>
-        </div>
+    <!-- 1. HEADER SECTION -->
+    <div class="header-card">
+      <div class="header-title">
+        <h1>📊 ระบบติดตามผลการผลิตเรียลไทม์ 210/1R</h1>
+        <p>บันทึกผลงานรายช่วงเวลา เปรียบเทียบแผน และสรุปสถานะเครื่องจักร</p>
+      </div>
+      <div class="date-picker-group">
+        <label for="work-date">📅 วันที่ปฏิบัติงาน:</label>
+        <input type="date" id="work-date" value="2026-08-08">
+      </div>
     </div>
 
-    <div class="action-box">
-        <span class="action-title">⚙️ บันทึกการทาสีระหว่างทาง</span>
-        <label for="inputDate" style="font-size: 0.85rem; color: #555; display:block; margin-bottom: 6px;">เลือกวันที่พนักงานแอบทาสีจริง:</label>
-        <input type="date" id="inputDate" class="date-input">
-        <button onclick="saveNewDate()" id="btnSubmit" class="btn-submit">💾 บันทึกส่งเข้า Google Sheets</button>
-        <button onclick="clearSavedData()" id="btnReset" class="btn-reset" style="display:none;">↩️ ล้างข้อมูลกลับไปใช้ค่าเริ่มต้น</button>
+    <!-- 2. KPI CARDS OVERVIEW -->
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="title">🎯 เป้าหมายรวมทั้งสิ้น</div>
+        <div class="value" id="kpi-target">0</div>
+      </div>
+      <div class="kpi-card">
+        <div class="title">⚙️ ผลงานผลิตจริงรวม</div>
+        <div class="value" id="kpi-actual" style="color: var(--primary-light);">0</div>
+      </div>
+      <div class="kpi-card">
+        <div class="title">📊 ผลต่าง (Diff)</div>
+        <div class="value" id="kpi-diff">0</div>
+      </div>
+      <div class="kpi-card">
+        <div class="title">📈 % ประสิทธิภาพ (Efficiency)</div>
+        <div class="value" id="kpi-eff" style="color: var(--success);">0%</div>
+      </div>
     </div>
-</div>
 
-<script>
-    // ==========================================
-    // ⚙️ ตั้งค่าข้อมูลเครื่องจักรตรงนี้
-    // ==========================================
-    const CONFIG = {
-        machineId: "E9",                                                
-        startDate: "20/05/2569",                                            
-        endDate: "20/06/2569",                                              
-        googleSheetUrl: "https://script.google.com/macros/s/AKfycbztJzTenKhjfpuJKOTqEGQgWI9U7B6rjgHPO_xov2jejoGauGwjd-C-sYjT6gYK8QwU/exec" 
+    <!-- 3. REALTIME ENTRY TABLE -->
+    <div class="card">
+      <div class="card-header">
+        <h2>📝 ลงบันทึกผลงานและสถานะรายช่วงเวลา (12 ช่วง)</h2>
+        <div class="btn-group">
+          <button class="btn btn-success" onclick="alert('บันทึกข้อมูลเข้าสู่ระบบเรียบร้อย!')">💾 บันทึกข้อมูล</button>
+          <button class="btn btn-primary" onclick="window.print()">🖨️ พิมพ์รายงาน</button>
+        </div>
+      </div>
+      
+      <div class="table-wrapper">
+        <table id="main-table">
+          <thead>
+            <tr id="tr-header-time">
+              <th rowspan="2" style="min-width: 80px;">เครื่อง</th>
+              <!-- ช่วงเวลาจะถูกวาดผ่าน JS -->
+            </tr>
+            <tr id="tr-header-sub">
+              <!-- หัวข้อ ผลงาน/เป้า/สถานะ จะถูกวาดผ่าน JS -->
+            </tr>
+          </thead>
+          <tbody id="table-body">
+            <!-- รายชื่อเครื่องจะถูกวาดผ่าน JS -->
+          </tbody>
+          <tfoot>
+            <tr class="row-total" id="table-footer">
+              <td>รวมทั้งหมด</td>
+              <!-- แถวรวมสรุปด้านล่างสุด -->
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+
+    <!-- 4. CHARTS & SUMMARY SECTION -->
+    <div class="dashboard-grid">
+      <!-- Chart 1: Bar Chart -->
+      <div class="card">
+        <div class="card-header">
+          <h2>📈 เปรียบเทียบ ผลงานจริง vs แผนเป้าหมาย (แยกรายเครื่อง)</h2>
+        </div>
+        <canvas id="barChart" height="140"></canvas>
+      </div>
+
+      <!-- Chart 2: Doughnut Chart -->
+      <div class="card">
+        <div class="card-header">
+          <h2>สัดส่วนผลงานรายเครื่องจักร</h2>
+        </div>
+        <canvas id="doughnutChart" height="200"></canvas>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // ---------------------------------------------------------
+    // 1. MASTER DATA: Translation Code Mapping
+    // ---------------------------------------------------------
+    const CODE_MAPPING = {
+      "201": "จอดเปลี่ยนใย", "202": "จอดเปลี่ยนจำนวน", "203": "จอดเดินปม", "204": "จอดตัดอวน",
+      "205": "จอดตรวจการกระบวนการ", "206": "จอดตัดใบ", "207": "จอดตัดอีแปะ", "208": "จอดแก้อวนพันเพลา",
+      "209": "จอดใส่ด้ายร้อยหู", "210": "ผูกหาง", "211": "ต่อด้ายที่ขาด", "212": "จอดร้อยด้ายหลังเครื่อง", "213": "ใส่ด้ายกัน",
+      "301": "จอดตัดอีแปะ", "302": "จอดตัดอีแปะ",
+      "401": "จอดเปลี่ยนตา", "402": "ซ่อมไม่คล้อง", "403": "ขัดเดือน / ขัดเป็นบ่วง / ไม่รัด", "404": "ซ่อมด้ายหย่อน",
+      "405": "ซ่อมตึง / ตาเล็ก / ตาใหญ่", "406": "ซ่อมแผลเล็ก", "407": "ซ่อมข้อไม่เสมอ / ใหญ่ / ยาว", "408": "ซ่อมใยขาด / ใยขุด / ใยลาย",
+      "409": "ซ่อมตาขึ้น", "410": "ซ่อมอวนเปื้อน", "411": "ซ่อมเครื่องชน", "412": "ซ่อมรอยขาด / ข้ามตา", "413": "ซ่อมอวนขาดยาว",
+      "414": "ซ่อมขาดมากเกิน", "415": "ซ่อมตะขอบน", "416": "จอดปรับฐานเครื่อง", "417": "ซ่อมระบบไฟฟ้า", "418": "ซ่อมอะไหล่ชำรุด",
+      "419": "ซ่อมตะขอล่าง", "420": "Set up รายการใหม่",
+      "501": "ซ่อมบำรุงรายวัน / เครื่อง Breakdown", "502": "ปรับปรุงตามแผน PM", "503": "จอดทำความสะอาด", "504": "จอดล้างอ่างน้ำยารัดข้อ",
+      "505": "จอดตรวจสภาพเครื่อง", "506": "จอดปรับจังหวะ", "507": "รอทำ PM", "508": "ไฟฟ้าดับ", "509": "รอช่างไฟ",
+      "510": "ซ่อมระบบไฟฟ้า", "511": "รออะไหล่อุปกรณ์ไฟฟ้า", "512": "ซ่อมตะขอบน",
+      "601": "จอดตรวจสอบคุณภาพ",
+      "701": "รอช่าง", "702": "รออะไหล่อุปกรณ์", "704": "รออีแปะตัว", "705": "รอพนักงานตัด", "706": "รออีแปะหู",
+      "707": "รอใยกรอ", "708": "จอดรอหัวหน้า", "709": "รอเปลี่ยนรายการ", "710": "รอออเดอร์", "711": "รอใย",
+      "712": "รอเพลา", "713": "รอพนักงานทอ", "714": "รอสรุปปลายใย / ใยบาด", "715": "รอสรุปผล %", "716": "รอสรุปน้ำหนัก",
+      "717": "รอตรวจคุณภาพ", "718": "รอพนักงาน QC", "719": "รอคำสั่งดำเนินการ"
     };
 
-    const storageKey = 'machine_date_logs_' + CONFIG.machineId;
+    const TIME_SLOTS = ["02:00 น.", "04:00 น.", "06:00 น.", "08:00 น.", "10:00 น.", "12:00 น.", "14:00 น.", "16:00 น.", "18:00 น.", "20:00 น.", "22:00 น.", "24:00 น."];
+    const MACHINES = ["E6", "E4", "E12", "E14"];
 
-    function parseThaiDate(dateStr) {
-        const parts = dateStr.split('/');
-        return new Date(parseInt(parts[2], 10) - 543, parseInt(parts[1], 10) - 1, parseInt(parts[0], 10));
-    }
+    let barChartInstance = null;
+    let doughnutChartInstance = null;
 
-    function formatDateThai(date) {
-        return date.toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' });
-    }
+    // ---------------------------------------------------------
+    // 2. BUILD TABLE STRUCTURE
+    // ---------------------------------------------------------
+    function buildTable() {
+      const headerTime = document.getElementById("tr-header-time");
+      const headerSub = document.getElementById("tr-header-sub");
+      const tbody = document.getElementById("table-body");
 
-    function initStatus() {
-        document.getElementById('machineId').innerText = CONFIG.machineId;
-        let start = parseThaiDate(CONFIG.startDate);
-        let end = parseThaiDate(CONFIG.endDate);
+      TIME_SLOTS.forEach(time => {
+        const th = document.createElement("th");
+        th.colSpan = 3;
+        th.className = "time-header";
+        th.innerText = time;
+        headerTime.appendChild(th);
+
+        headerSub.innerHTML += `<th class="sub-actual">ผลงาน</th><th class="sub-target">เป้า</th><th class="sub-status">สถานะ</th>`;
+      });
+
+      MACHINES.forEach(m => {
+        let tr = document.createElement("tr");
+        tr.className = "row-machine";
+        let html = `<td>${m}</td>`;
         
-        const savedDate = localStorage.getItem(storageKey);
-        if (savedDate) {
-            start = new Date(savedDate);
-            end = new Date(savedDate);
-            end.setDate(end.getDate() + 30);
-            document.getElementById('btnReset').style.display = 'block';
-        } else {
-            document.getElementById('btnReset').style.display = 'none';
-        }
-
-        document.getElementById('startDate').innerText = formatDateThai(start);
-        document.getElementById('endDate').innerText = formatDateThai(end);
-
-        const today = new Date(); today.setHours(0,0,0,0);
-        const timeDiff = end.getTime() - today.getTime();
-        const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
-        const statusBox = document.getElementById('statusBox');
-
-        if (daysDiff > 0) {
-            statusBox.className = "status-box status-safe";
-            statusBox.innerHTML = `สภาพปกติ<br><span style="font-size:1rem; font-weight:normal;">เหลืออีก <b>${daysDiff}</b> วันต้องทาใหม่</span>`;
-        } else if (daysDiff === 0) {
-            statusBox.className = "status-box status-warning";
-            statusBox.innerHTML = `ถึงกำหนดวันนี้!<br><span style="font-size:1rem; font-weight:normal;">ต้องถอดกระสวยไปทาสีทันที</span>`;
-        } else {
-            statusBox.className = "status-box status-warning";
-            statusBox.innerHTML = `เลยกำหนดแล้ว!<br><span style="font-size:1rem; font-weight:normal;">เลยกำหนดมาแล้ว <b>${Math.abs(daysDiff)}</b> วัน รีบทาสีด่วน</span>`;
-        }
-    }
-
-    function saveNewDate() {
-        const inputVal = document.getElementById('inputDate').value;
-        if (!inputVal) {
-            alert('❌ กรุณาเลือกวันที่ก่อนกดบันทึกครับ!');
-            return;
-        }
-
-        const btn = document.getElementById('btnSubmit');
-        btn.disabled = true;
-        btn.innerText = '⏳ กำลังส่งข้อมูลเข้า Google Sheets...';
-
-        fetch(CONFIG.googleSheetUrl, {
-            method: 'POST',
-            mode: 'no-cors',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ machineId: CONFIG.machineId, savedDate: inputVal })
-        })
-        .then(() => {
-            localStorage.setItem(storageKey, inputVal);
-            alert('🎯 บันทึกสำเร็จ! ข้อมูลถูกส่งเข้า Google Sheets ปลายทางเรียบร้อยครับ');
-            initStatus();
-            document.getElementById('inputDate').value = '';
-        })
-        .catch(err => {
-            alert('เกิดข้อผิดพลาด: ' + err);
-        })
-        .finally(() => {
-            btn.disabled = false;
-            btn.innerText = '💾 บันทึกส่งเข้า Google Sheets';
+        TIME_SLOTS.forEach((_, tIdx) => {
+          html += `
+            <td><input type="number" class="table-input actual-input" data-m="${m}" data-t="${tIdx}" oninput="updateCalculations()"></td>
+            <td><input type="number" class="table-input target-input" data-m="${m}" data-t="${tIdx}" value="9000" oninput="updateCalculations()"></td>
+            <td class="status-cell"><input type="text" class="table-input status-input" placeholder="กรอกโค้ด..." onchange="autoTranslateCode(this)"></td>
+          `;
         });
+
+        tr.innerHTML = html;
+        tbody.appendChild(tr);
+      });
+
+      updateCalculations();
     }
 
-    function clearSavedData() {
-        if(confirm('คุณต้องการกลับไปใช้วันรอบหลักใช่ไหม?')) {
-            localStorage.removeItem(storageKey);
-            alert('ล้างข้อมูลเรียบร้อยแล้ว');
-            initStatus();
+    // ---------------------------------------------------------
+    // 3. CODE TRANSLATION
+    // ---------------------------------------------------------
+    function autoTranslateCode(input) {
+      const val = input.value.trim();
+      if (CODE_MAPPING[val]) {
+        input.value = CODE_MAPPING[val];
+      }
+    }
+
+    // ---------------------------------------------------------
+    // 4. CALCULATIONS & DASHBOARD UPDATES
+    // ---------------------------------------------------------
+    function updateCalculations() {
+      let grandActual = 0;
+      let grandTarget = 0;
+
+      let machineActuals = {};
+      let machineTargets = {};
+
+      MACHINES.forEach(m => {
+        machineActuals[m] = 0;
+        machineTargets[m] = 0;
+
+        document.querySelectorAll(`.actual-input[data-m="${m}"]`).forEach(i => {
+          machineActuals[m] += Number(i.value) || 0;
+        });
+
+        document.querySelectorAll(`.target-input[data-m="${m}"]`).forEach(i => {
+          machineTargets[m] += Number(i.value) || 0;
+        });
+
+        grandActual += machineActuals[m];
+        grandTarget += machineTargets[m];
+      });
+
+      // Update KPI Cards
+      document.getElementById("kpi-target").innerText = grandTarget.toLocaleString();
+      document.getElementById("kpi-actual").innerText = grandActual.toLocaleString();
+      
+      let diff = grandActual - grandTarget;
+      let diffEl = document.getElementById("kpi-diff");
+      diffEl.innerText = (diff >= 0 ? "+" : "") + diff.toLocaleString();
+      diffEl.style.color = diff >= 0 ? "var(--success)" : "var(--danger)";
+
+      let eff = grandTarget > 0 ? ((grandActual / grandTarget) * 100).toFixed(1) : 0;
+      document.getElementById("kpi-eff").innerText = eff + "%";
+
+      // Update Table Footer
+      const footer = document.getElementById("table-footer");
+      let footerHTML = `<td>รวมทั้งหมด</td>`;
+
+      TIME_SLOTS.forEach((_, tIdx) => {
+        let slotActual = 0;
+        let slotTarget = 0;
+
+        document.querySelectorAll(`.actual-input[data-t="${tIdx}"]`).forEach(i => slotActual += Number(i.value) || 0);
+        document.querySelectorAll(`.target-input[data-t="${tIdx}"]`).forEach(i => slotTarget += Number(i.value) || 0);
+
+        footerHTML += `<td style="color: var(--primary); font-weight:700;">${slotActual.toLocaleString()}</td><td>${slotTarget.toLocaleString()}</td><td>-</td>`;
+      });
+
+      footer.innerHTML = footerHTML;
+
+      // Update Charts
+      renderCharts(machineActuals, machineTargets);
+    }
+
+    // ---------------------------------------------------------
+    // 5. RENDER CHARTS
+    // ---------------------------------------------------------
+    function renderCharts(actuals, targets) {
+      const labels = MACHINES;
+      const actualData = labels.map(m => actuals[m]);
+      const targetData = labels.map(m => targets[m]);
+
+      // Bar Chart
+      const ctxBar = document.getElementById('barChart').getContext('2d');
+      if (barChartInstance) barChartInstance.destroy();
+
+      barChartInstance = new Chart(ctxBar, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [
+            { label: 'ผลงานจริง', data: actualData, backgroundColor: '#3b82f6', borderRadius: 6 },
+            { label: 'แผนเป้าหมาย', data: targetData, backgroundColor: '#cbd5e1', borderRadius: 6 }
+          ]
+        },
+        options: {
+          responsive: true,
+          plugins: { legend: { position: 'top' } },
+          scales: { y: { beginAtZero: true } }
         }
+      });
+
+      // Doughnut Chart
+      const ctxDoughnut = document.getElementById('doughnutChart').getContext('2d');
+      if (doughnutChartInstance) doughnutChartInstance.destroy();
+
+      doughnutChartInstance = new Chart(ctxDoughnut, {
+        type: 'doughnut',
+        data: {
+          labels: labels,
+          datasets: [{
+            data: actualData,
+            backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6']
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: { legend: { position: 'bottom' } }
+        }
+      });
     }
 
-    initStatus();
-</script>
-
+    window.onload = buildTable;
+  </script>
 </body>
 </html>
