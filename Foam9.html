@@ -194,7 +194,7 @@
                 <th colspan="1" class="yellow-head">ได้เริ่มผลิต</th>
                 <th rowspan="2">จำนวนสั่งผลิต</th>
                 <th rowspan="2">จำนวนชุดสั่งผลิต</th>
-                <th rowspan="2">มิติเป้าหมาย</th>
+                <th rowspan="2">มิเตอร์เป้าหมาย</th>
                 <th rowspan="2">จำนวนวันทอ</th>
                 <th colspan="1" class="red-head">ทอครบกำหนด</th>
                 <th rowspan="2" class="blue-head">รายงานถึงการกำหนด</th>
@@ -302,7 +302,7 @@
         container.innerHTML += `
           <div class="machine-card">
             <div class="machine-card-header">
-              <span class="machine-title">เครื่อง ${m}</span>
+              <span class="machine-title">เครื่อง {m}</span>
               ${badgeHtml}
             </div>
             
@@ -422,7 +422,7 @@
       if (dimChart) dimChart.destroy();
       dimChart = new Chart(ctx1, {
         type: 'bar',
-        data: { labels: labels, datasets: [{ label: 'มิติสะสม', data: current, backgroundColor: '#2563eb' }, { label: 'มิติเป้าหมาย', data: target, backgroundColor: '#cbd5e1' }] },
+        data: { labels: labels, datasets: [{ label: 'มิเตอร์สะสม', data: current, backgroundColor: '#2563eb' }, { label: 'มิเตอร์เป้าหมาย', data: target, backgroundColor: '#cbd5e1' }] },
         options: { responsive: true }
       });
 
