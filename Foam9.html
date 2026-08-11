@@ -236,6 +236,7 @@
   <script>
     const TIME_SLOTS = ["02:00", "04:00", "06:00", "08:00", "10:00", "12:00", "14:00", "16:00", "18:00", "20:00", "22:00", "24:00"];
     
+    // กำหนดเป้าหมาย (targetDim) ของทุกรายการให้เป็น 9,000
     let planData = [
       { machine: "E12", order: "26/3130-HB", item: "210/1R 4.3*50*88 SK YOKO DARK NATURAL WHITE WTM01 (N101)", pcs: 276, pcsSet: 12, sets: 23, dimSet: 4000, totalDim: 92000, changeRoll: "", setup: "", startDate: "2-ส.ค.", orderPcs: 276, orderSets: 23, targetDim: 9000, days: 10, endDate: "13-ส.ค.", reportDate: "", priority: "ทอครบแล้ว", status: "ครบแล้ว" },
       { machine: "E12", order: "26/6028-CH", item: "210/1 24mmsq*50md*2000ml SK YOKO NATURAL WHITE WTM01", pcs: 360, pcsSet: 12, sets: 30, dimSet: 4000, totalDim: 120000, changeRoll: "", setup: "", startDate: "7-ส.ค.", orderPcs: 360, orderSets: 30, targetDim: 9000, days: 13, endDate: "21-ส.ค.", reportDate: "31/7/69", priority: 1, status: "ไม่ตรงตามตารางแผน" },
@@ -253,7 +254,9 @@
     ];
 
     let actualProgress = { "E6": 18000, "E4": 45000, "E12": 92000, "E14": 20000 };
-    let avgSpeedPerDay = { "E6": 8000, "E4": 9000, "E12": 9000, "E14": 9000 };
+    
+    // ตั้งค่าความเร็วเฉลี่ยต่อวันเป้าหมายเป็น 9,000 ทุกเครื่อง
+    let avgSpeedPerDay = { "E6": 9000, "E4": 9000, "E12": 9000, "E14": 9000 };
 
     let dimChart = null, progChart = null;
 
@@ -407,7 +410,7 @@
         let tr = document.createElement("tr");
         let html = `<td style="font-weight:bold;">${m}</td>`;
         TIME_SLOTS.forEach(() => {
-          html += `<td><input type="number" class="table-input"></td><td><input type="number" class="table-input" value="1500"></td><td><input type="text" class="table-input"></td>`;
+          html += `<td><input type="number" class="table-input"></td><td><input type="number" class="table-input" value="750"></td><td><input type="text" class="table-input"></td>`;
         });
         tr.innerHTML = html;
         tbody.appendChild(tr);
