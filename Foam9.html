@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ระบบติดตามสถานะแผนเครื่องทอ บันทึกผลงานแบบเรียลไทม์ 210/1R</title>
+  <title>ระบบติดตามสถานะแผนเครื่องทอ 210/1R (Dynamic Update)</title>
 
   <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -40,7 +40,7 @@
     /* Navigation Tabs */
     .tab-container { display: flex; gap: 8px; margin-bottom: 20px; border-bottom: 2px solid var(--border-color); padding-bottom: 2px; flex-wrap: wrap; }
     .tab-btn {
-      padding: 10px 18px; font-size: 13px; font-weight: 600; border: none; background: transparent;
+      padding: 10px 18px; font-size: 14px; font-weight: 600; border: none; background: transparent;
       color: var(--text-muted); cursor: pointer; border-radius: 8px 8px 0 0; transition: all 0.2s;
     }
     .tab-btn.active { background-color: var(--primary-light); color: white; }
@@ -49,12 +49,12 @@
     .tab-content { display: none; }
     .tab-content.active { display: block; }
 
-    /* Cards & Layout */
+    /* Cards */
     .card { background: var(--panel-bg); border-radius: 16px; padding: 20px; border: 1px solid var(--border-color); margin-bottom: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.03); }
     .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
     .card-header h2 { margin: 0; font-size: 18px; color: var(--accent); }
 
-    /* Machine Status Cards Grid */
+    /* Machine Status Grid */
     .machine-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 16px; margin-bottom: 20px; }
     .machine-card {
       background: #ffffff; border: 1px solid var(--border-color); border-radius: 14px; padding: 18px;
@@ -66,7 +66,6 @@
     .status-badge { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; text-transform: uppercase; }
     .status-running { background: #dcfce7; color: #15803d; }
     .status-stopped { background: #fee2e2; color: #b91c1c; }
-    .status-warning { background: #fef3c7; color: #b45309; }
 
     .info-row { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 8px; }
     .info-label { color: var(--text-muted); }
@@ -86,11 +85,12 @@
     th.blue-head { background-color: #0ea5e9; color: #fff; }
 
     input.table-input {
-      width: 100%; border: 1px solid #cbd5e1; border-radius: 4px; padding: 4px 2px; text-align: center; font-size: 11px;
+      width: 100%; border: 1px solid #cbd5e1; border-radius: 4px; padding: 4px 2px; text-align: center; font-size: 11px; background: transparent;
     }
     input.table-input:focus { outline: none; border-color: var(--primary-light); background-color: #eff6ff; }
 
-    .btn { padding: 8px 16px; border-radius: 8px; border: none; font-weight: 600; cursor: pointer; }
+    .btn { padding: 8px 16px; border-radius: 8px; border: none; font-weight: 600; cursor: pointer; transition: 0.2s; }
+    .btn:active { transform: scale(0.98); }
     .btn-success { background: var(--success); color: white; }
     .btn-primary { background: var(--primary-light); color: white; }
 
@@ -102,15 +102,14 @@
 
   <div class="container">
     
-    <!-- HEADER -->
     <div class="header-card">
       <div class="header-title">
         <h1>ระบบติดตามสถานะแผนเครื่องทอ บันทึกผลงานแบบเรียลไทม์ 210/1R</h1>
-        <p>หน่วยงาน 210/1R - อัปเดตสถานะการเดินเครื่อง ผลผลิตรายช่วงเวลา และแจ้งเตือนเป้าหมาย</p>
+        <p>เชื่อมโยงข้อมูลอัตโนมัติ: ปรับแผนงาน หน้าสรุปภาพรวมและเวลาจบงานจะเปลี่ยนตามทันที</p>
       </div>
       <div>
-        <label for="history-date" style="font-size:13px; margin-right:8px;">📅 ดูข้อมูลย้อนหลัง:</label>
-        <input type="date" id="history-date" value="2026-08-11" onchange="alert('โหลดข้อมูลเรียบร้อย')" style="padding:6px 12px; border-radius:8px; border:none;">
+        <label style="font-size:13px; margin-right:8px;">วันที่ปัจจุบัน:</label>
+        <span id="current-date-display" style="font-weight:bold; background:rgba(255,255,255,0.2); padding:6px 12px; border-radius:8px;"></span>
       </div>
     </div>
 
@@ -119,7 +118,6 @@
       <button class="tab-btn active" onclick="switchTab('summary-tab', this)">📊 1. สรุปภาพรวม & สถานะเครื่อง</button>
       <button class="tab-btn" onclick="switchTab('realtime-tab', this)">⏱️ 2. ผลงานเรียลไทม์ (Real-time Tracker)</button>
       <button class="tab-btn" onclick="switchTab('plan-tab', this)">📋 3. กรอกแผนรายการทอ (Plan Entry)</button>
-      <button class="tab-btn" onclick="switchTab('entry-tab', this)">📝 4. บันทึกผลงานรายชั่วโมง</button>
     </div>
 
     <!-- TAB 1: SUMMARY -->
@@ -127,7 +125,7 @@
       <div class="machine-grid" id="machine-cards-container"></div>
       <div class="dashboard-charts">
         <div class="card">
-          <div class="card-header"><h2>📈 เปรียบเทียบ มิติผลิตสะสม vs มิติเป้าหมาย ($M^2$)</h2></div>
+          <div class="card-header"><h2>📈 เปรียบเทียบ มิติผลิตสะสม vs มิติเป้าหมายแผนงาน</h2></div>
           <canvas id="dimensionChart" height="130"></canvas>
         </div>
         <div class="card">
@@ -137,31 +135,25 @@
       </div>
     </div>
 
-    <!-- TAB 2: REAL-TIME TRACKER (NEW SHEET) -->
+    <!-- TAB 2: REAL-TIME TRACKER -->
     <div id="realtime-tab" class="tab-content">
       <div class="card">
         <div class="card-header">
-          <h2>⏱️ ติดตามสถานะการเดินเครื่องและแจ้งเตือนรายช่วงเวลา (Real-time Status)</h2>
-          <span style="font-size:12px; color:var(--text-muted);">อัปเดตล่าสุด: วันนี้ 11:00 น.</span>
+          <h2>⏱️ สถานะการเดินเครื่องเรียลไทม์ (อิงตามแผนงานปัจจุบัน)</h2>
         </div>
         <div class="table-wrapper">
           <table id="realtime-table">
             <thead>
               <tr>
                 <th>เครื่อง</th>
-                <th>สถานะการเดินเครื่อง</th>
-                <th>รายการที่กำลังทอ</th>
-                <th>ช่วงเวลาล่าสุด</th>
-                <th>ผลงานจริง ($M^2$)</th>
-                <th>เป้าช่วงเวลา ($M^2$)</th>
-                <th>ต่างจากเป้า ($M^2$)</th>
-                <th>ประเมินการทอ</th>
-                <th>สาเหตุ / หมายเหตุ</th>
+                <th>สถานะเครื่อง</th>
+                <th>ออเดอร์ปัจจุบัน (Priority หลัก)</th>
+                <th>มิติสะสมล่าสุด ($M^2$)</th>
+                <th>ประเมินสถานะ</th>
+                <th>หมายเหตุระบบ</th>
               </tr>
             </thead>
-            <tbody id="realtime-tbody">
-              <!-- JS Render Realtime Status -->
-            </tbody>
+            <tbody id="realtime-tbody"></tbody>
           </table>
         </div>
       </div>
@@ -171,39 +163,23 @@
     <div id="plan-tab" class="tab-content">
       <div class="card">
         <div class="card-header">
-          <h2>📋 ตารางแผนรายการทอรายการ 210/1R</h2>
+          <h2>📋 ตารางแผนรายการทอ (แก้ไขข้อมูลระบบจะคำนวณใหม่ทันทีเมื่อกดบันทึก)</h2>
           <div>
-            <button class="btn btn-primary" onclick="addPlanRow()">➕ เพิ่มแถวแผนงาน</button>
-            <button class="btn btn-success" onclick="savePlanData()">💾 บันทึกและอัปเดตแผน</button>
+            <button class="btn btn-primary" onclick="addPlanRow()">➕ เพิ่มออเดอร์ใหม่</button>
+            <button class="btn btn-success" onclick="savePlanData()">💾 บันทึกและอัปเดตภาพรวม</button>
           </div>
         </div>
         <div class="table-wrapper">
           <table id="plan-table">
             <thead>
               <tr>
-                <th rowspan="2">เครื่อง</th>
-                <th rowspan="2">ออเดอร์</th>
-                <th rowspan="2" style="min-width: 220px;">รายการ</th>
-                <th rowspan="2">จำนวนผืน</th>
-                <th rowspan="2">จำนวนผืน/ชุด</th>
-                <th rowspan="2">จำนวนชุด</th>
-                <th rowspan="2">มิติ/ชุด</th>
-                <th rowspan="2">มิติรวม</th>
-                <th rowspan="2">ขึ้นโรล/เปลี่ยนรายการ</th>
-                <th rowspan="2">Set up</th>
-                <th colspan="1" class="yellow-head">ได้เริ่มผลิต</th>
-                <th rowspan="2">จำนวนสั่งผลิต</th>
-                <th rowspan="2">จำนวนชุดสั่งผลิต</th>
-                <th rowspan="2">มิติเป้าหมาย</th>
-                <th rowspan="2">จำนวนวันทอ</th>
-                <th colspan="1" class="red-head">ทอครบกำหนด</th>
-                <th rowspan="2" class="blue-head">รายงานถึงการกำหนด</th>
-                <th rowspan="2">ลำดับความสำคัญ</th>
-                <th rowspan="2">สถานะ/ข้อความ</th>
-              </tr>
-              <tr>
-                <th class="yellow-head">ใหม่</th>
-                <th class="red-head">ใหม่</th>
+                <th>เครื่อง</th>
+                <th>ออเดอร์</th>
+                <th style="min-width: 220px;">รายการ</th>
+                <th>มิติรวม (เป้าหมาย)</th>
+                <th>มิติเป้าหมายต่อวัน</th>
+                <th>ลำดับความสำคัญ</th>
+                <th>สถานะ/ข้อความ</th>
               </tr>
             </thead>
             <tbody id="plan-tbody"></tbody>
@@ -212,50 +188,28 @@
       </div>
     </div>
 
-    <!-- TAB 4: HOURLY ENTRY -->
-    <div id="entry-tab" class="tab-content">
-      <div class="card">
-        <div class="card-header">
-          <h2>📝 กรอกข้อมูลผลงานและสถานะการจอดรายช่วงเวลา</h2>
-          <button class="btn btn-success" onclick="alert('บันทึกเรียบร้อย!')">💾 บันทึกข้อมูล</button>
-        </div>
-        <div class="table-wrapper">
-          <table id="entry-table">
-            <thead>
-              <tr id="tr-header-time"><th rowspan="2">เครื่อง</th></tr>
-              <tr id="tr-header-sub"></tr>
-            </thead>
-            <tbody id="entry-tbody"></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
   </div>
 
   <script>
-    const TIME_SLOTS = ["02:00", "04:00", "06:00", "08:00", "10:00", "12:00", "14:00", "16:00", "18:00", "20:00", "22:00", "24:00"];
-    
+    // ตั้งเวลาปัจจุบัน
+    const today = new Date();
+    document.getElementById('current-date-display').innerText = today.toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' });
+
+    // ข้อมูลแผนรายการทอหลัก
     let planData = [
-      { machine: "E12", order: "26/3130-HB", item: "210/1R 4.3*50*88 SK YOKO DARK NATURAL WHITE WTM01 (N101)", pcs: 276, pcsSet: 12, sets: 23, dimSet: 4000, totalDim: 92000, changeRoll: "", setup: "", startDate: "2-ส.ค.", orderPcs: 276, orderSets: 23, targetDim: 9000, days: 10, endDate: "13-ส.ค.", reportDate: "", priority: "ทอครบแล้ว", status: "ครบแล้ว" },
-      { machine: "E12", order: "26/6028-CH", item: "210/1 24mmsq*50md*2000ml SK YOKO NATURAL WHITE WTM01", pcs: 360, pcsSet: 12, sets: 30, dimSet: 4000, totalDim: 120000, changeRoll: "", setup: "", startDate: "7-ส.ค.", orderPcs: 360, orderSets: 30, targetDim: 9000, days: 13, endDate: "21-ส.ค.", reportDate: "31/7/69", priority: 1, status: "ไม่ตรงตามตารางแผน" },
-      { machine: "E4", order: "26/5062K", item: "210/1R 1*50*90", pcs: 132, pcsSet: 12, sets: 11, dimSet: 9000, totalDim: 99000, changeRoll: "3-ส.ค.", setup: "4-ส.ค.", startDate: "7-ส.ค.", orderPcs: 132, orderSets: 11, targetDim: 9000, days: 11, endDate: "19-ส.ค.", reportDate: "", priority: "ทอแถน 1", status: "ทอแทรกตามเป้า" },
-      { machine: "E6", order: "26/1017-0H", item: "210/1 24mmsq*46md*2000ml SK YOKO NATURAL WHITE WTM01", pcs: 78, pcsSet: 13, sets: 6, dimSet: 4000, totalDim: 24000, changeRoll: "ดำเนินการแล้ว", setup: "6-ส.ค.", startDate: "6-ส.ค.", orderPcs: 78, orderSets: 6, targetDim: 9000, days: 3, endDate: "9-ส.ค.", reportDate: "", priority: 1, status: "ทอซ่อมตามเป้าหมาย" },
-      { machine: "E14", order: "26/6028-CG", item: "210/1 20mmsq*50md*4000ml SK YOKO NATURAL WHITE WTM01", pcs: 72, pcsSet: 12, sets: 6, dimSet: 8000, totalDim: 48000, changeRoll: "14-ก.ย.", setup: "15-ก.ย.", startDate: "9-ส.ค.", orderPcs: 72, orderSets: 6, targetDim: 9000, days: 5, endDate: "15-ส.ค.", reportDate: "20/7/69", priority: 1, status: "ไม่ตรงตามตารางแผน" }
+      { machine: "E12", order: "26/6028-CH", item: "210/1 24mmsq*50md*2000ml SK YOKO NATURAL WHITE WTM01", totalDim: 120000, targetDim: 9000, priority: "1", status: "กำลังดำเนินงาน" },
+      { machine: "E12", order: "26/6048-0T", item: "ข่ายใบซ่อม 210/1 R 4.3*50*88 SK1Y", totalDim: 88000, targetDim: 9000, priority: "2", status: "รอคิว" },
+      { machine: "E4", order: "26/5062K", item: "210/1R 1*50*90", totalDim: 99000, targetDim: 9000, priority: "ทอแถน 1", status: "กำลังดำเนินงาน" },
+      { machine: "E4", order: "26/6028-CF", item: "210/1 24mmsq*50md*4000ml SK YOKO", totalDim: 192000, targetDim: 9000, priority: "2", status: "รอคิว" },
+      { machine: "E6", order: "26/1017-0H", item: "210/1 24mmsq*46md*2000ml SK YOKO NATURAL", totalDim: 24000, targetDim: 9000, priority: "1", status: "รอตั้งเครื่อง" },
+      { machine: "E14", order: "26/6028-CG", item: "210/1 20mmsq*50md*4000ml SK YOKO NATURAL", totalDim: 48000, targetDim: 9000, priority: "1", status: "กำลังดำเนินงาน" }
     ];
 
-    // ข้อมูลจำลองสถานะเรียลไทม์
-    let realTimeData = [
-      { machine: "E12", status: "RUNNING", item: "26/6028-CH", timeSlot: "10:00 น.", actual: 1500, target: 1500, cause: "เดินเครื่องปกติ" },
-      { machine: "E4", status: "WARNING", item: "26/5062K", timeSlot: "10:00 น.", actual: 800, target: 1500, cause: "ด้ายขาดบ่อย / ความเร็วตก" },
-      { machine: "E6", status: "STOPPED", item: "26/1017-0H", timeSlot: "10:00 น.", actual: 0, target: 1500, cause: "ยังไม่เดินเครื่อง (รอ Setup / เปลี่ยนโรล)" },
-      { machine: "E14", status: "RUNNING", item: "26/6028-CG", timeSlot: "10:00 น.", actual: 1550, target: 1500, cause: "เดินเครื่องปกติ" }
-    ];
-
-    let actualProgress = { "E6": 18000, "E4": 45000, "E12": 92000, "E14": 20000 };
-    let avgSpeedPerDay = { "E6": 8000, "E4": 9000, "E12": 9000, "E14": 9000 };
-
+    // ตัวแปรเก็บผลงานสะสมปัจจุบัน เริ่มที่ 0 ทั้งหมดตามที่คุณต้องการ
+    let actualProgress = { "E12": 0, "E4": 0, "E6": 0, "E14": 0 };
+    
     let dimChart = null, progChart = null;
+    const MACHINES = ["E12", "E4", "E6", "E14"];
 
     function switchTab(tabId, btn) {
       document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
@@ -264,32 +218,53 @@
       btn.classList.add('active');
     }
 
+    // ฟังก์ชันค้นหาออเดอร์ที่กำลังผลิตของแต่ละเครื่อง (Priority ต่ำสุด หรือ ทอแถน 1)
+    function getActivePlan(machine) {
+      let mPlans = planData.filter(p => p.machine === machine && p.status !== "ทอครบแล้ว");
+      if(mPlans.length === 0) return null;
+      
+      mPlans.sort((a, b) => {
+        let pA = a.priority.toString().includes("แถน") ? 0 : Number(a.priority) || 99;
+        let pB = b.priority.toString().includes("แถน") ? 0 : Number(b.priority) || 99;
+        return pA - pB;
+      });
+      return mPlans[0];
+    }
+
+    function updatePlanData(index, field, value) {
+      if(field === 'totalDim' || field === 'targetDim') {
+        planData[index][field] = Number(value);
+      } else {
+        planData[index][field] = value;
+      }
+    }
+
     function renderSummary() {
       const container = document.getElementById("machine-cards-container");
       container.innerHTML = "";
 
-      let machines = ["E6", "E4", "E12", "E14"];
       let labels = [], currentDims = [], targetDims = [], pcts = [];
 
-      machines.forEach(m => {
-        let currentPlan = planData.find(p => p.machine === m && (p.priority == 1 || p.priority == "ทอแถน 1")) || { order: "-", item: "ไม่มีแผน", totalDim: 0 };
-        let nextPlan = planData.find(p => p.machine === m && p.priority == 2) || { order: "-", item: "ไม่มีแผน" };
-
-        let rt = realTimeData.find(r => r.machine === m) || { status: "RUNNING" };
-        let badgeHtml = rt.status === "RUNNING" ? `<span class="status-badge status-running">🟢 เดินเครื่องปกติ</span>` :
-                        rt.status === "WARNING" ? `<span class="status-badge status-warning">🟡 ต่ำกว่าเป้า</span>` :
-                        `<span class="status-badge status-stopped">🔴 ยังไม่เดินเครื่อง</span>`;
-
-        let curDim = actualProgress[m] || 0;
-        let targetDim = currentPlan.totalDim || 1;
-        let pct = Math.min(100, ((curDim / targetDim) * 100)).toFixed(1);
-
-        let remDim = Math.max(0, targetDim - curDim);
-        let daysLeft = (remDim / avgSpeedPerDay[m]).toFixed(1);
-
+      MACHINES.forEach(m => {
+        let currentPlan = getActivePlan(m) || { order: "-", item: "ไม่มีแผนงาน", totalDim: 0, targetDim: 9000 };
+        
+        let curDim = actualProgress[m] || 0; // ปัจจุบันเป็น 0
+        let targetDim = currentPlan.totalDim || 0;
+        let dailySpeed = currentPlan.targetDim || 9000;
+        
+        // คำนวณความคืบหน้า (%)
+        let pct = targetDim > 0 ? ((curDim / targetDim) * 100).toFixed(1) : 0;
+        
+        // คำนวณวันคงเหลือ และ วันจบงาน
+        let remainingDim = Math.max(0, targetDim - curDim);
+        let daysLeft = targetDim > 0 ? Math.ceil(remainingDim / dailySpeed) : 0;
+        
         let finishDate = new Date();
-        finishDate.setDate(finishDate.getDate() + Math.ceil(daysLeft));
-        let dateStr = finishDate.toLocaleDateString('th-TH', { day: 'numeric', month: 'short' });
+        finishDate.setDate(finishDate.getDate() + daysLeft);
+        let dateStr = targetDim > 0 ? finishDate.toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: 'numeric' }) : "-";
+
+        let isStopped = curDim === 0;
+        let badgeHtml = isStopped ? `<span class="status-badge status-stopped">🔴 ยังไม่เดินเครื่อง</span>` : `<span class="status-badge status-running">🟢 กำลังเดินเครื่อง</span>`;
 
         labels.push(m);
         currentDims.push(curDim);
@@ -303,17 +278,16 @@
               ${badgeHtml}
             </div>
             
-            <div class="info-row"><span class="info-label">ออเดอร์ปัจจุบัน:</span> <span class="info-value">${currentPlan.order}</span></div>
-            <div class="info-row"><span class="info-label">รายการ:</span> <span class="info-value" style="font-size:11px;">${currentPlan.item}</span></div>
-            <div class="info-row"><span class="info-label">มิติเป้าหมาย ($M^2$):</span> <span class="info-value">${targetDim.toLocaleString()}</span></div>
-            <div class="info-row"><span class="info-label">มิติสะสมแล้ว ($M^2$):</span> <span class="info-value" style="color:var(--primary-light);">${curDim.toLocaleString()}</span></div>
+            <div class="info-row"><span class="info-label">ออเดอร์ปัจจุบัน:</span> <span class="info-value" style="color:var(--primary);">${currentPlan.order}</span></div>
+            <div class="info-row"><span class="info-label">มิติรวมที่ต้องทอ (แผน):</span> <span class="info-value">${targetDim.toLocaleString()}</span></div>
+            <div class="info-row"><span class="info-label">มิติสะสม:</span> <span class="info-value" style="color:var(--danger);">${curDim.toLocaleString()} (เริ่ม 0)</span></div>
             
             <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: ${pct}%;"></div></div>
-            <div class="info-row" style="margin-bottom:12px;"><span class="info-label">คืบหน้า:</span> <span class="info-value">${pct}%</span></div>
+            <div class="info-row" style="margin-bottom:12px;"><span class="info-label">ความคืบหน้า:</span> <span class="info-value">${pct}%</span></div>
 
             <div style="background:#f8fafc; padding:10px; border-radius:8px; border:1px solid #cbd5e1;">
-              <div class="info-row"><span class="info-label">⏳ เหลืออีกประมาณ:</span> <span class="info-value" style="color:var(--danger);">${daysLeft} วัน</span></div>
-              <div class="info-row"><span class="info-label">📅 คาดว่าจะจบวันที่:</span> <span class="info-value" style="color:var(--success);">${dateStr}</span></div>
+              <div class="info-row"><span class="info-label">⏳ ระยะเวลาตามแผน:</span> <span class="info-value" style="color:var(--warning);">${daysLeft} วัน</span></div>
+              <div class="info-row"><span class="info-label">📅 คาดว่าจะจบวันที่:</span> <span class="info-value" style="color:var(--success); font-weight:700;">${dateStr}</span></div>
             </div>
           </div>
         `;
@@ -327,26 +301,21 @@
       const tbody = document.getElementById("realtime-tbody");
       tbody.innerHTML = "";
 
-      realTimeData.forEach(rt => {
-        let diff = rt.actual - rt.target;
-        let diffClass = diff < 0 ? "color:var(--danger); font-weight:bold;" : "color:var(--success); font-weight:bold;";
-        let badgeHtml = rt.status === "RUNNING" ? `<span class="status-badge status-running">🟢 เดินเครื่อง</span>` :
-                        rt.status === "WARNING" ? `<span class="status-badge status-warning">🟡 ต่ำกว่าเป้า</span>` :
-                        `<span class="status-badge status-stopped">🔴 ยังไม่เดินเครื่อง</span>`;
-
-        let evalText = diff >= 0 ? "✅ ตามเป้าหมาย" : (rt.actual === 0 ? "❌ เครื่องจอด" : "⚠️ ไม่ได้ตามเป้า");
+      MACHINES.forEach(m => {
+        let active = getActivePlan(m);
+        let curDim = actualProgress[m];
+        let isStopped = curDim === 0;
+        let badgeHtml = isStopped ? `<span class="status-badge status-stopped">🔴 ยังไม่เดินเครื่อง</span>` : `<span class="status-badge status-running">🟢 กำลังเดินเครื่อง</span>`;
+        let textStatus = isStopped ? "❌ เครื่องจอด / ขาดข้อมูล" : "✅ ตามเป้าหมาย";
 
         tbody.innerHTML += `
           <tr>
-            <td style="font-weight:bold; font-size:14px;">${rt.machine}</td>
+            <td style="font-weight:bold; font-size:14px;">${m}</td>
             <td>${badgeHtml}</td>
-            <td style="text-align:left;">${rt.item}</td>
-            <td>${rt.timeSlot}</td>
-            <td style="font-size:13px; font-weight:bold;">${rt.actual.toLocaleString()}</td>
-            <td>${rt.target.toLocaleString()}</td>
-            <td style="${diffClass}">${diff > 0 ? '+' + diff : diff}</td>
-            <td style="font-weight:bold;">${evalText}</td>
-            <td style="text-align:left; color:var(--text-muted);">${rt.cause}</td>
+            <td style="text-align:left;">${active ? active.order + " - " + active.item : "ไม่มีออเดอร์ในแผน"}</td>
+            <td style="font-size:13px; font-weight:bold;">${curDim}</td>
+            <td style="font-weight:bold; color:${isStopped ? 'var(--danger)' : 'var(--success)'};">${textStatus}</td>
+            <td style="text-align:left; color:var(--text-muted);">${isStopped ? 'รอเดินเครื่อง/รอ Setup' : 'ดำเนินงานปกติ'}</td>
           </tr>
         `;
       });
@@ -359,59 +328,26 @@
       planData.forEach((row, i) => {
         tbody.innerHTML += `
           <tr>
-            <td><input type="text" class="table-input" value="${row.machine}" onchange="planData[${i}].machine=this.value"></td>
-            <td><input type="text" class="table-input" value="${row.order}" onchange="planData[${i}].order=this.value"></td>
-            <td><input type="text" class="table-input" style="text-align:left;" value="${row.item}" onchange="planData[${i}].item=this.value"></td>
-            <td><input type="number" class="table-input" value="${row.pcs}"></td>
-            <td><input type="number" class="table-input" value="${row.pcsSet}"></td>
-            <td><input type="number" class="table-input" value="${row.sets}"></td>
-            <td><input type="number" class="table-input" value="${row.dimSet}"></td>
-            <td><input type="number" class="table-input" value="${row.totalDim}"></td>
-            <td><input type="text" class="table-input" value="${row.changeRoll}"></td>
-            <td><input type="text" class="table-input" value="${row.setup}"></td>
-            <td><input type="text" class="table-input" value="${row.startDate}"></td>
-            <td><input type="number" class="table-input" value="${row.orderPcs}"></td>
-            <td><input type="number" class="table-input" value="${row.orderSets}"></td>
-            <td><input type="number" class="table-input" value="${row.targetDim}"></td>
-            <td><input type="number" class="table-input" value="${row.days}"></td>
-            <td><input type="text" class="table-input" value="${row.endDate}"></td>
-            <td><input type="text" class="table-input" value="${row.reportDate}"></td>
-            <td><input type="text" class="table-input" style="font-weight:bold;" value="${row.priority}"></td>
-            <td><input type="text" class="table-input" value="${row.status}"></td>
+            <td><input type="text" class="table-input" value="${row.machine}" onchange="updatePlanData(${i}, 'machine', this.value)"></td>
+            <td><input type="text" class="table-input" value="${row.order}" onchange="updatePlanData(${i}, 'order', this.value)"></td>
+            <td><input type="text" class="table-input" style="text-align:left;" value="${row.item}" onchange="updatePlanData(${i}, 'item', this.value)"></td>
+            <td><input type="number" class="table-input" style="background:#fff3cd;" value="${row.totalDim}" onchange="updatePlanData(${i}, 'totalDim', this.value)"></td>
+            <td><input type="number" class="table-input" style="background:#e2e3e5;" value="${row.targetDim}" onchange="updatePlanData(${i}, 'targetDim', this.value)"></td>
+            <td><input type="text" class="table-input" style="font-weight:bold;" value="${row.priority}" onchange="updatePlanData(${i}, 'priority', this.value)"></td>
+            <td><input type="text" class="table-input" value="${row.status}" onchange="updatePlanData(${i}, 'status', this.value)"></td>
           </tr>
         `;
       });
     }
 
     function addPlanRow() {
-      planData.push({ machine: "E6", order: "NEW-ORD", item: "รายการใหม่", pcs: 0, pcsSet: 0, sets: 0, dimSet: 0, totalDim: 10000, changeRoll: "-", setup: "-", startDate: "-", orderPcs: 0, orderSets: 0, targetDim: 9000, days: 1, endDate: "-", reportDate: "-", priority: 8, status: "วางแผน" });
+      planData.push({ machine: "E12", order: "NEW-ORD", item: "รายการใหม่", totalDim: 100000, targetDim: 9000, priority: "2", status: "รอคิว" });
       renderPlanTable();
     }
 
     function savePlanData() {
-      renderSummary();
-      alert("✅ บันทึกและอัปเดตข้อมูลเรียบร้อย!");
-    }
-
-    function renderEntryTable() {
-      const hTime = document.getElementById("tr-header-time");
-      const hSub = document.getElementById("tr-header-sub");
-      const tbody = document.getElementById("entry-tbody");
-
-      TIME_SLOTS.forEach(t => {
-        hTime.innerHTML += `<th colspan="3" style="background:#0f172a;">${t} น.</th>`;
-        hSub.innerHTML += `<th style="background:#dbeafe; color:#1e3a8a;">ผลงาน</th><th style="background:#e0e7ff; color:#3730a3;">เป้า</th><th style="background:#fef3c7; color:#92400e;">สถานะ</th>`;
-      });
-
-      ["E6", "E4", "E12", "E14"].forEach(m => {
-        let tr = document.createElement("tr");
-        let html = `<td style="font-weight:bold;">${m}</td>`;
-        TIME_SLOTS.forEach(() => {
-          html += `<td><input type="number" class="table-input"></td><td><input type="number" class="table-input" value="1500"></td><td><input type="text" class="table-input"></td>`;
-        });
-        tr.innerHTML = html;
-        tbody.appendChild(tr);
-      });
+      renderSummary(); // คำนวณวันจบและสถานะใหม่ทั้งหมดตามข้อมูลแผนล่าสุด
+      alert("✅ บันทึกแผนสำเร็จ! ระบบได้ปรับปรุง วันที่คาดว่าจะจบงานและภาพรวมเรียลไทม์ใหม่เรียบร้อยแล้ว");
     }
 
     function renderCharts(labels, current, target, pcts) {
@@ -419,23 +355,22 @@
       if (dimChart) dimChart.destroy();
       dimChart = new Chart(ctx1, {
         type: 'bar',
-        data: { labels: labels, datasets: [{ label: 'มิติสะสม', data: current, backgroundColor: '#2563eb' }, { label: 'มิติเป้าหมาย', data: target, backgroundColor: '#cbd5e1' }] },
-        options: { responsive: true }
+        data: { labels: labels, datasets: [{ label: 'มิติสะสมล่าสุด', data: current, backgroundColor: '#ef4444' }, { label: 'มิติรวมแผนงาน', data: target, backgroundColor: '#cbd5e1' }] },
+        options: { responsive: true, scales: { y: { beginAtZero: true } } }
       });
 
       const ctx2 = document.getElementById('progressDoughnut').getContext('2d');
       if (progChart) progChart.destroy();
       progChart = new Chart(ctx2, {
         type: 'doughnut',
-        data: { labels: labels, datasets: [{ data: pcts, backgroundColor: ['#10b981', '#3b82f6', '#f59e0b', '#8b5cf6'] }] },
-        options: { responsive: true }
+        data: { labels: labels, datasets: [{ data: pcts.map(p => p > 0 ? p : 0.1), backgroundColor: ['#10b981', '#3b82f6', '#f59e0b', '#8b5cf6'] }] },
+        options: { responsive: true, plugins: { tooltip: { callbacks: { label: function(c) { return c.label + ': ' + (c.raw === 0.1 ? 0 : c.raw) + '%'; } } } } }
       });
     }
 
     window.onload = function() {
       renderSummary();
       renderPlanTable();
-      renderEntryTable();
     };
   </script>
 </body>
