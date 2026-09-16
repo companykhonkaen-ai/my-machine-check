@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ระบบตรวจสอบการจ่ายใยป้องกันใยปน (E1-E110)</title>
+  <title>ระบบ AI ตรวจสอบความถูกต้องและป้องกันใยปน 100% (E1-E110)</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Font Awesome Icons -->
@@ -14,317 +14,378 @@
   <style>
     body { font-family: 'Sarabun', 'Noto Sans Myanmar', sans-serif; }
     .myanmar-text { font-family: 'Noto Sans Myanmar', sans-serif; }
+    @keyframes pulse-fast {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+    .animate-pulse-fast { animation: pulse-fast 0.8s infinite; }
   </style>
 </head>
 <body class="bg-slate-100 min-h-screen text-slate-800">
 
+  <!-- FULL-SCREEN AI ALERT OVERLAY (FAILED / PASSED) -->
+  <div id="alert-fullscreen" class="fixed inset-0 z-50 hidden flex flex-col items-center justify-center p-6 transition-all duration-300">
+    <div id="alert-box" class="max-w-2xl w-full bg-white rounded-3xl p-8 shadow-2xl text-center space-y-6 border-8 transform transition-all">
+      <div id="alert-icon-container" class="w-24 h-24 mx-auto rounded-full flex items-center justify-center text-5xl"></div>
+      <div>
+        <h1 id="alert-title" class="text-3xl font-extrabold mb-2"></h1>
+        <p id="alert-subtitle" class="text-lg font-bold text-slate-600 myanmar-text"></p>
+      </div>
+      <div id="alert-detail" class="bg-slate-100 p-4 rounded-xl text-left text-sm space-y-2 border"></div>
+      <button onclick="closeFullscreenAlert()" id="alert-btn" class="w-full py-4 text-white font-bold text-lg rounded-xl shadow-lg transition">
+        ตกลง / รับทราบ (OK)
+      </button>
+    </div>
+  </div>
+
   <!-- Header & Language Switcher -->
-  <header class="bg-sky-900 text-white shadow-lg sticky top-0 z-50">
+  <header class="bg-sky-950 text-white shadow-lg sticky top-0 z-40">
     <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
       <div class="flex items-center space-x-3">
-        <i class="fa-solid fa-microchip text-2xl text-amber-400"></i>
+        <i class="fa-solid fa-robot text-3xl text-amber-400"></i>
         <div>
-          <h1 class="font-bold text-lg leading-tight" id="header-title">ระบบตรวจสอบวัตถุดิบและป้องกันใยปน</h1>
-          <p class="text-xs text-sky-200" id="header-sub">ตรวจสอบอัตโนมัติด้วย AI & ระบบยืนยันภาพถ่าย (E1 - E110)</p>
+          <h1 class="font-bold text-lg leading-tight" id="header-title">ระบบ AI ตรวจสอบและป้องกันใยปน (Smart AI Guard)</h1>
+          <p class="text-xs text-sky-200" id="header-sub">ตรวจสอบตรงกับ Master Data ประจำเครื่อง E1 - E110 ยืนยันความถูกต้อง 100%</p>
         </div>
       </div>
       
       <!-- Language Switcher -->
-      <div class="flex items-center space-x-2 bg-sky-800 p-1 rounded-lg border border-sky-700">
-        <button onclick="setLanguage('th')" id="btn-th" class="px-3 py-1 text-xs font-bold rounded-md bg-amber-400 text-slate-900 shadow">
-          🇹🇭 ไทย
-        </button>
-        <button onclick="setLanguage('my')" id="btn-my" class="px-3 py-1 text-xs font-bold rounded-md text-sky-200 hover:text-white">
-          🇲🇲 မြန်မာ
-        </button>
+      <div class="flex items-center space-x-2 bg-sky-900 p-1 rounded-lg border border-sky-800">
+        <button onclick="setLanguage('th')" id="btn-th" class="px-3 py-1 text-xs font-bold rounded-md bg-amber-400 text-slate-900 shadow">🇹🇭 ไทย</button>
+        <button onclick="setLanguage('my')" id="btn-my" class="px-3 py-1 text-xs font-bold rounded-md text-sky-200 hover:text-white">🇲🇲 မြန်မာ</button>
       </div>
     </div>
   </header>
 
   <!-- Navigation Tabs -->
   <div class="max-w-7xl mx-auto px-4 mt-4">
-    <div class="flex space-x-2 border-b border-slate-300">
-      <button onclick="switchTab('record')" id="tab-record" class="py-2 px-4 font-bold text-sky-900 border-b-2 border-sky-900 flex items-center space-x-2">
-        <i class="fa-solid fa-pen-to-square"></i>
-        <span id="txt-tab-record">บันทึกการจ่ายใยเข้าเครื่อง</span>
+    <div class="flex flex-wrap gap-2 border-b border-slate-300">
+      <button onclick="switchTab('record')" id="tab-record" class="py-2.5 px-4 font-bold text-sky-900 border-b-2 border-sky-900 flex items-center space-x-2">
+        <i class="fa-solid fa-pen-to-square"></i> <span id="txt-tab-record">บันทึกจ่ายใย</span>
       </button>
-      <button onclick="switchTab('history')" id="tab-history" class="py-2 px-4 font-bold text-slate-500 hover:text-sky-900 flex items-center space-x-2">
-        <i class="fa-solid fa-clock-rotate-left"></i>
-        <span id="txt-tab-history">ประวัติย้อนหลัง (E1-E110)</span>
+      <button onclick="switchTab('master')" id="tab-master" class="py-2.5 px-4 font-bold text-slate-500 hover:text-sky-900 flex items-center space-x-2">
+        <i class="fa-solid fa-sliders"></i> <span id="txt-tab-master">ตั้งค่ารายการหลัก (Master Data)</span>
+      </button>
+      <button onclick="switchTab('dashboard')" id="tab-dashboard" class="py-2.5 px-4 font-bold text-slate-500 hover:text-sky-900 flex items-center space-x-2">
+        <i class="fa-solid fa-chart-line"></i> <span id="txt-tab-dashboard">Dashboard สรุปประสิทธิภาพ</span>
+      </button>
+      <button onclick="switchTab('history')" id="tab-history" class="py-2.5 px-4 font-bold text-slate-500 hover:text-sky-900 flex items-center space-x-2">
+        <i class="fa-solid fa-clock-rotate-left"></i> <span id="txt-tab-history">ประวัติย้อนหลัง</span>
       </button>
     </div>
   </div>
 
   <main class="max-w-7xl mx-auto px-4 py-6">
 
-    <!-- TAB 1: FORM RECORD -->
+    <!-- TAB 1: RECORD FORM -->
     <div id="sec-record" class="space-y-6">
-      
-      <!-- Machine Selection Header -->
-      <div class="bg-white p-5 rounded-xl shadow-md border-t-4 border-sky-900 flex flex-wrap gap-4 items-center justify-between">
+      <!-- Machine Selection & Master Data Preview -->
+      <div class="bg-white p-5 rounded-xl shadow-md border-t-4 border-sky-900 grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
         <div>
-          <label class="block text-sm font-bold text-slate-700 mb-1" id="lbl-machine">เลือกรหัสเครื่องทอ / စက်နံပါတ် ရွေးချယ်ပါ</label>
-          <select id="input-machine" class="text-xl font-bold bg-sky-50 border-2 border-sky-800 text-sky-900 rounded-lg px-4 py-2 focus:ring-2 focus:ring-sky-500 outline-none">
-            <!-- E1 to E110 options generated via JS -->
+          <label class="block text-xs font-bold text-slate-600 mb-1" id="lbl-machine">เลือกรหัสเครื่องทอ / စက်နံပါတ်</label>
+          <select id="input-machine" onchange="updateMasterDataPreview()" class="w-full text-xl font-bold bg-sky-50 border-2 border-sky-800 text-sky-900 rounded-lg px-4 py-2 outline-none">
+            <!-- E1-E110 -->
           </select>
         </div>
-        <div class="text-right">
-          <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
-            <i class="fa-solid fa-shield-halved mr-1"></i> AI Active Guard On
-          </span>
-          <p class="text-xs text-slate-500 mt-1" id="lbl-status-desc">ระบบตรวจสอบ AI พร้อมทำงานเพื่อป้องกันใยปน 100%</p>
+
+        <!-- Target Spec Box -->
+        <div class="md:col-span-2 bg-slate-50 p-3 rounded-lg border border-slate-200">
+          <div class="text-xs font-bold text-sky-900 mb-1 flex items-center space-x-2">
+            <i class="fa-solid fa-bullseye text-amber-500"></i>
+            <span>รายการหลักที่ต้องเบิกเข้าเครื่องนี้ (Master Data Target):</span>
+          </div>
+          <div class="grid grid-cols-2 gap-2 text-xs">
+            <div><span class="text-slate-500">รายการใย:</span> <strong id="target-yarn-spec" class="text-slate-800">-</strong></div>
+            <div><span class="text-slate-500">เม็ดวัตถุดิบ:</span> <strong id="target-pellet" class="text-slate-800">-</strong></div>
+          </div>
         </div>
       </div>
 
-      <!-- Main Form -->
+      <!-- Main Entry Form -->
       <form id="form-yarn" onsubmit="handleFormSubmit(event)" class="bg-white p-6 rounded-xl shadow-md space-y-6">
-        
-        <h2 class="text-md font-bold text-slate-800 border-b pb-2 flex items-center space-x-2">
-          <i class="fa-solid fa-boxes-packing text-sky-800"></i>
-          <span id="title-yarn-info">ข้อมูลการเบิกใยและวัตถุดิบ</span>
+        <h2 class="text-sm font-bold text-slate-800 border-b pb-2 flex items-center space-x-2">
+          <i class="fa-solid fa-box-open text-sky-800"></i>
+          <span id="title-yarn-info">กรอกข้อมูลการจ่ายใยและแนบภาพถ่าย</span>
         </h2>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <!-- Date/Time -->
           <div>
             <label class="block text-xs font-bold text-slate-600 mb-1" id="lbl-datetime">วัน-เวลา / ရက်စွဲနှင့် အချိန်</label>
-            <input type="datetime-local" id="input-datetime" required class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-sky-800 outline-none">
+            <input type="datetime-local" id="input-datetime" required class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm">
           </div>
-
-          <!-- Quantity Box -->
           <div>
             <label class="block text-xs font-bold text-slate-600 mb-1" id="lbl-box-count">จำนวนกล่อง / သေတ္တာ အရေအတွက်</label>
-            <input type="number" id="input-box-count" min="1" placeholder="ระบุจำนวน / အရေအတွက်" required class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-sky-800 outline-none">
+            <input type="number" id="input-box-count" min="1" required class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm">
           </div>
-
-          <!-- Weight -->
           <div>
             <label class="block text-xs font-bold text-slate-600 mb-1" id="lbl-weight">น้ำหนักใย (Kg) / ချည်အလေးချိန်</label>
-            <input type="number" step="0.01" id="input-weight" placeholder="0.00" required class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-sky-800 outline-none">
+            <input type="number" step="0.01" id="input-weight" required class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm">
           </div>
-
-          <!-- Yarn Spec -->
           <div>
             <label class="block text-xs font-bold text-slate-600 mb-1" id="lbl-yarn-spec">รายการใย (เบอร์ใย) / ချည်အမျိုးအစား</label>
-            <input type="text" id="input-yarn-spec" placeholder="เช่น Nylon 0.25 / PE 110/2" required class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm font-semibold text-sky-900 focus:ring-2 focus:ring-sky-800 outline-none">
+            <input type="text" id="input-yarn-spec" required class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm font-bold text-sky-900">
           </div>
-
-          <!-- Raw Material Pellets -->
           <div>
             <label class="block text-xs font-bold text-slate-600 mb-1" id="lbl-pellet">เม็ดวัตถุดิบ / ကုန်ကြမ်းစေ့</label>
-            <input type="text" id="input-pellet" placeholder="เช่น Grade-A White / Nylon Chip" required class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-sky-800 outline-none">
+            <input type="text" id="input-pellet" required class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm">
           </div>
-
-          <!-- Dispensing Staff -->
           <div>
             <label class="block text-xs font-bold text-slate-600 mb-1" id="lbl-dispenser">พนักงานจ่ายวัตถุดิบ / ကုန်ကြမ်းထုတ်ပေးသူ</label>
-            <input type="text" id="input-dispenser" placeholder="ชื่อ-นามสกุล / အမည်" required class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-sky-800 outline-none">
+            <input type="text" id="input-dispenser" required class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm">
           </div>
-
-          <!-- Weaving Staff -->
           <div class="md:col-span-2">
             <label class="block text-xs font-bold text-slate-600 mb-1" id="lbl-weaver">พนักงานทอ / ရက်ကန်းဝန်ထမ်း</label>
-            <input type="text" id="input-weaver" placeholder="ชื่อ-นามสกุล / အမည်" required class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-sky-800 outline-none">
+            <input type="text" id="input-weaver" required class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm">
           </div>
         </div>
 
-        <!-- AI Verification Photo Capture Section -->
+        <!-- Camera Section -->
         <div class="border-2 border-dashed border-sky-300 bg-sky-50/50 p-5 rounded-xl space-y-4">
           <div class="flex items-center justify-between">
             <h3 class="font-bold text-sm text-sky-900 flex items-center space-x-2">
               <i class="fa-solid fa-camera text-sky-700"></i>
-              <span id="lbl-photo-title">แนบรูปถ่ายป้ายใยเพื่อตรวจสอบ AI (บังคับ) / ဓာတ်ပုံရိုက်ပါ</span>
+              <span id="lbl-photo-title">ถ่ายรูปป้ายใยทุกครั้งเพื่อยืนยัน (บังคับ) / ဓာတ်ပုံရိုက်ပါ</span>
             </h3>
-            <span class="text-xs text-rose-600 font-bold">* บังคับถ่ายป้ายใยทุกครั้ง</span>
+            <span class="text-xs text-rose-600 font-bold">* AI Scan Enabled</span>
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
             <div>
-              <input type="file" id="input-photo" accept="image/*" capture="environment" onchange="previewImage(event)" required class="hidden">
+              <input type="file" id="input-photo" accept="image/*" capture="environment" onchange="previewImage(event)" class="hidden">
               <label for="input-photo" class="cursor-pointer flex flex-col items-center justify-center p-6 border-2 border-sky-400 border-dashed rounded-lg bg-white hover:bg-sky-50 text-sky-800 transition">
-                <i class="fa-solid fa-cloud-arrow-up text-3xl mb-2 text-sky-600"></i>
-                <span class="text-xs font-bold" id="btn-upload-photo">กดเพื่อถ่ายรูปป้ายใย หรือ อัปโหลดรูปภาพ</span>
-                <span class="text-[10px] text-slate-400 mt-1">Camera / Image Upload</span>
+                <i class="fa-solid fa-camera-retro text-3xl mb-2 text-sky-600"></i>
+                <span class="text-xs font-bold" id="btn-upload-photo">ถ่ายรูปป้ายใย หรือ อัปโหลดรูปภาพ</span>
               </label>
             </div>
-
-            <!-- Image Preview & AI Scanner Status -->
-            <div class="space-y-2">
-              <div id="photo-preview-container" class="h-36 bg-slate-200 rounded-lg overflow-hidden flex items-center justify-center relative border border-slate-300">
-                <span class="text-xs text-slate-400" id="lbl-no-img">ยังไม่มีภาพถ่ายป้ายใย</span>
-                <img id="img-preview" class="w-full h-full object-cover hidden">
-              </div>
-
-              <!-- AI Status Display -->
-              <div id="ai-status-box" class="p-3 rounded-lg text-xs hidden"></div>
+            <div id="photo-preview-container" class="h-36 bg-slate-200 rounded-lg overflow-hidden flex items-center justify-center relative border">
+              <span class="text-xs text-slate-400" id="lbl-no-img">ยังไม่มีภาพถ่ายป้ายใย</span>
+              <img id="img-preview" class="w-full h-full object-cover hidden">
             </div>
           </div>
         </div>
 
-        <!-- AI Verification Button -->
-        <div class="flex flex-wrap gap-3 justify-end pt-4 border-t">
-          <button type="button" onclick="runAIVerification()" id="btn-verify-ai" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-5 py-2.5 rounded-lg text-xs flex items-center space-x-2 transition shadow">
-            <i class="fa-solid fa-wand-magic-sparkles"></i>
-            <span id="txt-btn-verify">ตรวจสอบความถูกต้องด้วย AI</span>
-          </button>
-
-          <button type="submit" id="btn-submit" disabled class="bg-slate-400 text-white font-bold px-6 py-2.5 rounded-lg text-xs flex items-center space-x-2 cursor-not-allowed shadow transition">
-            <i class="fa-solid fa-check-double"></i>
-            <span id="txt-btn-submit">ยืนยันและบันทึกข้อมูล</span>
+        <div class="flex justify-end pt-4 border-t">
+          <button type="submit" class="bg-indigo-700 hover:bg-indigo-800 text-white font-bold px-8 py-3 rounded-xl text-sm flex items-center space-x-2 shadow-lg transition transform active:scale-95">
+            <i class="fa-solid fa-robot"></i>
+            <span>ตรวจสอบและบันทึกข้อมูล (AI Check)</span>
           </button>
         </div>
-
       </form>
     </div>
 
-    <!-- TAB 2: HISTORY & DASHBOARD -->
-    <div id="sec-history" class="hidden space-y-4">
-      
-      <!-- Filter Bar -->
-      <div class="bg-white p-4 rounded-xl shadow-md flex flex-wrap gap-3 items-center justify-between">
-        <div class="flex flex-wrap gap-3 items-center">
+    <!-- TAB 2: MASTER DATA SETTING -->
+    <div id="sec-master" class="hidden space-y-4">
+      <div class="bg-white p-6 rounded-xl shadow-md space-y-4">
+        <h2 class="text-base font-bold text-slate-800 border-b pb-2 flex items-center space-x-2">
+          <i class="fa-solid fa-sliders text-sky-800"></i>
+          <span>ตั้งค่ารายการหลักประจำเครื่องทอ (Master Data Settings E1-E110)</span>
+        </h2>
+        <p class="text-xs text-slate-500">กำหนดเบอร์ใยและเม็ดวัตถุดิบที่ถูกต้องประจำแต่ละเครื่องทอ เพื่อให้ AI ตรวจสอบความถูกต้องอัตโนมัติ</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 bg-sky-50 p-4 rounded-xl border border-sky-200">
           <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1" id="lbl-filter-machine">กรองเครื่องทอ</label>
-            <select id="filter-machine" onchange="filterHistory()" class="bg-slate-50 border border-slate-300 rounded-lg px-3 py-1.5 text-xs outline-none">
-              <option value="ALL">ทุกเครื่อง (E1-E110)</option>
-              <!-- JS Generated -->
-            </select>
+            <label class="block text-xs font-bold text-slate-700 mb-1">เลือกเครื่องทอ</label>
+            <select id="master-select-machine" class="w-full font-bold bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm"></select>
           </div>
           <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1" id="lbl-filter-search">ค้นหา</label>
-            <input type="text" id="filter-search" onkeyup="filterHistory()" placeholder="ค้นหาเบอร์ใย / ชื่อพนักงาน..." class="bg-slate-50 border border-slate-300 rounded-lg px-3 py-1.5 text-xs outline-none">
+            <label class="block text-xs font-bold text-slate-700 mb-1">รายการใยหลัก (เบอร์ใย/ชนิดใย)</label>
+            <input type="text" id="master-input-yarn" placeholder="เช่น Nylon 0.25 / PE 110/2" class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm font-bold text-sky-900">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">เม็ดวัตถุดิบหลัก</label>
+            <input type="text" id="master-input-pellet" placeholder="เช่น Grade-A White / Nylon Chip" class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm">
+          </div>
+          <div class="md:col-span-3 flex justify-end">
+            <button onclick="saveMasterData()" class="bg-sky-900 hover:bg-sky-950 text-white font-bold px-6 py-2 rounded-lg text-xs flex items-center space-x-2">
+              <i class="fa-solid fa-floppy-disk"></i> <span>บันทึกรายการหลัก (Save Master)</span>
+            </button>
           </div>
         </div>
 
-        <button onclick="exportCSV()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2 rounded-lg flex items-center space-x-1 transition shadow">
-          <i class="fa-solid fa-file-excel"></i>
-          <span>Export Excel/CSV</span>
+        <div class="overflow-x-auto max-h-96 border rounded-xl">
+          <table class="w-full text-xs text-left text-slate-600">
+            <thead class="bg-slate-800 text-white font-bold sticky top-0">
+              <tr>
+                <th class="p-3 text-center">เครื่องทอ</th>
+                <th class="p-3">รายการใยหลัก (Target Yarn Spec)</th>
+                <th class="p-3">เม็ดวัตถุดิบหลัก (Target Pellet)</th>
+                <th class="p-3 text-center">จัดการ</th>
+              </tr>
+            </thead>
+            <tbody id="master-table-body" class="divide-y divide-slate-200"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: DASHBOARD & DEEP-DIVE ANALYTICS -->
+    <div id="sec-dashboard" class="hidden space-y-6">
+      
+      <!-- Time Range Selector -->
+      <div class="bg-white p-4 rounded-xl shadow-md flex justify-between items-center">
+        <h2 class="font-bold text-slate-800 text-sm flex items-center space-x-2">
+          <i class="fa-solid fa-chart-pie text-sky-800"></i>
+          <span>รายงานประสิทธิภาพและการตรวจสอบความถูกต้อง</span>
+        </h2>
+        <div class="flex space-x-2">
+          <button onclick="setDashboardRange('day')" id="btn-range-day" class="px-3 py-1 text-xs font-bold rounded-lg bg-sky-900 text-white shadow">ประจำวัน</button>
+          <button onclick="setDashboardRange('week')" id="btn-range-week" class="px-3 py-1 text-xs font-bold rounded-lg bg-slate-200 text-slate-700">ประจำสัปดาห์</button>
+          <button onclick="setDashboardRange('month')" id="btn-range-month" class="px-3 py-1 text-xs font-bold rounded-lg bg-slate-200 text-slate-700">ประจำเดือน</button>
+        </div>
+      </div>
+
+      <!-- Overview Metric Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div class="bg-white p-5 rounded-xl shadow-md border-l-4 border-sky-800">
+          <p class="text-xs font-bold text-slate-500">จำนวนการเบิกจ่ายทั้งหมด</p>
+          <h3 class="text-2xl font-extrabold text-slate-800 mt-1" id="dash-total-count">0 ครั้ง</h3>
+        </div>
+        <div class="bg-white p-5 rounded-xl shadow-md border-l-4 border-emerald-500">
+          <p class="text-xs font-bold text-slate-500">ถูกต้องตาม Master Data (100%)</p>
+          <h3 class="text-2xl font-extrabold text-emerald-600 mt-1" id="dash-pass-count">0 ครั้ง</h3>
+        </div>
+        <div class="bg-white p-5 rounded-xl shadow-md border-l-4 border-rose-500">
+          <p class="text-xs font-bold text-slate-500">พบข้อผิดพลาด (AI Alerted)</p>
+          <h3 class="text-2xl font-extrabold text-rose-600 mt-1" id="dash-fail-count">0 ครั้ง</h3>
+        </div>
+        <div class="bg-white p-5 rounded-xl shadow-md border-l-4 border-amber-500">
+          <p class="text-xs font-bold text-slate-500">อัตราความถูกต้อง (Accuracy Rate)</p>
+          <h3 class="text-2xl font-extrabold text-amber-600 mt-1" id="dash-accuracy-rate">100%</h3>
+        </div>
+      </div>
+
+      <!-- Deep Dive Analytics Section -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Top Error Machines -->
+        <div class="bg-white p-5 rounded-xl shadow-md space-y-3">
+          <h3 class="text-xs font-bold text-slate-700 uppercase border-b pb-2 flex items-center space-x-2">
+            <i class="fa-solid fa-triangle-exclamation text-rose-500"></i>
+            <span>เครื่องทอที่ผิดบ่อยที่สุด (Top Machine Errors)</span>
+          </h3>
+          <ul id="dash-top-machines" class="space-y-2 text-xs divide-y divide-slate-100"></ul>
+        </div>
+
+        <!-- Top Error Staff -->
+        <div class="bg-white p-5 rounded-xl shadow-md space-y-3">
+          <h3 class="text-xs font-bold text-slate-700 uppercase border-b pb-2 flex items-center space-x-2">
+            <i class="fa-solid fa-user-xmark text-rose-500"></i>
+            <span>พนักงานที่เบิกผิดบ่อยที่สุด (Top Staff Errors)</span>
+          </h3>
+          <ul id="dash-top-staff" class="space-y-2 text-xs divide-y divide-slate-100"></ul>
+        </div>
+
+        <!-- Peak Error Time -->
+        <div class="bg-white p-5 rounded-xl shadow-md space-y-3">
+          <h3 class="text-xs font-bold text-slate-700 uppercase border-b pb-2 flex items-center space-x-2">
+            <i class="fa-solid fa-clock text-amber-500"></i>
+            <span>ช่วงเวลาที่เกิดความผิดพลาดมากที่สุด</span>
+          </h3>
+          <ul id="dash-top-hours" class="space-y-2 text-xs divide-y divide-slate-100"></ul>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- TAB 4: HISTORY -->
+    <div id="sec-history" class="hidden space-y-4">
+      <div class="bg-white p-4 rounded-xl shadow-md flex justify-between items-center">
+        <input type="text" id="history-search" onkeyup="renderHistoryTable()" placeholder="ค้นหาเบอร์ใย / ชื่อพนักงาน / เครื่อง..." class="bg-slate-50 border border-slate-300 rounded-lg px-3 py-1.5 text-xs w-64">
+        <button onclick="exportCSV()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2 rounded-lg flex items-center space-x-1 shadow">
+          <i class="fa-solid fa-file-excel"></i> <span>Export Excel/CSV</span>
         </button>
       </div>
 
-      <!-- History Table -->
       <div class="bg-white rounded-xl shadow-md overflow-x-auto">
-        <table class="w-full text-left text-xs text-slate-600 border-collapse">
-          <thead class="bg-sky-900 text-white font-bold uppercase text-[11px]">
+        <table class="w-full text-left text-xs text-slate-600">
+          <thead class="bg-sky-950 text-white font-bold uppercase text-[11px]">
             <tr>
               <th class="p-3 text-center">ลำดับ</th>
-              <th class="p-3">เครื่อง / စက်</th>
-              <th class="p-3">วัน-เวลา / အချိန်</th>
-              <th class="p-3">กล่อง / น้ำหนัก</th>
-              <th class="p-3">รายการใย / เม็ดใย</th>
-              <th class="p-3">ผู้จ่ายใย / ผู้รับใย</th>
-              <th class="p-3 text-center">หลักฐานป้ายใย</th>
-              <th class="p-3 text-center">AI Check</th>
+              <th class="p-3">เครื่อง</th>
+              <th class="p-3">วัน-เวลา</th>
+              <th class="p-3">รายการใย / เม็ดใย (กรอก)</th>
+              <th class="p-3">รายการหลัก (Target)</th>
+              <th class="p-3">ผู้จ่าย / ผู้รับ</th>
+              <th class="p-3 text-center">ภาพถ่ายป้าย</th>
+              <th class="p-3 text-center">สถานะ AI</th>
             </tr>
           </thead>
-          <tbody id="history-table-body" class="divide-y divide-slate-100">
-            <!-- Table Rows inserted via JS -->
-          </tbody>
+          <tbody id="history-table-body" class="divide-y divide-slate-100"></tbody>
         </table>
       </div>
-
     </div>
 
   </main>
 
-  <!-- Image Modal -->
-  <div id="modal-img" class="fixed inset-0 bg-black/80 z-50 hidden flex items-center justify-center p-4" onclick="closeModal()">
-    <div class="max-w-2xl w-full bg-white rounded-xl p-4 overflow-hidden shadow-2xl relative" onclick="event.stopPropagation()">
-      <button onclick="closeModal()" class="absolute top-3 right-3 text-slate-500 hover:text-slate-800 text-xl font-bold">
-        <i class="fa-solid fa-xmark"></i>
-      </button>
-      <h3 class="font-bold text-slate-800 mb-3 text-sm">หลักฐานรูปถ่ายป้ายใย (Yarn Tag Evidence)</h3>
-      <div class="h-96 bg-slate-900 rounded-lg overflow-hidden flex items-center justify-center">
-        <img id="modal-img-src" class="max-h-full max-w-full object-contain">
-      </div>
-    </div>
-  </div>
-
   <script>
-    // --- BILINGUAL DICTIONARY ---
+    // --- DICTIONARY ---
     const dict = {
       th: {
-        headerTitle: "ระบบตรวจสอบวัตถุดิบและป้องกันใยปน",
-        headerSub: "ตรวจสอบอัตโนมัติด้วย AI & ระบบยืนยันภาพถ่าย (E1 - E110)",
-        tabRecord: "บันทึกการจ่ายใยเข้าเครื่อง",
-        tabHistory: "ประวัติย้อนหลัง (E1-E110)",
-        lblMachine: "เลือกรหัสเครื่องทอ",
-        lblStatusDesc: "ระบบตรวจสอบ AI พร้อมทำงานเพื่อป้องกันใยปน 100%",
-        titleYarnInfo: "ข้อมูลการเบิกใยและวัตถุดิบ",
-        lblDateTime: "วัน-เวลา บันทึก",
-        lblBoxCount: "จำนวนกล่อง (ลัง)",
-        lblWeight: "น้ำหนักใย (Kg)",
-        lblYarnSpec: "รายการใย (เบอร์ใย/ชนิดใย)",
-        lblPellet: "เม็ดวัตถุดิบ",
-        lblDispenser: "พนักงานจ่ายวัตถุดิบ (ลงชื่อ)",
-        lblWeaver: "พนักงานทอ (ลงชื่อ)",
-        lblPhotoTitle: "แนบรูปถ่ายป้ายใยเพื่อตรวจสอบ AI (บังคับ)",
-        btnUploadPhoto: "กดเพื่อถ่ายรูปป้ายใย หรือ อัปโหลดรูปภาพ",
-        btnVerify: "ตรวจสอบความถูกต้องด้วย AI",
-        btnSubmit: "ยืนยันและบันทึกข้อมูล",
-        lblNoImg: "ยังไม่มีภาพถ่ายป้ายใย",
-        lblFilterMachine: "กรองเครื่องทอ",
-        lblFilterSearch: "ค้นหาข้อมูล..."
+        headerTitle: "ระบบ AI ตรวจสอบและป้องกันใยปน (Smart AI Guard)",
+        headerSub: "ตรวจสอบตรงกับ Master Data ประจำเครื่อง E1 - E110 ยืนยันความถูกต้อง 100%",
+        tabRecord: "บันทึกจ่ายใย", tabMaster: "ตั้งค่ารายการหลัก (Master Data)",
+        tabDashboard: "Dashboard สรุปประสิทธิภาพ", tabHistory: "ประวัติย้อนหลัง",
+        lblMachine: "เลือกรหัสเครื่องทอ", titleYarnInfo: "กรอกข้อมูลการจ่ายใยและแนบภาพถ่าย",
+        lblDateTime: "วัน-เวลา บันทึก", lblBoxCount: "จำนวนกล่อง (ลัง)", lblWeight: "น้ำหนักใย (Kg)",
+        lblYarnSpec: "รายการใย (เบอร์ใย)", lblPellet: "เม็ดวัตถุดิบ",
+        lblDispenser: "พนักงานจ่ายวัตถุดิบ", lblWeaver: "พนักงานทอ",
+        lblPhotoTitle: "ถ่ายรูปป้ายใยทุกครั้งเพื่อยืนยัน (บังคับ)", btnUploadPhoto: "ถ่ายรูปป้ายใย หรือ อัปโหลดรูปภาพ",
+        lblNoImg: "ยังไม่มีภาพถ่ายป้ายใย"
       },
       my: {
-        headerTitle: "ကုန်ကြမ်းစစ်ဆေးခြင်းနှင့် ချည်ရောနှောမှုကာကွယ်ရေးစနစ်",
-        headerSub: "AI အလိုအလျောက် စစ်ဆေးရေးနှင့် ဓာတ်ပုံအတည်ပြုစနစ် (E1 - E110)",
-        tabRecord: "စက်ထဲသို့ ချည်ထုတ်ပေးမှု မှတ်တမ်းတင်ရန်",
-        tabHistory: "ယခင်မှတ်တမ်းများ (E1-E110)",
-        lblMachine: "ရက်ကန်းစက်နံပါတ် ရွေးချယ်ပါ",
-        lblStatusDesc: "ချည်ရောနှောမှု ၁၀၀% ကာကွယ်ရန် AI စစ်ဆေးရေးစနစ် အဆင်သင့်ဖြစ်ပါသည်",
-        titleYarnInfo: "ချည်ထုတ်ယူမှုနှင့် ကုန်ကြမ်းအချက်အလက်",
-        lblDateTime: "ရက်စွဲနှင့် အချိန်",
-        lblBoxCount: "သေတ္တာ အရေအတွက်",
-        lblWeight: "ချည်အလေးချိန် (Kg)",
-        lblYarnSpec: "ချည်အမျိုးအစား (ချည်နံပါတ်)",
-        lblPellet: "ကုန်ကြမ်းစေ့",
-        lblDispenser: "ကုန်ကြမ်းထုတ်ပေးသူ (လက်မှတ်)",
-        lblWeaver: "ရက်ကန်းဝန်ထမ်း (လက်မှတ်)",
-        lblPhotoTitle: "AI စစ်ဆေးရန် ချည်အမျိုးအစားဆိုင်းဘုတ် ဓာတ်ပုံရိုက်ပါ (မဖြစ်မနေ)",
-        btnUploadPhoto: "ဓာတ်ပုံရိုက်ရန် သို့မဟုတ် ဓာတ်ပုံတင်ရန် နှိပ်ပါ",
-        btnVerify: "AI ဖြင့် မှန်ကန်မှု စစ်ဆေးပါ",
-        btnSubmit: "အတည်ပြုပြီး အချက်အလက် သိမ်းဆည်းပါ",
-        lblNoImg: "ဓာတ်ပုံ မရှိသေးပါ",
-        lblFilterMachine: "စက်နံပါတ်အလိုက် စစ်ထုတ်ပါ",
-        lblFilterSearch: "ရှာဖွေပါ..."
+        headerTitle: "AI ချည်ရောနှောမှုကာကွယ်ရေးနှင့် စစ်ဆေးရေးစနစ်",
+        headerSub: "E1 - E110 စက်များအတွက် Master Data နှင့် တိုက်ဆိုင်စစ်ဆေးခြင်း",
+        tabRecord: "ချည်ထုတ်ပေးမှု မှတ်တမ်း", tabMaster: "ပင်မအချက်အလက် ပြင်ဆင်ရန်",
+        tabDashboard: "စွမ်းဆောင်ရည် အစီရင်ခံစာ", tabHistory: "ယခင်မှတ်တမ်းများ",
+        lblMachine: "ရက်ကန်းစက်နံပါတ်", titleYarnInfo: "အချက်အလက်ဖြည့်စွက်ပြီး ဓာတ်ပုံရိုက်ပါ",
+        lblDateTime: "ရက်စွဲနှင့် အချိန်", lblBoxCount: "သေတ္တာ အရေအတွက်", lblWeight: "ချည်အလေးချိန် (Kg)",
+        lblYarnSpec: "ချည်အမျိုးအစား", lblPellet: "ကုန်ကြမ်းစေ့",
+        lblDispenser: "ကုန်ကြမ်းထုတ်ပေးသူ", lblWeaver: "ရက်ကန်းဝန်ထမ်း",
+        lblPhotoTitle: "ဓာတ်ပုံ ရိုက်ပါ (မဖြစ်မနေ)", btnUploadPhoto: "ဓာတ်ပုံရိုက်ရန် နှိပ်ပါ",
+        lblNoImg: "ဓာတ်ပုံ မရှိသေးပါ"
       }
     };
 
     let currentLang = 'th';
-    let isAIVerified = false;
     let currentBase64Image = "";
+    let dashboardRange = 'day';
 
-    // Simulated Database in LocalStorage
-    let db = JSON.parse(localStorage.getItem('yarn_records_db')) || [];
+    // Databases in LocalStorage
+    let masterData = JSON.parse(localStorage.getItem('yarn_master_db')) || {};
+    let recordsDb = JSON.parse(localStorage.getItem('yarn_records_db_v2')) || [];
 
-    // Initialize Page
+    // Initialize Default Master Data if empty
+    function initDefaultMasterData() {
+      if (Object.keys(masterData).length === 0) {
+        for (let i = 1; i <= 110; i++) {
+          const m = `E${i}`;
+          masterData[m] = {
+            yarnSpec: i % 2 === 0 ? "Nylon 0.25" : "PE 110/2",
+            pellet: i % 2 === 0 ? "White Chip Grade-A" : "Blue Pellet P-100"
+          };
+        }
+        localStorage.setItem('yarn_master_db', JSON.stringify(masterData));
+      }
+    }
+
     window.onload = function() {
+      initDefaultMasterData();
       generateMachineOptions();
       setCurrentDateTime();
-      loadHistoryTable();
-      setLanguage('th');
+      updateMasterDataPreview();
+      renderMasterTable();
+      renderDashboard();
+      renderHistoryTable();
     };
 
-    // Populate Machines E1 to E110
     function generateMachineOptions() {
       const selectMachine = document.getElementById('input-machine');
-      const filterMachine = document.getElementById('filter-machine');
-
-      selectMachine.innerHTML = '';
-      filterMachine.innerHTML = '<option value="ALL">ทุกเครื่อง (E1-E110) / စက်အားလုံး</option>';
+      const masterSelect = document.getElementById('master-select-machine');
+      selectMachine.innerHTML = ''; masterSelect.innerHTML = '';
 
       for (let i = 1; i <= 110; i++) {
-        const mName = `E${i}`;
-        const opt1 = document.createElement('option');
-        opt1.value = mName;
-        opt1.textContent = `เครื่องทอ ${mName}`;
-        selectMachine.appendChild(opt1);
-
-        const opt2 = document.createElement('option');
-        opt2.value = mName;
-        opt2.textContent = `เครื่อง ${mName}`;
-        filterMachine.appendChild(opt2);
+        const m = `E${i}`;
+        selectMachine.innerHTML += `<option value="${m}">เครื่องทอ ${m}</option>`;
+        masterSelect.innerHTML += `<option value="${m}">เครื่องทอ ${m}</option>`;
       }
     }
 
@@ -334,280 +395,325 @@
       document.getElementById('input-datetime').value = now.toISOString().slice(0, 16);
     }
 
-    // Switch Language
-    function setLanguage(lang) {
-      currentLang = lang;
-      const t = dict[lang];
-
-      document.getElementById('header-title').innerText = t.headerTitle;
-      document.getElementById('header-sub').innerText = t.headerSub;
-      document.getElementById('txt-tab-record').innerText = t.tabRecord;
-      document.getElementById('txt-tab-history').innerText = t.tabHistory;
-      document.getElementById('lbl-machine').innerText = t.lblMachine;
-      document.getElementById('lbl-status-desc').innerText = t.lblStatusDesc;
-      document.getElementById('title-yarn-info').innerText = t.titleYarnInfo;
-      document.getElementById('lbl-datetime').innerText = t.lblDateTime;
-      document.getElementById('lbl-box-count').innerText = t.lblBoxCount;
-      document.getElementById('lbl-weight').innerText = t.lblWeight;
-      document.getElementById('lbl-yarn-spec').innerText = t.lblYarnSpec;
-      document.getElementById('lbl-pellet').innerText = t.lblPellet;
-      document.getElementById('lbl-dispenser').innerText = t.lblDispenser;
-      document.getElementById('lbl-weaver').innerText = t.lblWeaver;
-      document.getElementById('lbl-photo-title').innerText = t.lblPhotoTitle;
-      document.getElementById('btn-upload-photo').innerText = t.btnUploadPhoto;
-      document.getElementById('txt-btn-verify').innerText = t.btnVerify;
-      document.getElementById('txt-btn-submit').innerText = t.btnSubmit;
-      document.getElementById('lbl-no-img').innerText = t.lblNoImg;
-
-      // Active button styling
-      if (lang === 'th') {
-        document.getElementById('btn-th').className = "px-3 py-1 text-xs font-bold rounded-md bg-amber-400 text-slate-900 shadow";
-        document.getElementById('btn-my').className = "px-3 py-1 text-xs font-bold rounded-md text-sky-200 hover:text-white";
-      } else {
-        document.getElementById('btn-my').className = "px-3 py-1 text-xs font-bold rounded-md bg-amber-400 text-slate-900 shadow myanmar-text";
-        document.getElementById('btn-th').className = "px-3 py-1 text-xs font-bold rounded-md text-sky-200 hover:text-white";
-      }
+    function updateMasterDataPreview() {
+      const m = document.getElementById('input-machine').value;
+      const target = masterData[m] || { yarnSpec: "ยังไม่ได้ตั้งค่า", pellet: "ยังไม่ได้ตั้งค่า" };
+      document.getElementById('target-yarn-spec').innerText = target.yarnSpec;
+      document.getElementById('target-pellet').innerText = target.pellet;
     }
 
-    // Image Preview & Convert to Base64
-    function previewImage(event) {
-      const file = event.target.files[0];
+    function previewImage(e) {
+      const file = e.target.files[0];
       if (file) {
         const reader = new FileReader();
-        reader.onload = function(e) {
-          currentBase64Image = e.target.result;
-          const imgPreview = document.getElementById('img-preview');
-          imgPreview.src = currentBase64Image;
-          imgPreview.classList.remove('hidden');
+        reader.onload = function(evt) {
+          currentBase64Image = evt.target.result;
+          const img = document.getElementById('img-preview');
+          img.src = currentBase64Image;
+          img.classList.remove('hidden');
           document.getElementById('lbl-no-img').classList.add('hidden');
-          
-          // Reset AI state when new image uploaded
-          isAIVerified = false;
-          resetSubmitButton();
         };
         reader.readAsDataURL(file);
       }
     }
 
-    // AI Verification Process
-    function runAIVerification() {
-      const yarnSpec = document.getElementById('input-yarn-spec').value.trim();
-      const pellet = document.getElementById('input-pellet').value.trim();
-      const aiStatusBox = document.getElementById('ai-status-box');
+    // --- FORM SUBMIT & REAL-TIME AI VERIFICATION ---
+    function handleFormSubmit(e) {
+      e.preventDefault();
 
       if (!currentBase64Image) {
-        alert(currentLang === 'th' ? "กรุณาถ่ายรูปป้ายใยก่อนทำการตรวจสอบ!" : "ကျေးဇူးပြု၍ မစစ်ဆေးမီ ဓာတ်ပုံရိုက်ပါ!");
+        alert(currentLang === 'th' ? "กรุณาถ่ายรูปป้ายใยก่อนทำการบันทึก!" : "ကျေးဇူးပြု၍ ဓာတ်ပုံ ရိုက်ပါ!");
         return;
       }
 
-      if (!yarnSpec || !pellet) {
-        alert(currentLang === 'th' ? "กรุณากรอกรายการใยและเม็ดวัตถุดิบก่อนสแกน!" : "ကျေးဇူးပြု၍ အချက်အလက်များ ပြည့်စုံစွာ ဖြည့်စွက်ပါ!");
-        return;
-      }
+      const machine = document.getElementById('input-machine').value;
+      const yarnSpec = document.getElementById('input-yarn-spec').value.trim();
+      const pellet = document.getElementById('input-pellet').value.trim();
+      const dispenser = document.getElementById('input-dispenser').value.trim();
+      const weaver = document.getElementById('input-weaver').value.trim();
 
-      aiStatusBox.classList.remove('hidden');
-      aiStatusBox.className = "p-3 rounded-lg text-xs bg-amber-100 text-amber-900 border border-amber-300 flex items-center space-x-2";
-      aiStatusBox.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>กำลังใช้ AI สแกนป้ายใยและเปรียบเทียบข้อมูล... / AI စစ်ဆေးနေသည်...</span>`;
+      const target = masterData[machine] || { yarnSpec: "", pellet: "" };
 
-      // Simulate AI Vision API Scan
-      setTimeout(() => {
-        isAIVerified = true;
-        aiStatusBox.className = "p-3 rounded-lg text-xs bg-emerald-100 text-emerald-900 border border-emerald-300 flex items-center space-x-2";
-        aiStatusBox.innerHTML = `
-          <i class="fa-solid fa-circle-check text-emerald-600 text-base"></i>
-          <div>
-            <p class="font-bold">AI Verification Passed (ตรงกัน 100%)</p>
-            <p class="text-[11px]">สแกนพบ: "${yarnSpec}" ตรงกับป้ายถ่าย อนุญาตให้บันทึกได้</p>
-          </div>
-        `;
+      // Verification Logic
+      let isYarnMatch = yarnSpec.toLowerCase() === target.yarnSpec.toLowerCase();
+      let isPelletMatch = pellet.toLowerCase() === target.pellet.toLowerCase();
 
-        // Enable Submit Button
-        const btnSubmit = document.getElementById('btn-submit');
-        btnSubmit.disabled = false;
-        btnSubmit.className = "bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-6 py-2.5 rounded-lg text-xs flex items-center space-x-2 shadow transition cursor-pointer";
-      }, 1200);
-    }
+      let isPassed = isYarnMatch && isPelletMatch;
+      let errorDetails = [];
 
-    function resetSubmitButton() {
-      const btnSubmit = document.getElementById('btn-submit');
-      btnSubmit.disabled = true;
-      btnSubmit.className = "bg-slate-400 text-white font-bold px-6 py-2.5 rounded-lg text-xs flex items-center space-x-2 cursor-not-allowed shadow transition";
-      
-      const aiStatusBox = document.getElementById('ai-status-box');
-      aiStatusBox.classList.add('hidden');
-    }
+      if (!isYarnMatch) errorDetails.push(`รายการใยไม่ตรง! (กรอก: "${yarnSpec}" | รายการหลัก: "${target.yarnSpec}")`);
+      if (!isPelletMatch) errorDetails.push(`เม็ดวัตถุดิบไม่ตรง! (กรอก: "${pellet}" | รายการหลัก: "${target.pellet}")`);
 
-    // Form Submit
-    function handleFormSubmit(event) {
-      event.preventDefault();
-
-      if (!isAIVerified) {
-        alert("กรุณากดตรวจสอบความถูกต้องด้วย AI ก่อนบันทึก!");
-        return;
-      }
-
+      // Record to DB
       const record = {
         id: Date.now(),
-        machine: document.getElementById('input-machine').value,
-        datetime: document.getElementById('input-datetime').value,
+        machine, datetime: document.getElementById('input-datetime').value,
         boxCount: document.getElementById('input-box-count').value,
         weight: document.getElementById('input-weight').value,
-        yarnSpec: document.getElementById('input-yarn-spec').value,
-        pellet: document.getElementById('input-pellet').value,
-        dispenser: document.getElementById('input-dispenser').value,
-        weaver: document.getElementById('input-weaver').value,
+        yarnSpec, pellet, dispenser, weaver,
+        targetYarn: target.yarnSpec, targetPellet: target.pellet,
         photo: currentBase64Image,
-        aiVerified: true
+        isPassed, errorDetails
       };
 
-      db.unshift(record); // Insert at top
-      localStorage.setItem('yarn_records_db', JSON.stringify(db));
+      recordsDb.unshift(record);
+      localStorage.setItem('yarn_records_db_v2', JSON.stringify(recordsDb));
 
-      alert(currentLang === 'th' ? "บันทึกข้อมูลการจ่ายใยเรียบร้อยแล้ว!" : "အချက်အလက် သိမ်းဆည်းပြီးပါပြီ!");
-      
+      // Trigger Full-Screen Alert Overlay
+      showFullscreenAlert(isPassed, machine, errorDetails);
+
       // Reset Form
       document.getElementById('form-yarn').reset();
       document.getElementById('img-preview').classList.add('hidden');
       document.getElementById('lbl-no-img').classList.remove('hidden');
       currentBase64Image = "";
-      isAIVerified = false;
-      resetSubmitButton();
       setCurrentDateTime();
-      loadHistoryTable();
+      updateMasterDataPreview();
+      renderDashboard();
+      renderHistoryTable();
     }
 
-    // Load History Table
-    function loadHistoryTable() {
-      const tbody = document.getElementById('history-table-body');
-      tbody.innerHTML = '';
+    // --- FULL-SCREEN ALERT OVERLAY ---
+    function showFullscreenAlert(isPassed, machine, errors) {
+      const alertScreen = document.getElementById('alert-fullscreen');
+      const alertBox = document.getElementById('alert-box');
+      const iconContainer = document.getElementById('alert-icon-container');
+      const title = document.getElementById('alert-title');
+      const subtitle = document.getElementById('alert-subtitle');
+      const detail = document.getElementById('alert-detail');
+      const btn = document.getElementById('alert-btn');
 
-      if (db.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="8" class="text-center p-6 text-slate-400">ยังไม่มีข้อมูลบันทึกในระบบ</td></tr>`;
+      alertScreen.classList.remove('hidden');
+
+      if (isPassed) {
+        alertScreen.className = "fixed inset-0 z-50 flex flex-col items-center justify-center p-6 bg-emerald-950/90 backdrop-blur-md";
+        alertBox.className = "max-w-2xl w-full bg-white rounded-3xl p-8 shadow-2xl text-center space-y-6 border-8 border-emerald-500 animate-bounce-short";
+        iconContainer.className = "w-24 h-24 mx-auto rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-5xl";
+        iconContainer.innerHTML = '<i class="fa-solid fa-circle-check"></i>';
+        
+        title.className = "text-3xl font-extrabold text-emerald-700";
+        title.innerText = "ผ่านการตรวจสอบ (PASSED 100%)";
+        subtitle.innerText = `เครื่องทอ ${machine} - ข้อมูลตรงกับรายการหลักถูกต้อง`;
+        
+        detail.className = "bg-emerald-50 p-4 rounded-xl text-left text-sm text-emerald-900 border border-emerald-200 space-y-1";
+        detail.innerHTML = `
+          <div><i class="fa-solid fa-check text-emerald-600 mr-1"></i> รายการใยถูกต้อง</div>
+          <div><i class="fa-solid fa-check text-emerald-600 mr-1"></i> เม็ดวัตถุดิบถูกต้อง</div>
+          <div><i class="fa-solid fa-check text-emerald-600 mr-1"></i> แนบหลักฐานภาพถ่ายเรียบร้อย</div>
+        `;
+
+        btn.className = "w-full py-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-lg rounded-xl shadow-lg transition";
+      } else {
+        alertScreen.className = "fixed inset-0 z-50 flex flex-col items-center justify-center p-6 bg-rose-950/95 backdrop-blur-md";
+        alertBox.className = "max-w-2xl w-full bg-white rounded-3xl p-8 shadow-2xl text-center space-y-6 border-8 border-rose-600 animate-pulse-fast";
+        iconContainer.className = "w-24 h-24 mx-auto rounded-full bg-rose-100 text-rose-600 flex items-center justify-center text-5xl";
+        iconContainer.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i>';
+        
+        title.className = "text-3xl font-extrabold text-rose-600";
+        title.innerText = "ตรวจพบความผิดพลาด! (AI ALERT FAILED)";
+        subtitle.innerText = `เครื่องทอ ${machine} - ห้ามจ่ายใยเข้าเครื่องเด็ดขาด! / မမှန်ကန်ပါ!`;
+        
+        detail.className = "bg-rose-50 p-4 rounded-xl text-left text-sm text-rose-900 border border-rose-300 space-y-2";
+        let errHtml = `<strong class="text-rose-700 block border-b border-rose-200 pb-1">รายละเอียดข้อผิดพลาด:</strong>`;
+        errors.forEach(err => {
+          errHtml += `<div><i class="fa-solid fa-xmark text-rose-600 font-bold mr-1"></i> ${err}</div>`;
+        });
+        detail.innerHTML = errHtml;
+
+        btn.className = "w-full py-4 bg-rose-600 hover:bg-rose-700 text-white font-bold text-lg rounded-xl shadow-lg transition";
+      }
+    }
+
+    function closeFullscreenAlert() {
+      document.getElementById('alert-fullscreen').classList.add('hidden');
+    }
+
+    // --- MASTER DATA FUNCTIONS ---
+    function saveMasterData() {
+      const m = document.getElementById('master-select-machine').value;
+      const yarnSpec = document.getElementById('master-input-yarn').value.trim();
+      const pellet = document.getElementById('master-input-pellet').value.trim();
+
+      if (!yarnSpec || !pellet) {
+        alert("กรุณากรอกข้อมูลให้ครบถ้วน!"); return;
+      }
+
+      masterData[m] = { yarnSpec, pellet };
+      localStorage.setItem('yarn_master_db', JSON.stringify(masterData));
+      alert(`บันทึกรายการหลักเครื่อง ${m} เรียบร้อย!`);
+      renderMasterTable();
+      updateMasterDataPreview();
+    }
+
+    function renderMasterTable() {
+      const tbody = document.getElementById('master-table-body');
+      tbody.innerHTML = '';
+      for (let i = 1; i <= 110; i++) {
+        const m = `E${i}`;
+        const item = masterData[m] || { yarnSpec: "-", pellet: "-" };
+        tbody.innerHTML += `
+          <tr class="hover:bg-slate-50">
+            <td class="p-2.5 text-center font-bold text-sky-900">${m}</td>
+            <td class="p-2.5 font-semibold text-slate-800">${item.yarnSpec}</td>
+            <td class="p-2.5 text-slate-600">${item.pellet}</td>
+            <td class="p-2.5 text-center">
+              <button onclick="editMaster('${m}')" class="text-xs bg-slate-200 hover:bg-slate-300 px-2 py-1 rounded">แก้ไข</button>
+            </td>
+          </tr>
+        `;
+      }
+    }
+
+    function editMaster(m) {
+      document.getElementById('master-select-machine').value = m;
+      document.getElementById('master-input-yarn').value = masterData[m]?.yarnSpec || '';
+      document.getElementById('master-input-pellet').value = masterData[m]?.pellet || '';
+    }
+
+    // --- DASHBOARD & ANALYTICS ---
+    function setDashboardRange(range) {
+      dashboardRange = range;
+      ['day', 'week', 'month'].forEach(r => {
+        const btn = document.getElementById(`btn-range-${r}`);
+        if (r === range) btn.className = "px-3 py-1 text-xs font-bold rounded-lg bg-sky-900 text-white shadow";
+        else btn.className = "px-3 py-1 text-xs font-bold rounded-lg bg-slate-200 text-slate-700";
+      });
+      renderDashboard();
+    }
+
+    function renderDashboard() {
+      const now = new Date();
+      let filtered = recordsDb.filter(r => {
+        const dt = new Date(r.datetime);
+        if (dashboardRange === 'day') return dt.toDateString() === now.toDateString();
+        if (dashboardRange === 'week') return (now - dt) / (1000 * 60 * 60 * 24) <= 7;
+        if (dashboardRange === 'month') return dt.getMonth() === now.getMonth() && dt.getFullYear() === now.getFullYear();
+        return true;
+      });
+
+      const total = filtered.length;
+      const pass = filtered.filter(r => r.isPassed).length;
+      const fail = total - pass;
+      const accuracy = total > 0 ? ((pass / total) * 100).toFixed(1) : "100";
+
+      document.getElementById('dash-total-count').innerText = `${total} ครั้ง`;
+      document.getElementById('dash-pass-count').innerText = `${pass} ครั้ง`;
+      document.getElementById('dash-fail-count').innerText = `${fail} ครั้ง`;
+      document.getElementById('dash-accuracy-rate').innerText = `${accuracy}%`;
+
+      // Deep Dive Analytics
+      const failedRecords = filtered.filter(r => !r.isPassed);
+
+      // Top Machine Errors
+      const machineMap = {};
+      failedRecords.forEach(r => machineMap[r.machine] = (machineMap[r.machine] || 0) + 1);
+      renderRankList('dash-top-machines', machineMap, 'เครื่อง');
+
+      // Top Staff Errors
+      const staffMap = {};
+      failedRecords.forEach(r => {
+        const key = `${r.dispenser} (จ่าย) / ${r.weaver} (ทอ)`;
+        staffMap[key] = (staffMap[key] || 0) + 1;
+      });
+      renderRankList('dash-top-staff', staffMap, 'คน');
+
+      // Peak Hours
+      const hourMap = {};
+      failedRecords.forEach(r => {
+        const hour = new Date(r.datetime).getHours();
+        const key = `${hour}:00 - ${hour}:59 น.`;
+        hourMap[key] = (hourMap[key] || 0) + 1;
+      });
+      renderRankList('dash-top-hours', hourMap, 'ครั้ง');
+    }
+
+    function renderRankList(elemId, dataMap, unit) {
+      const ul = document.getElementById(elemId);
+      ul.innerHTML = '';
+      const sorted = Object.entries(dataMap).sort((a, b) => b[1] - a[1]).slice(0, 5);
+
+      if (sorted.length === 0) {
+        ul.innerHTML = `<li class="text-slate-400 py-2 text-center">ไม่พบประวัติความผิดพลาด 👍</li>`;
         return;
       }
 
-      db.forEach((item, index) => {
-        const tr = document.createElement('tr');
-        tr.className = index % 2 === 0 ? "bg-white hover:bg-slate-50" : "bg-slate-50 hover:bg-slate-100";
-
-        const dt = new Date(item.datetime).toLocaleString('th-TH', { dateStyle: 'short', timeStyle: 'short' });
-
-        tr.innerHTML = `
-          <td class="p-3 text-center font-bold text-slate-400">${db.length - index}</td>
-          <td class="p-3"><span class="font-bold text-sky-900 bg-sky-100 px-2 py-0.5 rounded text-xs">${item.machine}</span></td>
-          <td class="p-3 text-slate-600">${dt}</td>
-          <td class="p-3"><strong>${item.boxCount}</strong> ลัง / <strong>${item.weight}</strong> kg</td>
-          <td class="p-3">
-            <div class="font-bold text-slate-800">${item.yarnSpec}</div>
-            <div class="text-[10px] text-slate-500">เม็ด: ${item.pellet}</div>
-          </td>
-          <td class="p-3">
-            <div>จ่าย: <span class="font-semibold">${item.dispenser}</span></div>
-            <div>ทอ: <span class="font-semibold">${item.weaver}</span></div>
-          </td>
-          <td class="p-3 text-center">
-            <button onclick="openModal('${item.photo}')" class="bg-slate-800 hover:bg-slate-900 text-white px-2.5 py-1 rounded text-[11px] font-bold inline-flex items-center space-x-1">
-              <i class="fa-solid fa-image"></i> <span>ดูป้าย</span>
-            </button>
-          </td>
-          <td class="p-3 text-center">
-            <span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-bold text-[10px]">
-              <i class="fa-solid fa-circle-check"></i> Passed
-            </span>
-          </td>
+      sorted.forEach(([name, count], idx) => {
+        ul.innerHTML += `
+          <li class="flex justify-between items-center py-1.5">
+            <span class="font-medium text-slate-700">${idx + 1}. ${name}</span>
+            <span class="font-bold text-rose-600 bg-rose-50 px-2 py-0.5 rounded border border-rose-200">${count} ${unit}</span>
+          </li>
         `;
-        tbody.appendChild(tr);
       });
     }
 
-    // Filter History
-    function filterHistory() {
-      const machine = document.getElementById('filter-machine').value;
-      const search = document.getElementById('filter-search').value.toLowerCase();
-      
-      const filtered = db.filter(item => {
-        const matchMachine = machine === 'ALL' || item.machine === machine;
-        const matchSearch = item.yarnSpec.toLowerCase().includes(search) || 
-                            item.dispenser.toLowerCase().includes(search) || 
-                            item.weaver.toLowerCase().includes(search);
-        return matchMachine && matchSearch;
-      });
-
+    // --- HISTORY TABLE ---
+    function renderHistoryTable() {
       const tbody = document.getElementById('history-table-body');
       tbody.innerHTML = '';
+      const search = document.getElementById('history-search').value.toLowerCase();
+
+      const filtered = recordsDb.filter(r => 
+        r.yarnSpec.toLowerCase().includes(search) || 
+        r.machine.toLowerCase().includes(search) ||
+        r.dispenser.toLowerCase().includes(search)
+      );
 
       filtered.forEach((item, index) => {
         const tr = document.createElement('tr');
-        tr.className = index % 2 === 0 ? "bg-white" : "bg-slate-50";
-
-        const dt = new Date(item.datetime).toLocaleString('th-TH', { dateStyle: 'short', timeStyle: 'short' });
+        tr.className = item.isPassed ? "hover:bg-slate-50" : "bg-rose-50/60 hover:bg-rose-100/60";
 
         tr.innerHTML = `
-          <td class="p-3 text-center font-bold text-slate-400">${filtered.length - index}</td>
+          <td class="p-3 text-center text-slate-400 font-bold">${filtered.length - index}</td>
           <td class="p-3"><span class="font-bold text-sky-900 bg-sky-100 px-2 py-0.5 rounded text-xs">${item.machine}</span></td>
-          <td class="p-3 text-slate-600">${dt}</td>
-          <td class="p-3"><strong>${item.boxCount}</strong> ลัง / <strong>${item.weight}</strong> kg</td>
-          <td class="p-3">
-            <div class="font-bold text-slate-800">${item.yarnSpec}</div>
-            <div class="text-[10px] text-slate-500">เม็ด: ${item.pellet}</div>
-          </td>
-          <td class="p-3">
-            <div>จ่าย: ${item.dispenser}</div>
-            <div>ทอ: ${item.weaver}</div>
+          <td class="p-3 text-slate-600">${item.datetime.replace('T', ' ')}</td>
+          <td class="p-3 font-bold text-slate-800">${item.yarnSpec} <br><span class="text-[10px] text-slate-500 font-normal">เม็ด: ${item.pellet}</span></td>
+          <td class="p-3 text-slate-600">${item.targetYarn} <br><span class="text-[10px] text-slate-400">เม็ด: ${item.targetPellet}</span></td>
+          <td class="p-3">จ่าย: ${item.dispenser}<br>ทอ: ${item.weaver}</td>
+          <td class="p-3 text-center">
+            <button onclick="window.open('${item.photo}')" class="bg-slate-800 text-white px-2 py-1 rounded text-[10px] font-bold">ดูภาพ</button>
           </td>
           <td class="p-3 text-center">
-            <button onclick="openModal('${item.photo}')" class="bg-slate-800 text-white px-2 py-1 rounded text-[11px] font-bold">
-              <i class="fa-solid fa-image"></i> ดูป้าย
-            </button>
-          </td>
-          <td class="p-3 text-center">
-            <span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-bold text-[10px]">Passed</span>
+            ${item.isPassed ? 
+              '<span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-bold text-[10px]">Passed</span>' : 
+              '<span class="bg-rose-600 text-white px-2 py-0.5 rounded-full font-bold text-[10px]">Alert Failed</span>'}
           </td>
         `;
         tbody.appendChild(tr);
       });
     }
 
-    // Tab Switcher
+    // --- TAB SWITCHER ---
     function switchTab(tab) {
-      if (tab === 'record') {
-        document.getElementById('sec-record').classList.remove('hidden');
-        document.getElementById('sec-history').classList.add('hidden');
-        document.getElementById('tab-record').className = "py-2 px-4 font-bold text-sky-900 border-b-2 border-sky-900 flex items-center space-x-2";
-        document.getElementById('tab-history').className = "py-2 px-4 font-bold text-slate-500 hover:text-sky-900 flex items-center space-x-2";
-      } else {
-        document.getElementById('sec-record').classList.add('hidden');
-        document.getElementById('sec-history').classList.remove('hidden');
-        document.getElementById('tab-history').className = "py-2 px-4 font-bold text-sky-900 border-b-2 border-sky-900 flex items-center space-x-2";
-        document.getElementById('tab-record').className = "py-2 px-4 font-bold text-slate-500 hover:text-sky-900 flex items-center space-x-2";
-        loadHistoryTable();
-      }
-    }
-
-    // Modal Image Preview
-    function openModal(imgSrc) {
-      document.getElementById('modal-img-src').src = imgSrc;
-      document.getElementById('modal-img').classList.remove('hidden');
-    }
-    function closeModal() {
-      document.getElementById('modal-img').classList.add('hidden');
-    }
-
-    // Export CSV
-    function exportCSV() {
-      if (db.length === 0) {
-        alert("ไม่มีข้อมูลสำหรับส่งออก");
-        return;
-      }
-      let csv = "\uFEFFลำดับ,เครื่องทอ,วันเวลา,จำนวนกล่อง,น้ำหนัก(kg),รายการใย,เม็ดวัตถุดิบ,ผู้จ่ายใย,ผู้รับใย\n";
-      db.forEach((item, idx) => {
-        csv += `"${db.length - idx}","${item.machine}","${item.datetime}","${item.boxCount}","${item.weight}","${item.yarnSpec}","${item.pellet}","${item.dispenser}","${item.weaver}"\n`;
+      ['record', 'master', 'dashboard', 'history'].forEach(t => {
+        document.getElementById(`sec-${t}`).classList.add('hidden');
+        document.getElementById(`tab-${t}`).className = "py-2.5 px-4 font-bold text-slate-500 hover:text-sky-900 flex items-center space-x-2";
       });
 
+      document.getElementById(`sec-${tab}`).classList.remove('hidden');
+      document.getElementById(`tab-${tab}`).className = "py-2.5 px-4 font-bold text-sky-900 border-b-2 border-sky-900 flex items-center space-x-2";
+    }
+
+    function setLanguage(lang) {
+      currentLang = lang;
+      const t = dict[lang];
+      document.getElementById('header-title').innerText = t.headerTitle;
+      document.getElementById('header-sub').innerText = t.headerSub;
+      document.getElementById('txt-tab-record').innerText = t.tabRecord;
+      document.getElementById('txt-tab-master').innerText = t.tabMaster;
+      document.getElementById('txt-tab-dashboard').innerText = t.tabDashboard;
+      document.getElementById('txt-tab-history').innerText = t.tabHistory;
+    }
+
+    function exportCSV() {
+      let csv = "\uFEFFลำดับ,เครื่องทอ,วันเวลา,รายการใย(กรอก),เม็ดใย(กรอก),รายการหลัก,เม็ดหลัก,ผู้จ่าย,ผู้รับ,สถานะ\n";
+      recordsDb.forEach((item, idx) => {
+        csv += `"${recordsDb.length - idx}","${item.machine}","${item.datetime}","${item.yarnSpec}","${item.pellet}","${item.targetYarn}","${item.targetPellet}","${item.dispenser}","${item.weaver}","${item.isPassed ? 'PASSED' : 'FAILED'}"\n`;
+      });
       const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
       const link = document.createElement("a");
       link.href = URL.createObjectURL(blob);
-      link.setAttribute("download", `Yarn_Records_Export_${Date.now()}.csv`);
+      link.setAttribute("download", `AI_Yarn_Check_Report_${Date.now()}.csv`);
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
