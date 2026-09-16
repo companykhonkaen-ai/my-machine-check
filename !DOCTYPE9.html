@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ระบบ AI ตรวจสอบความถูกต้องและป้องกันใยปน (Ultra Stable E1-E110)</title>
+  <title>ระบบ AI ตรวจสอบความถูกต้องและป้องกันใยปน (Realtime Cloud Sync E1-E110)</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Font Awesome Icons -->
@@ -11,6 +11,10 @@
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Myanmar:wght@400;600;700&family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
   
+  <!-- Firebase Cloud SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
   <style>
     body { font-family: 'Sarabun', 'Noto Sans Myanmar', sans-serif; }
     .myanmar-text { font-family: 'Noto Sans Myanmar', sans-serif; }
@@ -82,16 +86,16 @@
   <header class="bg-sky-950 text-white shadow-lg sticky top-0 z-40">
     <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
       <div class="flex items-center space-x-3">
-        <i class="fa-solid fa-shield-halved text-3xl text-amber-400"></i>
+        <i class="fa-solid fa-cloud-arrow-up text-3xl text-amber-400"></i>
         <div>
-          <h1 class="font-bold text-lg leading-tight" id="header-title">ระบบ AI ตรวจสอบและป้องกันใยปน (Ultra Stable Guard)</h1>
-          <p class="text-xs text-sky-200" id="header-sub">ระบบเสถียรสูง รองรับการบันทึกต่อเนื่อง (E1 - E110)</p>
+          <h1 class="font-bold text-lg leading-tight" id="header-title">ระบบ AI ตรวจสอบและป้องกันใยปน (Real-time Cloud Sync)</h1>
+          <p class="text-xs text-sky-200" id="header-sub">เชื่อมต่อข้ามอุปกรณ์ มือถือ-คอมพิวเตอร์ แบบเรียลไทม์ (E1 - E110)</p>
         </div>
       </div>
       
       <div class="flex items-center space-x-2">
         <span id="sync-status" class="hidden sm:inline-block text-[10px] bg-emerald-800 text-emerald-200 px-2 py-1 rounded-md border border-emerald-700">
-          <i class="fa-solid fa-wifi text-amber-400 mr-1"></i> Cloud Active
+          <i class="fa-solid fa-wifi text-amber-400 mr-1"></i> Cloud Live Syncing
         </span>
         <div class="flex items-center space-x-1 bg-sky-900 p-1 rounded-lg border border-sky-800">
           <button onclick="setLanguage('th')" id="btn-th" class="px-2.5 py-1 text-xs font-bold rounded-md bg-amber-400 text-slate-900 shadow">🇹🇭 ไทย</button>
@@ -187,7 +191,7 @@
               <i class="fa-solid fa-camera text-sky-700"></i>
               <span id="lbl-photo-title">ถ่ายรูปป้ายใยทุกครั้งเพื่อยืนยัน (บังคับ)</span>
             </h3>
-            <span class="text-xs text-emerald-700 font-bold"><i class="fa-solid fa-compress mr-1"></i> Auto-Compress Active</span>
+            <span class="text-xs text-emerald-700 font-bold"><i class="fa-solid fa-cloud-arrow-up mr-1"></i> Real-time Cloud Active</span>
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
@@ -320,10 +324,31 @@
 
     </div>
 
-    <!-- TAB 4: HISTORY -->
+    <!-- TAB 4: HISTORY (เพิ่มเติมระบบกรอง เครื่องทอ + วันที่) -->
     <div id="sec-history" class="hidden space-y-4">
-      <div class="bg-white p-4 rounded-xl shadow-md flex justify-between items-center">
-        <input type="text" id="history-search" onkeyup="renderHistoryTable()" placeholder="ค้นหาเบอร์ใย / ชื่อพนักงาน / เครื่อง..." class="bg-slate-50 border border-slate-300 rounded-lg px-3 py-1.5 text-xs w-64">
+      <div class="bg-white p-4 rounded-xl shadow-md flex flex-wrap gap-3 justify-between items-center">
+        
+        <div class="flex flex-wrap gap-2 items-center w-full md:w-auto">
+          <!-- Filter by Machine -->
+          <div>
+            <select id="filter-machine" onchange="renderHistoryTable()" class="bg-slate-50 border border-slate-300 rounded-lg px-3 py-1.5 text-xs font-bold text-sky-900 outline-none">
+              <option value="">-- เครื่องทอทั้งหมด (E1-E110) --</option>
+            </select>
+          </div>
+
+          <!-- Filter by Date -->
+          <div>
+            <input type="date" id="filter-date" onchange="renderHistoryTable()" class="bg-slate-50 border border-slate-300 rounded-lg px-3 py-1.5 text-xs text-slate-700 outline-none">
+          </div>
+
+          <!-- Search Keyword -->
+          <div>
+            <input type="text" id="history-search" onkeyup="renderHistoryTable()" placeholder="ค้นหาเบอร์ใย / ชื่อพนักงาน..." class="bg-slate-50 border border-slate-300 rounded-lg px-3 py-1.5 text-xs w-48 outline-none">
+          </div>
+
+          <button onclick="resetHistoryFilters()" class="text-xs text-slate-500 hover:text-slate-800 underline font-bold px-2 py-1">ล้างตัวกรอง</button>
+        </div>
+
         <button onclick="exportCSV()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2 rounded-lg flex items-center space-x-1 shadow">
           <i class="fa-solid fa-file-excel"></i> <span>Export Excel/CSV</span>
         </button>
@@ -352,12 +377,21 @@
   </main>
 
   <script>
+    // --- REALTIME CLOUD DATABASE CONFIGURATION ---
+    const firebaseConfig = {
+      databaseURL: "https://yarn-ai-check-default-rtdb.asia-southeast1.firebasedatabase.app"
+    };
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+    const db = firebase.database();
+
     const ADMIN_PASSWORD = "1234";
 
     const dict = {
       th: {
-        headerTitle: "ระบบ AI ตรวจสอบและป้องกันใยปน (Ultra Stable Guard)",
-        headerSub: "ระบบเสถียรสูง รองรับการบันทึกต่อเนื่อง (E1 - E110)",
+        headerTitle: "ระบบ AI ตรวจสอบและป้องกันใยปน (Real-time Cloud Sync)",
+        headerSub: "เชื่อมต่อข้ามอุปกรณ์ มือถือ-คอมพิวเตอร์ แบบเรียลไทม์ (E1 - E110)",
         tabRecord: "บันทึกจ่ายใย", tabMaster: "ตั้งค่ารายการหลัก (Master Data)",
         tabDashboard: "Dashboard สรุปประสิทธิภาพ", tabHistory: "ประวัติย้อนหลัง",
         lblMachine: "เลือกรหัสเครื่องทอ", titleYarnInfo: "กรอกข้อมูลการจ่ายใยและแนบภาพถ่าย",
@@ -380,8 +414,8 @@
         titleRankTime: "ช่วงเวลาที่เกิดความผิดพลาดมากที่สุด"
       },
       my: {
-        headerTitle: "AI ချည်ရောနှောမှုကာကွယ်ရေးစနစ် (Ultra Stable Guard)",
-        headerSub: "အထူးတည်ငြိမ်သောစနစ် အစဉ်မပြတ် မှတ်တမ်းတင်နိုင်သည် (E1 - E110)",
+        headerTitle: "AI ချည်ရောနှောမှုကာကွယ်ရေးစနစ် (Real-time Cloud Sync)",
+        headerSub: "ဖုန်းနှင့် ကွန်ပျူတာကြား တိုက်ရိုက်ချိတ်ဆက်ထားသည် (E1 - E110)",
         tabRecord: "ချည်ထုတ်ပေးမှု မှတ်တမ်း", tabMaster: "ပင်မအချက်အလက် ပြင်ဆင်ရန်",
         tabDashboard: "စွမ်းဆောင်ရည် အစီရင်ခံစာ", tabHistory: "ယခင်မှတ်တမ်းများ",
         lblMachine: "ရက်ကန်းစက်နံပါတ် ရွေးပါ", titleYarnInfo: "အချက်အလက်ဖြည့်စွက်ပြီး ဓာတ်ပုံရိုက်ပါ",
@@ -404,8 +438,8 @@
         titleRankTime: "အမှားအများဆုံး အဖြစ်များသည့် အချိန်"
       },
       en: {
-        headerTitle: "AI Yarn Verification System (Ultra Stable Guard)",
-        headerSub: "Ultra Stable & High Capacity Continuous Recording (E1 - E110)",
+        headerTitle: "AI Yarn Verification System (Real-time Cloud Sync)",
+        headerSub: "Live Mobile-to-PC Cross Device Synchronization (E1 - E110)",
         tabRecord: "Yarn Issue Entry", tabMaster: "Master Data Settings",
         tabDashboard: "Analytics Dashboard", tabHistory: "Historical Logs",
         lblMachine: "Select Weaving Machine", titleYarnInfo: "Enter Issue Details & Attach Tag Photo",
@@ -434,22 +468,29 @@
     let dashboardRange = 'day';
     let recordToDeleteId = null;
 
-    let masterData = JSON.parse(localStorage.getItem('yarn_master_db')) || {};
-    let recordsDb = JSON.parse(localStorage.getItem('yarn_records_db_v2')) || [];
+    let masterData = {};
+    let recordsDb = [];
 
     window.onload = function() {
-      initDefaultMasterData();
       generateMachineOptions();
       setCurrentDateTime();
-      updateMasterDataPreview();
-      renderMasterTable();
-      renderDashboard();
-      renderHistoryTable();
+      
+      // REALTIME LISTENER FROM CLOUD DATABASE (MOBILE <-> PC LINKED)
+      db.ref('yarn_master_db').on('value', snapshot => {
+        masterData = snapshot.val() || {};
+        if (Object.keys(masterData).length === 0) initDefaultMasterData();
+        updateMasterDataPreview();
+        renderMasterTable();
+      });
 
-      setInterval(syncWithCloud, 8000);
+      db.ref('yarn_records_db').on('value', snapshot => {
+        const val = snapshot.val();
+        recordsDb = val ? Object.values(val).sort((a,b) => b.id - a.id) : [];
+        renderDashboard();
+        renderHistoryTable();
+      });
     };
 
-    // --- AUTOMATIC IMAGE COMPRESSION ENGINE (PREVENTS STORAGE CRASH) ---
     function previewAndCompressImage(e) {
       const file = e.target.files[0];
       if (!file) return;
@@ -459,7 +500,7 @@
         const img = new Image();
         img.onload = function() {
           const canvas = document.createElement('canvas');
-          const maxDim = 800; // Resize to max 800px width/height for fast loading & light memory
+          const maxDim = 800;
           let width = img.width;
           let height = img.height;
 
@@ -480,7 +521,6 @@
           const ctx = canvas.getContext('2d');
           ctx.drawImage(img, 0, 0, width, height);
 
-          // Compress to JPEG with 0.65 quality (ultra light ~40KB per image)
           currentBase64Image = canvas.toDataURL('image/jpeg', 0.65);
           
           const imgPreview = document.getElementById('img-preview');
@@ -552,61 +592,31 @@
     }
 
     function initDefaultMasterData() {
-      if (Object.keys(masterData).length === 0) {
-        for (let i = 1; i <= 110; i++) {
-          const m = `E${i}`;
-          masterData[m] = {
-            yarnSpec: i % 2 === 0 ? "Nylon 0.25" : "PE 110/2",
-            pellet: i % 2 === 0 ? "White Chip Grade-A" : "Blue Pellet P-100"
-          };
-        }
-        saveMasterToStorage();
+      let defaults = {};
+      for (let i = 1; i <= 110; i++) {
+        const m = `E${i}`;
+        defaults[m] = {
+          yarnSpec: i % 2 === 0 ? "Nylon 0.25" : "PE 110/2",
+          pellet: i % 2 === 0 ? "White Chip Grade-A" : "Blue Pellet P-100"
+        };
       }
-    }
-
-    function saveMasterToStorage() {
-      try {
-        localStorage.setItem('yarn_master_db', JSON.stringify(masterData));
-      } catch (err) {
-        console.warn("Storage warning handled.");
-      }
-    }
-
-    // SAFE STORAGE SYSTEM (SAFEGUARDS CONTINUOUS SAVES)
-    function saveRecordsToStorage() {
-      try {
-        localStorage.setItem('yarn_records_db_v2', JSON.stringify(recordsDb));
-      } catch (err) {
-        // If storage quota exceeded, trim oldest image buffers while keeping record metadata safe
-        if (recordsDb.length > 20) {
-          for (let i = recordsDb.length - 1; i >= 20; i--) {
-            if (recordsDb[i].photo) recordsDb[i].photo = ""; // Clean heavy image buffer for old records
-          }
-          try {
-            localStorage.setItem('yarn_records_db_v2', JSON.stringify(recordsDb));
-          } catch (e) {
-            console.error("Critical storage boundary reached.");
-          }
-        }
-      }
-    }
-
-    function syncWithCloud() {
-      const cloudData = localStorage.getItem('yarn_records_db_v2');
-      if (cloudData) recordsDb = JSON.parse(cloudData);
-      renderDashboard();
-      renderHistoryTable();
+      db.ref('yarn_master_db').set(defaults);
     }
 
     function generateMachineOptions() {
       const selectMachine = document.getElementById('input-machine');
       const masterSelect = document.getElementById('master-select-machine');
-      selectMachine.innerHTML = ''; masterSelect.innerHTML = '';
+      const filterMachine = document.getElementById('filter-machine');
+      
+      selectMachine.innerHTML = ''; 
+      masterSelect.innerHTML = '';
+      filterMachine.innerHTML = '<option value="">-- เครื่องทอทั้งหมด (E1-E110) --</option>';
 
       for (let i = 1; i <= 110; i++) {
         const m = `E${i}`;
         selectMachine.innerHTML += `<option value="${m}">เครื่องทอ ${m}</option>`;
         masterSelect.innerHTML += `<option value="${m}">เครื่องทอ ${m}</option>`;
+        filterMachine.innerHTML += `<option value="${m}">เครื่องทอ ${m}</option>`;
       }
     }
 
@@ -623,7 +633,6 @@
       document.getElementById('target-pellet').innerText = target.pellet;
     }
 
-    // --- INSTANT FORM SUBMISSION ---
     function handleFormSubmit(e) {
       e.preventDefault();
 
@@ -649,8 +658,9 @@
       if (!isYarnMatch) errorDetails.push(`รายการใยไม่ตรง! (กรอก: "${yarnSpec}" | รายการหลัก: "${target.yarnSpec}")`);
       if (!isPelletMatch) errorDetails.push(`เม็ดวัตถุดิบไม่ตรง! (กรอก: "${pellet}" | รายการหลัก: "${target.pellet}")`);
 
+      const recordId = Date.now();
       const record = {
-        id: Date.now(),
+        id: recordId,
         machine, datetime: document.getElementById('input-datetime').value,
         boxCount: document.getElementById('input-box-count').value,
         weight: document.getElementById('input-weight').value,
@@ -660,8 +670,8 @@
         isPassed, errorDetails
       };
 
-      recordsDb.unshift(record);
-      saveRecordsToStorage();
+      // REAL-TIME CLOUD PUSH
+      db.ref(`yarn_records_db/${recordId}`).set(record);
 
       showFullscreenAlert(isPassed, machine, errorDetails);
 
@@ -671,8 +681,6 @@
       currentBase64Image = "";
       setCurrentDateTime();
       updateMasterDataPreview();
-      renderDashboard();
-      renderHistoryTable();
     }
 
     function showFullscreenAlert(isPassed, machine, errors) {
@@ -698,7 +706,7 @@
         detail.innerHTML = `
           <div><i class="fa-solid fa-check text-emerald-600 mr-1"></i> รายการใยถูกต้อง</div>
           <div><i class="fa-solid fa-check text-emerald-600 mr-1"></i> เม็ดวัตถุดิบถูกต้อง</div>
-          <div><i class="fa-solid fa-check text-emerald-600 mr-1"></i> ซิงค์ขึ้น Cloud เรียบร้อย</div>
+          <div><i class="fa-solid fa-check text-emerald-600 mr-1"></i> ซิงค์ขึ้น Cloud เรียบร้อยทุกอุปกรณ์</div>
         `;
         btn.className = "w-full py-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-lg rounded-xl shadow-lg transition";
       } else {
@@ -752,12 +760,9 @@
         return;
       }
 
-      recordsDb = recordsDb.filter(r => r.id !== recordToDeleteId);
-      saveRecordsToStorage();
+      db.ref(`yarn_records_db/${recordToDeleteId}`).remove();
       closeDeleteModal();
       alert("ลบรายการเรียบร้อยแล้ว!");
-      renderDashboard();
-      renderHistoryTable();
     }
 
     function saveMasterData() {
@@ -767,11 +772,8 @@
 
       if (!yarnSpec || !pellet) { alert("กรุณากรอกข้อมูลให้ครบถ้วน!"); return; }
 
-      masterData[m] = { yarnSpec, pellet };
-      saveMasterToStorage();
+      db.ref(`yarn_master_db/${m}`).set({ yarnSpec, pellet });
       alert(`อัปเดตรายการหลักเครื่อง ${m} ขึ้น Cloud เรียบร้อย!`);
-      renderMasterTable();
-      updateMasterDataPreview();
     }
 
     function renderMasterTable() {
@@ -871,16 +873,30 @@
       });
     }
 
+    // --- RENDER HISTORY WITH MACHINE & DATE FILTERS ---
     function renderHistoryTable() {
       const tbody = document.getElementById('history-table-body');
       tbody.innerHTML = '';
-      const search = document.getElementById('history-search').value.toLowerCase();
 
-      const filtered = recordsDb.filter(r => 
-        r.yarnSpec.toLowerCase().includes(search) || 
-        r.machine.toLowerCase().includes(search) ||
-        r.dispenser.toLowerCase().includes(search)
-      );
+      const search = document.getElementById('history-search').value.toLowerCase();
+      const selectedMachine = document.getElementById('filter-machine').value;
+      const selectedDate = document.getElementById('filter-date').value;
+
+      const filtered = recordsDb.filter(r => {
+        const matchSearch = r.yarnSpec.toLowerCase().includes(search) || 
+                            r.machine.toLowerCase().includes(search) ||
+                            r.dispenser.toLowerCase().includes(search);
+
+        const matchMachine = selectedMachine === "" || r.machine === selectedMachine;
+        
+        let matchDate = true;
+        if (selectedDate !== "") {
+          const recordDate = r.datetime.slice(0, 10);
+          matchDate = (recordDate === selectedDate);
+        }
+
+        return matchSearch && matchMachine && matchDate;
+      });
 
       filtered.forEach((item, index) => {
         const tr = document.createElement('tr');
@@ -911,6 +927,13 @@
         `;
         tbody.appendChild(tr);
       });
+    }
+
+    function resetHistoryFilters() {
+      document.getElementById('filter-machine').value = "";
+      document.getElementById('filter-date').value = "";
+      document.getElementById('history-search').value = "";
+      renderHistoryTable();
     }
 
     function switchTab(tab) {
