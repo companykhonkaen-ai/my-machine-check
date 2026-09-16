@@ -62,7 +62,7 @@
     </div>
   </div>
 
-  <!-- Header & Language Switcher -->
+  <!-- Header & Language Switcher (TH / MY / EN) -->
   <header class="bg-sky-950 text-white shadow-lg sticky top-0 z-40">
     <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
       <div class="flex items-center space-x-3">
@@ -74,12 +74,14 @@
       </div>
       
       <div class="flex items-center space-x-2">
-        <span id="sync-status" class="text-[10px] bg-emerald-800 text-emerald-200 px-2 py-1 rounded-md border border-emerald-700">
+        <span id="sync-status" class="hidden sm:inline-block text-[10px] bg-emerald-800 text-emerald-200 px-2 py-1 rounded-md border border-emerald-700">
           <i class="fa-solid fa-wifi text-amber-400 mr-1"></i> Cloud Connected
         </span>
+        <!-- 3 Language Switchers -->
         <div class="flex items-center space-x-1 bg-sky-900 p-1 rounded-lg border border-sky-800">
-          <button onclick="setLanguage('th')" id="btn-th" class="px-2.5 py-1 text-xs font-bold rounded-md bg-amber-400 text-slate-900 shadow">🇹🇭 ไทย</button>
-          <button onclick="setLanguage('my')" id="btn-my" class="px-2.5 py-1 text-xs font-bold rounded-md text-sky-200 hover:text-white">🇲🇲 မြန်မာ</button>
+          <button onclick="setLanguage('th')" id="btn-th" class="px-2 py-1 text-xs font-bold rounded-md bg-amber-400 text-slate-900 shadow">🇹🇭 ไทย</button>
+          <button onclick="setLanguage('my')" id="btn-my" class="px-2 py-1 text-xs font-bold rounded-md text-sky-200 hover:text-white myanmar-text">🇲🇲 မြန်မာ</button>
+          <button onclick="setLanguage('en')" id="btn-en" class="px-2 py-1 text-xs font-bold rounded-md text-sky-200 hover:text-white">🇬🇧 ENG</button>
         </div>
       </div>
     </div>
@@ -109,7 +111,7 @@
     <div id="sec-record" class="space-y-6">
       <div class="bg-white p-5 rounded-xl shadow-md border-t-4 border-sky-900 grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
         <div>
-          <label class="block text-xs font-bold text-slate-600 mb-1" id="lbl-machine">เลือกรหัสเครื่องทอ / စက်နံပါတ်</label>
+          <label class="block text-xs font-bold text-slate-600 mb-1" id="lbl-machine">เลือกรหัสเครื่องทอ</label>
           <select id="input-machine" onchange="updateMasterDataPreview()" class="w-full text-xl font-bold bg-sky-50 border-2 border-sky-800 text-sky-900 rounded-lg px-4 py-2 outline-none">
             <!-- E1-E110 -->
           </select>
@@ -118,11 +120,11 @@
         <div class="md:col-span-2 bg-slate-50 p-3 rounded-lg border border-slate-200">
           <div class="text-xs font-bold text-sky-900 mb-1 flex items-center space-x-2">
             <i class="fa-solid fa-bullseye text-amber-500"></i>
-            <span>รายการหลักประจำเครื่องนี้ (Master Target):</span>
+            <span id="lbl-master-target-title">รายการหลักประจำเครื่องนี้ (Master Target):</span>
           </div>
           <div class="grid grid-cols-2 gap-2 text-xs">
-            <div><span class="text-slate-500">รายการใย:</span> <strong id="target-yarn-spec" class="text-slate-800">-</strong></div>
-            <div><span class="text-slate-500">เม็ดวัตถุดิบ:</span> <strong id="target-pellet" class="text-slate-800">-</strong></div>
+            <div><span class="text-slate-500" id="lbl-target-yarn">รายการใย:</span> <strong id="target-yarn-spec" class="text-slate-800">-</strong></div>
+            <div><span class="text-slate-500" id="lbl-target-pellet">เม็ดวัตถุดิบ:</span> <strong id="target-pellet" class="text-slate-800">-</strong></div>
           </div>
         </div>
       </div>
@@ -135,31 +137,31 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1" id="lbl-datetime">วัน-เวลา / ရက်စွဲနှင့် အချိန်</label>
+            <label class="block text-xs font-bold text-slate-600 mb-1" id="lbl-datetime">วัน-เวลา</label>
             <input type="datetime-local" id="input-datetime" required class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm">
           </div>
           <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1" id="lbl-box-count">จำนวนกล่อง / သေတ္တာ အရေအတွက်</label>
+            <label class="block text-xs font-bold text-slate-600 mb-1" id="lbl-box-count">จำนวนกล่อง</label>
             <input type="number" id="input-box-count" min="1" required class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm">
           </div>
           <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1" id="lbl-weight">น้ำหนักใย (Kg) / ချည်အလေးချိန်</label>
+            <label class="block text-xs font-bold text-slate-600 mb-1" id="lbl-weight">น้ำหนักใย (Kg)</label>
             <input type="number" step="0.01" id="input-weight" required class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm">
           </div>
           <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1" id="lbl-yarn-spec">รายการใย (เบอร์ใย) / ချည်အမျိုးအစား</label>
+            <label class="block text-xs font-bold text-slate-600 mb-1" id="lbl-yarn-spec">รายการใย (เบอร์ใย)</label>
             <input type="text" id="input-yarn-spec" required class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm font-bold text-sky-900">
           </div>
           <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1" id="lbl-pellet">เม็ดวัตถุดิบ / ကုန်ကြမ်းစေ့</label>
+            <label class="block text-xs font-bold text-slate-600 mb-1" id="lbl-pellet">เม็ดวัตถุดิบ</label>
             <input type="text" id="input-pellet" required class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm">
           </div>
           <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1" id="lbl-dispenser">พนักงานจ่ายวัตถุดิบ / ကုန်ကြမ်းထုတ်ပေးသူ</label>
+            <label class="block text-xs font-bold text-slate-600 mb-1" id="lbl-dispenser">พนักงานจ่ายวัตถุดิบ</label>
             <input type="text" id="input-dispenser" required class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm">
           </div>
           <div class="md:col-span-2">
-            <label class="block text-xs font-bold text-slate-600 mb-1" id="lbl-weaver">พนักงานทอ / ရက်ကန်းဝန်ထမ်း</label>
+            <label class="block text-xs font-bold text-slate-600 mb-1" id="lbl-weaver">พนักงานทอ</label>
             <input type="text" id="input-weaver" required class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm">
           </div>
         </div>
@@ -168,7 +170,7 @@
           <div class="flex items-center justify-between">
             <h3 class="font-bold text-sm text-sky-900 flex items-center space-x-2">
               <i class="fa-solid fa-camera text-sky-700"></i>
-              <span id="lbl-photo-title">ถ่ายรูปป้ายใยทุกครั้งเพื่อยืนยัน (บังคับ) / ဓာတ်ပုံရိုက်ပါ</span>
+              <span id="lbl-photo-title">ถ่ายรูปป้ายใยทุกครั้งเพื่อยืนยัน (บังคับ)</span>
             </h3>
             <span class="text-xs text-rose-600 font-bold">* AI Cloud Enabled</span>
           </div>
@@ -191,7 +193,7 @@
         <div class="flex justify-end pt-4 border-t">
           <button type="submit" class="bg-indigo-700 hover:bg-indigo-800 text-white font-bold px-8 py-3 rounded-xl text-sm flex items-center space-x-2 shadow-lg transition active:scale-95">
             <i class="fa-solid fa-cloud-arrow-up"></i>
-            <span>ตรวจสอบและซิงค์ข้อมูล (AI Cloud Check)</span>
+            <span id="btn-submit-text">ตรวจสอบและซิงค์ข้อมูล (AI Cloud Check)</span>
           </button>
         </div>
       </form>
@@ -202,25 +204,25 @@
       <div class="bg-white p-6 rounded-xl shadow-md space-y-4">
         <h2 class="text-base font-bold text-slate-800 border-b pb-2 flex items-center space-x-2">
           <i class="fa-solid fa-sliders text-sky-800"></i>
-          <span>ตั้งค่ารายการหลักประจำเครื่องทอ (Master Data Settings E1-E110)</span>
+          <span id="title-master-data">ตั้งค่ารายการหลักประจำเครื่องทอ (Master Data Settings E1-E110)</span>
         </h2>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 bg-sky-50 p-4 rounded-xl border border-sky-200">
           <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">เลือกเครื่องทอ</label>
+            <label class="block text-xs font-bold text-slate-700 mb-1" id="lbl-master-select-m">เลือกเครื่องทอ</label>
             <select id="master-select-machine" class="w-full font-bold bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm"></select>
           </div>
           <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">รายการใยหลัก (เบอร์ใย/ชนิดใย)</label>
+            <label class="block text-xs font-bold text-slate-700 mb-1" id="lbl-master-yarn-spec">รายการใยหลัก (เบอร์ใย/ชนิดใย)</label>
             <input type="text" id="master-input-yarn" placeholder="เช่น Nylon 0.25 / PE 110/2" class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm font-bold text-sky-900">
           </div>
           <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1">เม็ดวัตถุดิบหลัก</label>
+            <label class="block text-xs font-bold text-slate-700 mb-1" id="lbl-master-pellet">เม็ดวัตถุดิบหลัก</label>
             <input type="text" id="master-input-pellet" placeholder="เช่น Grade-A White / Nylon Chip" class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm">
           </div>
           <div class="md:col-span-3 flex justify-end">
             <button onclick="saveMasterData()" class="bg-sky-900 hover:bg-sky-950 text-white font-bold px-6 py-2 rounded-lg text-xs flex items-center space-x-2 shadow">
-              <i class="fa-solid fa-cloud-arrow-up"></i> <span>อัปเดตรายการหลักขึ้น Cloud</span>
+              <i class="fa-solid fa-cloud-arrow-up"></i> <span id="btn-save-master-text">อัปเดตรายการหลักขึ้น Cloud</span>
             </button>
           </div>
         </div>
@@ -229,10 +231,10 @@
           <table class="w-full text-xs text-left text-slate-600">
             <thead class="bg-slate-800 text-white font-bold sticky top-0">
               <tr>
-                <th class="p-3 text-center">เครื่องทอ</th>
-                <th class="p-3">รายการใยหลัก (Target Yarn Spec)</th>
-                <th class="p-3">เม็ดวัตถุดิบหลัก (Target Pellet)</th>
-                <th class="p-3 text-center">จัดการ</th>
+                <th class="p-3 text-center" id="th-master-m">เครื่องทอ</th>
+                <th class="p-3" id="th-master-yarn">รายการใยหลัก (Target Yarn Spec)</th>
+                <th class="p-3" id="th-master-pellet">เม็ดวัตถุดิบหลัก (Target Pellet)</th>
+                <th class="p-3 text-center" id="th-master-action">จัดการ</th>
               </tr>
             </thead>
             <tbody id="master-table-body" class="divide-y divide-slate-200"></tbody>
@@ -247,7 +249,7 @@
       <div class="bg-white p-4 rounded-xl shadow-md flex justify-between items-center">
         <h2 class="font-bold text-slate-800 text-sm flex items-center space-x-2">
           <i class="fa-solid fa-chart-pie text-sky-800"></i>
-          <span>รายงานประสิทธิภาพประจำวัน สัปดาห์ เดือน</span>
+          <span id="title-dash">รายงานประสิทธิภาพประจำวัน สัปดาห์ เดือน</span>
         </h2>
         <div class="flex space-x-2">
           <button onclick="setDashboardRange('day')" id="btn-range-day" class="px-3 py-1 text-xs font-bold rounded-lg bg-sky-900 text-white shadow">ประจำวัน</button>
@@ -258,19 +260,19 @@
 
       <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div class="bg-white p-5 rounded-xl shadow-md border-l-4 border-sky-800">
-          <p class="text-xs font-bold text-slate-500">จำนวนการเบิกจ่ายทั้งหมด</p>
+          <p class="text-xs font-bold text-slate-500" id="card-total-title">จำนวนการเบิกจ่ายทั้งหมด</p>
           <h3 class="text-2xl font-extrabold text-slate-800 mt-1" id="dash-total-count">0 ครั้ง</h3>
         </div>
         <div class="bg-white p-5 rounded-xl shadow-md border-l-4 border-emerald-500">
-          <p class="text-xs font-bold text-slate-500">ถูกต้อง 100% (Passed)</p>
+          <p class="text-xs font-bold text-slate-500" id="card-pass-title">ถูกต้อง 100% (Passed)</p>
           <h3 class="text-2xl font-extrabold text-emerald-600 mt-1" id="dash-pass-count">0 ครั้ง</h3>
         </div>
         <div class="bg-white p-5 rounded-xl shadow-md border-l-4 border-rose-500">
-          <p class="text-xs font-bold text-slate-500">พบข้อผิดพลาด (AI Alerted)</p>
+          <p class="text-xs font-bold text-slate-500" id="card-fail-title">พบข้อผิดพลาด (AI Alerted)</p>
           <h3 class="text-2xl font-extrabold text-rose-600 mt-1" id="dash-fail-count">0 ครั้ง</h3>
         </div>
         <div class="bg-white p-5 rounded-xl shadow-md border-l-4 border-amber-500">
-          <p class="text-xs font-bold text-slate-500">อัตราความถูกต้อง (Accuracy)</p>
+          <p class="text-xs font-bold text-slate-500" id="card-acc-title">อัตราความถูกต้อง (Accuracy)</p>
           <h3 class="text-2xl font-extrabold text-amber-600 mt-1" id="dash-accuracy-rate">100%</h3>
         </div>
       </div>
@@ -279,7 +281,7 @@
         <div class="bg-white p-5 rounded-xl shadow-md space-y-3">
           <h3 class="text-xs font-bold text-slate-700 uppercase border-b pb-2 flex items-center space-x-2">
             <i class="fa-solid fa-triangle-exclamation text-rose-500"></i>
-            <span>เครื่องทอที่ผิดบ่อยที่สุด</span>
+            <span id="title-rank-machine">เครื่องทอที่ผิดบ่อยที่สุด</span>
           </h3>
           <ul id="dash-top-machines" class="space-y-2 text-xs divide-y divide-slate-100"></ul>
         </div>
@@ -287,7 +289,7 @@
         <div class="bg-white p-5 rounded-xl shadow-md space-y-3">
           <h3 class="text-xs font-bold text-slate-700 uppercase border-b pb-2 flex items-center space-x-2">
             <i class="fa-solid fa-user-xmark text-rose-500"></i>
-            <span>พนักงานที่เบิกผิดบ่อยที่สุด</span>
+            <span id="title-rank-staff">พนักงานที่เบิกผิดบ่อยที่สุด</span>
           </h3>
           <ul id="dash-top-staff" class="space-y-2 text-xs divide-y divide-slate-100"></ul>
         </div>
@@ -295,7 +297,7 @@
         <div class="bg-white p-5 rounded-xl shadow-md space-y-3">
           <h3 class="text-xs font-bold text-slate-700 uppercase border-b pb-2 flex items-center space-x-2">
             <i class="fa-solid fa-clock text-amber-500"></i>
-            <span>ช่วงเวลาที่เกิดความผิดพลาดมากที่สุด</span>
+            <span id="title-rank-time">ช่วงเวลาที่เกิดความผิดพลาดมากที่สุด</span>
           </h3>
           <ul id="dash-top-hours" class="space-y-2 text-xs divide-y divide-slate-100"></ul>
         </div>
@@ -335,8 +337,83 @@
   </main>
 
   <script>
-    const ADMIN_PASSWORD = "1234"; // รหัสผ่านสำหรับลบข้อมูล
-    const CLOUD_SYNC_URL = "https://api.myjsononline.com/v1/records"; // Fallback Mock Cloud Endpoint
+    const ADMIN_PASSWORD = "1234";
+
+    // --- 3-LANGUAGE DICTIONARY (TH / MY / EN) ---
+    const dict = {
+      th: {
+        headerTitle: "ระบบ AI ตรวจสอบและป้องกันใยปน (Cloud Online Sync)",
+        headerSub: "ข้อมูลเชื่อมตรงกันทุกอุปกรณ์ (E1 - E110)",
+        tabRecord: "บันทึกจ่ายใย", tabMaster: "ตั้งค่ารายการหลัก (Master Data)",
+        tabDashboard: "Dashboard สรุปประสิทธิภาพ", tabHistory: "ประวัติย้อนหลัง",
+        lblMachine: "เลือกรหัสเครื่องทอ", titleYarnInfo: "กรอกข้อมูลการจ่ายใยและแนบภาพถ่าย",
+        lblDateTime: "วัน-เวลา บันทึก", lblBoxCount: "จำนวนกล่อง (ลัง)", lblWeight: "น้ำหนักใย (Kg)",
+        lblYarnSpec: "รายการใย (เบอร์ใย)", lblPellet: "เม็ดวัตถุดิบ",
+        lblDispenser: "พนักงานจ่ายวัตถุดิบ", lblWeaver: "พนักงานทอ",
+        lblPhotoTitle: "ถ่ายรูปป้ายใยทุกครั้งเพื่อยืนยัน (บังคับ)", btnUploadPhoto: "ถ่ายรูปป้ายใย หรือ อัปโหลดรูปภาพ",
+        lblNoImg: "ยังไม่มีภาพถ่ายป้ายใย", btnSubmitText: "ตรวจสอบและซิงค์ข้อมูล (AI Cloud Check)",
+        lblMasterTargetTitle: "รายการหลักประจำเครื่องนี้ (Master Target):",
+        lblTargetYarn: "รายการใย:", lblTargetPellet: "เม็ดวัตถุดิบ:",
+        titleMasterData: "ตั้งค่ารายการหลักประจำเครื่องทอ (Master Data Settings E1-E110)",
+        lblMasterSelectM: "เลือกเครื่องทอ", lblMasterYarnSpec: "รายการใยหลัก (เบอร์ใย/ชนิดใย)",
+        lblMasterPellet: "เม็ดวัตถุดิบหลัก", btnSaveMasterText: "อัปเดตรายการหลักขึ้น Cloud",
+        thMasterM: "เครื่องทอ", thMasterYarn: "รายการใยหลัก (Target Yarn Spec)",
+        thMasterPellet: "เม็ดวัตถุดิบหลัก (Target Pellet)", thMasterAction: "จัดการ",
+        titleDash: "รายงานประสิทธิภาพประจำวัน สัปดาห์ เดือน",
+        cardTotalTitle: "จำนวนการเบิกจ่ายทั้งหมด", cardPassTitle: "ถูกต้อง 100% (Passed)",
+        cardFailTitle: "พบข้อผิดพลาด (AI Alerted)", cardAccTitle: "อัตราความถูกต้อง (Accuracy)",
+        titleRankMachine: "เครื่องทอที่ผิดบ่อยที่สุด", titleRankStaff: "พนักงานที่เบิกผิดบ่อยที่สุด",
+        titleRankTime: "ช่วงเวลาที่เกิดความผิดพลาดมากที่สุด"
+      },
+      my: {
+        headerTitle: "AI ချည်ရောနှောမှုကာကွယ်ရေးနှင့် စစ်ဆေးရေးစနစ် (Cloud Sync)",
+        headerSub: "စက်ပစ္စည်းအားလုံးတွင် အချက်အလက် တိုက်ရိုက်ချိတ်ဆက်ထားသည် (E1 - E110)",
+        tabRecord: "ချည်ထုတ်ပေးမှု မှတ်တမ်း", tabMaster: "ပင်မအချက်အလက် ပြင်ဆင်ရန်",
+        tabDashboard: "စွမ်းဆောင်ရည် အစီရင်ခံစာ", tabHistory: "ယခင်မှတ်တမ်းများ",
+        lblMachine: "ရက်ကန်းစက်နံပါတ် ရွေးပါ", titleYarnInfo: "အချက်အလက်ဖြည့်စွက်ပြီး ဓာတ်ပုံရိုက်ပါ",
+        lblDateTime: "ရက်စွဲနှင့် အချိန်", lblBoxCount: "သေတ္တာ အရေအတွက်", lblWeight: "ချည်အလေးချိန် (Kg)",
+        lblYarnSpec: "ချည်အမျိုးအစား", lblPellet: "ကုန်ကြမ်းစေ့",
+        lblDispenser: "ကုန်ကြမ်းထုတ်ပေးသူ", lblWeaver: "ရက်ကန်းဝန်ထမ်း",
+        lblPhotoTitle: "ဓာတ်ပုံရိုက်ပါ (မဖြစ်မနေ)", btnUploadPhoto: "ဓာတ်ပုံရိုက်ရန် နှိပ်ပါ",
+        lblNoImg: "ဓာတ်ပုံ မရှိသေးပါ", btnSubmitText: "စစ်ဆေးပြီး အချက်အလက် ပေးပို့ပါ (AI Check)",
+        lblMasterTargetTitle: "ဤစက်အတွက် ပင်မသတ်မှတ်ချက် (Master Target):",
+        lblTargetYarn: "ချည်အမျိုးအစား:", lblTargetPellet: "ကုန်ကြမ်းစေ့:",
+        titleMasterData: "ရက်ကန်းစက်များအတွက် ပင်မအချက်အလက် ပြင်ဆင်ရန် (E1-E110)",
+        lblMasterSelectM: "ရက်ကန်းစက် ရွေးပါ", lblMasterYarnSpec: "ပင်မ ချည်အမျိုးအစား",
+        lblMasterPellet: "ပင်မ ကုန်ကြမ်းစေ့", btnSaveMasterText: "Cloud သို့ ပေးပို့ သိမ်းဆည်းပါ",
+        thMasterM: "ရက်ကန်းစက်", thMasterYarn: "ပင်မ ချည်အမျိုးအစား",
+        thMasterPellet: "ပင်မ ကုန်ကြမ်းစေ့", thMasterAction: "ပြင်ဆင်ရန်",
+        titleDash: "နေ့စဉ်/အပတ်စဉ်/လစဉ် စွမ်းဆောင်ရည် အစီရင်ခံစာ",
+        cardTotalTitle: "စုစုပေါင်း ထုတ်ပေးမှု အရေအတွက်", cardPassTitle: "မှန်ကန်မှု ၁၀၀% (Passed)",
+        cardFailTitle: "မှားယွင်းမှု တွေ့ရှိချက် (AI Alerted)", cardAccTitle: "မှန်ကန်မှု ရာခိုင်နှုန်း (Accuracy)",
+        titleRankMachine: "အမှားအများဆုံး အဖြစ်များသည့် စက်များ", titleRankStaff: "အမှားအများဆုံး ဝန်ထမ်းများ",
+        titleRankTime: "အမှားအများဆုံး အဖြစ်များသည့် အချိန်"
+      },
+      en: {
+        headerTitle: "AI Yarn Verification & Anti-Mix System (Cloud Online Sync)",
+        headerSub: "Real-time Cloud Data Synchronization (E1 - E110)",
+        tabRecord: "Yarn Issue Entry", tabMaster: "Master Data Settings",
+        tabDashboard: "Analytics Dashboard", tabHistory: "Historical Logs",
+        lblMachine: "Select Weaving Machine", titleYarnInfo: "Enter Issue Details & Attach Tag Photo",
+        lblDateTime: "Date & Time", lblBoxCount: "Box Quantity", lblWeight: "Weight (Kg)",
+        lblYarnSpec: "Yarn Specification", lblPellet: "Raw Material Pellets",
+        lblDispenser: "Dispensing Staff", lblWeaver: "Weaving Staff",
+        lblPhotoTitle: "Take Tag Photo for AI Check (Mandatory)", btnUploadPhoto: "Capture Tag Photo or Upload",
+        lblNoImg: "No Tag Photo Attached", btnSubmitText: "Verify & Cloud Sync (AI Check)",
+        lblMasterTargetTitle: "Target Master Specs for Machine:",
+        lblTargetYarn: "Target Yarn Spec:", lblTargetPellet: "Target Pellets:",
+        titleMasterData: "Machine Master Data Configuration (E1-E110)",
+        lblMasterSelectM: "Select Machine", lblMasterYarnSpec: "Target Yarn Spec",
+        lblMasterPellet: "Target Pellet Spec", btnSaveMasterText: "Save Master to Cloud",
+        thMasterM: "Machine", thMasterYarn: "Target Yarn Spec",
+        thMasterPellet: "Target Pellet Spec", thMasterAction: "Action",
+        titleDash: "Daily / Weekly / Monthly Performance Analytics",
+        cardTotalTitle: "Total Issuance Records", cardPassTitle: "Correct 100% (Passed)",
+        cardFailTitle: "Errors Detected (AI Alerted)", cardAccTitle: "Overall Accuracy Rate",
+        titleRankMachine: "Top Error Machines", titleRankStaff: "Top Staff Errors",
+        titleRankTime: "Peak Error Hours"
+      }
+    };
 
     let currentLang = 'th';
     let currentBase64Image = "";
@@ -355,9 +432,67 @@
       renderDashboard();
       renderHistoryTable();
 
-      // Cloud Auto Sync Loop every 10 seconds
       setInterval(syncWithCloud, 10000);
     };
+
+    function setLanguage(lang) {
+      currentLang = lang;
+      const t = dict[lang];
+
+      document.getElementById('header-title').innerText = t.headerTitle;
+      document.getElementById('header-sub').innerText = t.headerSub;
+      document.getElementById('txt-tab-record').innerText = t.tabRecord;
+      document.getElementById('txt-tab-master').innerText = t.tabMaster;
+      document.getElementById('txt-tab-dashboard').innerText = t.tabDashboard;
+      document.getElementById('txt-tab-history').innerText = t.tabHistory;
+
+      document.getElementById('lbl-machine').innerText = t.lblMachine;
+      document.getElementById('title-yarn-info').innerText = t.titleYarnInfo;
+      document.getElementById('lbl-datetime').innerText = t.lblDateTime;
+      document.getElementById('lbl-box-count').innerText = t.lblBoxCount;
+      document.getElementById('lbl-weight').innerText = t.lblWeight;
+      document.getElementById('lbl-yarn-spec').innerText = t.lblYarnSpec;
+      document.getElementById('lbl-pellet').innerText = t.lblPellet;
+      document.getElementById('lbl-dispenser').innerText = t.lblDispenser;
+      document.getElementById('lbl-weaver').innerText = t.lblWeaver;
+      document.getElementById('lbl-photo-title').innerText = t.lblPhotoTitle;
+      document.getElementById('btn-upload-photo').innerText = t.btnUploadPhoto;
+      document.getElementById('lbl-no-img').innerText = t.lblNoImg;
+      document.getElementById('btn-submit-text').innerText = t.btnSubmitText;
+
+      document.getElementById('lbl-master-target-title').innerText = t.lblMasterTargetTitle;
+      document.getElementById('lbl-target-yarn').innerText = t.lblTargetYarn;
+      document.getElementById('lbl-target-pellet').innerText = t.lblTargetPellet;
+
+      document.getElementById('title-master-data').innerText = t.titleMasterData;
+      document.getElementById('lbl-master-select-m').innerText = t.lblMasterSelectM;
+      document.getElementById('lbl-master-yarn-spec').innerText = t.lblMasterYarnSpec;
+      document.getElementById('lbl-master-pellet').innerText = t.lblMasterPellet;
+      document.getElementById('btn-save-master-text').innerText = t.btnSaveMasterText;
+      document.getElementById('th-master-m').innerText = t.thMasterM;
+      document.getElementById('th-master-yarn').innerText = t.thMasterYarn;
+      document.getElementById('th-master-pellet').innerText = t.thMasterPellet;
+      document.getElementById('th-master-action').innerText = t.thMasterAction;
+
+      document.getElementById('title-dash').innerText = t.titleDash;
+      document.getElementById('card-total-title').innerText = t.cardTotalTitle;
+      document.getElementById('card-pass-title').innerText = t.cardPassTitle;
+      document.getElementById('card-fail-title').innerText = t.cardFailTitle;
+      document.getElementById('card-acc-title').innerText = t.cardAccTitle;
+      document.getElementById('title-rank-machine').innerText = t.titleRankMachine;
+      document.getElementById('title-rank-staff').innerText = t.titleRankStaff;
+      document.getElementById('title-rank-time').innerText = t.titleRankTime;
+
+      // Active Language Button Styles
+      ['th', 'my', 'en'].forEach(l => {
+        const btn = document.getElementById(`btn-${l}`);
+        if (l === lang) {
+          btn.className = "px-2.5 py-1 text-xs font-bold rounded-md bg-amber-400 text-slate-900 shadow myanmar-text";
+        } else {
+          btn.className = "px-2.5 py-1 text-xs font-bold rounded-md text-sky-200 hover:text-white myanmar-text";
+        }
+      });
+    }
 
     function initDefaultMasterData() {
       if (Object.keys(masterData).length === 0) {
@@ -381,7 +516,6 @@
     }
 
     function syncWithCloud() {
-      // Simulate real-time cloud data polling
       const cloudData = localStorage.getItem('yarn_records_db_v2');
       if (cloudData) recordsDb = JSON.parse(cloudData);
       renderDashboard();
@@ -432,7 +566,8 @@
       e.preventDefault();
 
       if (!currentBase64Image) {
-        alert("กรุณาถ่ายรูปป้ายใยก่อนทำการบันทึก!"); return;
+        alert(currentLang === 'th' ? "กรุณาถ่ายรูปป้ายใยก่อนทำการบันทึก!" : currentLang === 'my' ? "ကျေးဇူးပြု၍ ဓာတ်ပုံ ရိုက်ပါ!" : "Please attach tag photo!");
+        return;
       }
 
       const machine = document.getElementById('input-machine').value;
@@ -495,7 +630,7 @@
         iconContainer.className = "w-24 h-24 mx-auto rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-5xl";
         iconContainer.innerHTML = '<i class="fa-solid fa-circle-check"></i>';
         title.className = "text-3xl font-extrabold text-emerald-700";
-        title.innerText = "ผ่านการตรวจสอบ (PASSED 100%)";
+        title.innerText = currentLang === 'th' ? "ผ่านการตรวจสอบ (PASSED 100%)" : currentLang === 'my' ? "စစ်ဆေးမှု အောင်မြင်သည် (PASSED 100%)" : "Passed Verification (PASSED 100%)";
         subtitle.innerText = `เครื่องทอ ${machine} - ข้อมูลตรงกับรายการหลักถูกต้อง`;
         detail.className = "bg-emerald-50 p-4 rounded-xl text-left text-sm text-emerald-900 border border-emerald-200 space-y-1";
         detail.innerHTML = `
@@ -510,7 +645,7 @@
         iconContainer.className = "w-24 h-24 mx-auto rounded-full bg-rose-100 text-rose-600 flex items-center justify-center text-5xl";
         iconContainer.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i>';
         title.className = "text-3xl font-extrabold text-rose-600";
-        title.innerText = "ตรวจพบความผิดพลาด! (AI ALERT FAILED)";
+        title.innerText = currentLang === 'th' ? "ตรวจพบความผิดพลาด! (AI ALERT FAILED)" : currentLang === 'my' ? "မှားယွင်းမှု တွေ့ရှိသည်! (FAILED)" : "Error Detected! (AI ALERT FAILED)";
         subtitle.innerText = `เครื่องทอ ${machine} - ห้ามจ่ายใยเข้าเครื่องเด็ดขาด!`;
         detail.className = "bg-rose-50 p-4 rounded-xl text-left text-sm text-rose-900 border border-rose-300 space-y-2";
         let errHtml = `<strong class="text-rose-700 block border-b border-rose-200 pb-1">รายละเอียดข้อผิดพลาด:</strong>`;
@@ -524,7 +659,6 @@
       document.getElementById('alert-fullscreen').classList.add('hidden');
     }
 
-    // --- PASSWORD DELETE FUNCTIONALITY ---
     function openDeleteModal(id) {
       recordToDeleteId = id;
       document.getElementById('input-admin-pass').value = '';
@@ -710,17 +844,6 @@
 
       document.getElementById(`sec-${tab}`).classList.remove('hidden');
       document.getElementById(`tab-${tab}`).className = "py-2.5 px-4 font-bold text-sky-900 border-b-2 border-sky-900 flex items-center space-x-2";
-    }
-
-    function setLanguage(lang) {
-      currentLang = lang;
-      const t = dict[lang];
-      document.getElementById('header-title').innerText = t.headerTitle;
-      document.getElementById('header-sub').innerText = t.headerSub;
-      document.getElementById('txt-tab-record').innerText = t.tabRecord;
-      document.getElementById('txt-tab-master').innerText = t.tabMaster;
-      document.getElementById('txt-tab-dashboard').innerText = t.tabDashboard;
-      document.getElementById('txt-tab-history').innerText = t.tabHistory;
     }
 
     function exportCSV() {
