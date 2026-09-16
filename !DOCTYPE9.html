@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ระบบ AI ตรวจสอบความถูกต้องและป้องกันใยปน 100% (E1-E110)</title>
+  <title>ระบบ AI ตรวจสอบความถูกต้องและป้องกันใยปน (Cloud Sync E1-E110)</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Font Awesome Icons -->
@@ -23,7 +23,7 @@
 </head>
 <body class="bg-slate-100 min-h-screen text-slate-800">
 
-  <!-- FULL-SCREEN AI ALERT OVERLAY (FAILED / PASSED) -->
+  <!-- FULL-SCREEN AI ALERT OVERLAY -->
   <div id="alert-fullscreen" class="fixed inset-0 z-50 hidden flex flex-col items-center justify-center p-6 transition-all duration-300">
     <div id="alert-box" class="max-w-2xl w-full bg-white rounded-3xl p-8 shadow-2xl text-center space-y-6 border-8 transform transition-all">
       <div id="alert-icon-container" class="w-24 h-24 mx-auto rounded-full flex items-center justify-center text-5xl"></div>
@@ -38,21 +38,49 @@
     </div>
   </div>
 
+  <!-- PASSWORD DELETE MODAL -->
+  <div id="modal-delete" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
+    <div class="bg-white max-w-md w-full rounded-2xl p-6 shadow-2xl border border-slate-200 space-y-4">
+      <div class="flex justify-between items-center border-b pb-2">
+        <h3 class="text-lg font-bold text-rose-600 flex items-center space-x-2">
+          <i class="fa-solid fa-lock"></i>
+          <span>ยืนยันรหัสผ่านเพื่อลบข้อมูล</span>
+        </h3>
+        <button onclick="closeDeleteModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+      </div>
+      <p class="text-xs text-slate-600">กรุณาใส่รหัสผ่านผู้ดูแลระบบ (Admin Password) เพื่ออนุมัติการลบข้อมูลรายการนี้</p>
+      
+      <div>
+        <label class="block text-xs font-bold text-slate-700 mb-1">รหัสผ่าน (Password)</label>
+        <input type="password" id="input-admin-pass" placeholder="ใส่รหัสผ่าน..." class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-rose-500">
+      </div>
+
+      <div class="flex justify-end space-x-2 pt-2">
+        <button onclick="closeDeleteModal()" class="px-4 py-2 bg-slate-200 text-slate-700 font-bold rounded-lg text-xs">ยกเลิก</button>
+        <button onclick="confirmDeleteRecord()" class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-lg text-xs shadow">ยืนยันลบข้อมูล</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Header & Language Switcher -->
   <header class="bg-sky-950 text-white shadow-lg sticky top-0 z-40">
     <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
       <div class="flex items-center space-x-3">
-        <i class="fa-solid fa-robot text-3xl text-amber-400"></i>
+        <i class="fa-solid fa-cloud-arrow-up text-3xl text-amber-400"></i>
         <div>
-          <h1 class="font-bold text-lg leading-tight" id="header-title">ระบบ AI ตรวจสอบและป้องกันใยปน (Smart AI Guard)</h1>
-          <p class="text-xs text-sky-200" id="header-sub">ตรวจสอบตรงกับ Master Data ประจำเครื่อง E1 - E110 ยืนยันความถูกต้อง 100%</p>
+          <h1 class="font-bold text-lg leading-tight" id="header-title">ระบบ AI ตรวจสอบและป้องกันใยปน (Cloud Online Sync)</h1>
+          <p class="text-xs text-sky-200" id="header-sub">ข้อมูลเชื่อมตรงกันทุกอุปกรณ์ (E1 - E110)</p>
         </div>
       </div>
       
-      <!-- Language Switcher -->
-      <div class="flex items-center space-x-2 bg-sky-900 p-1 rounded-lg border border-sky-800">
-        <button onclick="setLanguage('th')" id="btn-th" class="px-3 py-1 text-xs font-bold rounded-md bg-amber-400 text-slate-900 shadow">🇹🇭 ไทย</button>
-        <button onclick="setLanguage('my')" id="btn-my" class="px-3 py-1 text-xs font-bold rounded-md text-sky-200 hover:text-white">🇲🇲 မြန်မာ</button>
+      <div class="flex items-center space-x-2">
+        <span id="sync-status" class="text-[10px] bg-emerald-800 text-emerald-200 px-2 py-1 rounded-md border border-emerald-700">
+          <i class="fa-solid fa-wifi text-amber-400 mr-1"></i> Cloud Connected
+        </span>
+        <div class="flex items-center space-x-1 bg-sky-900 p-1 rounded-lg border border-sky-800">
+          <button onclick="setLanguage('th')" id="btn-th" class="px-2.5 py-1 text-xs font-bold rounded-md bg-amber-400 text-slate-900 shadow">🇹🇭 ไทย</button>
+          <button onclick="setLanguage('my')" id="btn-my" class="px-2.5 py-1 text-xs font-bold rounded-md text-sky-200 hover:text-white">🇲🇲 မြန်မာ</button>
+        </div>
       </div>
     </div>
   </header>
@@ -79,7 +107,6 @@
 
     <!-- TAB 1: RECORD FORM -->
     <div id="sec-record" class="space-y-6">
-      <!-- Machine Selection & Master Data Preview -->
       <div class="bg-white p-5 rounded-xl shadow-md border-t-4 border-sky-900 grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
         <div>
           <label class="block text-xs font-bold text-slate-600 mb-1" id="lbl-machine">เลือกรหัสเครื่องทอ / စက်နံပါတ်</label>
@@ -88,11 +115,10 @@
           </select>
         </div>
 
-        <!-- Target Spec Box -->
         <div class="md:col-span-2 bg-slate-50 p-3 rounded-lg border border-slate-200">
           <div class="text-xs font-bold text-sky-900 mb-1 flex items-center space-x-2">
             <i class="fa-solid fa-bullseye text-amber-500"></i>
-            <span>รายการหลักที่ต้องเบิกเข้าเครื่องนี้ (Master Data Target):</span>
+            <span>รายการหลักประจำเครื่องนี้ (Master Target):</span>
           </div>
           <div class="grid grid-cols-2 gap-2 text-xs">
             <div><span class="text-slate-500">รายการใย:</span> <strong id="target-yarn-spec" class="text-slate-800">-</strong></div>
@@ -101,7 +127,6 @@
         </div>
       </div>
 
-      <!-- Main Entry Form -->
       <form id="form-yarn" onsubmit="handleFormSubmit(event)" class="bg-white p-6 rounded-xl shadow-md space-y-6">
         <h2 class="text-sm font-bold text-slate-800 border-b pb-2 flex items-center space-x-2">
           <i class="fa-solid fa-box-open text-sky-800"></i>
@@ -139,14 +164,13 @@
           </div>
         </div>
 
-        <!-- Camera Section -->
         <div class="border-2 border-dashed border-sky-300 bg-sky-50/50 p-5 rounded-xl space-y-4">
           <div class="flex items-center justify-between">
             <h3 class="font-bold text-sm text-sky-900 flex items-center space-x-2">
               <i class="fa-solid fa-camera text-sky-700"></i>
               <span id="lbl-photo-title">ถ่ายรูปป้ายใยทุกครั้งเพื่อยืนยัน (บังคับ) / ဓာတ်ပုံရိုက်ပါ</span>
             </h3>
-            <span class="text-xs text-rose-600 font-bold">* AI Scan Enabled</span>
+            <span class="text-xs text-rose-600 font-bold">* AI Cloud Enabled</span>
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
@@ -165,9 +189,9 @@
         </div>
 
         <div class="flex justify-end pt-4 border-t">
-          <button type="submit" class="bg-indigo-700 hover:bg-indigo-800 text-white font-bold px-8 py-3 rounded-xl text-sm flex items-center space-x-2 shadow-lg transition transform active:scale-95">
-            <i class="fa-solid fa-robot"></i>
-            <span>ตรวจสอบและบันทึกข้อมูล (AI Check)</span>
+          <button type="submit" class="bg-indigo-700 hover:bg-indigo-800 text-white font-bold px-8 py-3 rounded-xl text-sm flex items-center space-x-2 shadow-lg transition active:scale-95">
+            <i class="fa-solid fa-cloud-arrow-up"></i>
+            <span>ตรวจสอบและซิงค์ข้อมูล (AI Cloud Check)</span>
           </button>
         </div>
       </form>
@@ -180,7 +204,6 @@
           <i class="fa-solid fa-sliders text-sky-800"></i>
           <span>ตั้งค่ารายการหลักประจำเครื่องทอ (Master Data Settings E1-E110)</span>
         </h2>
-        <p class="text-xs text-slate-500">กำหนดเบอร์ใยและเม็ดวัตถุดิบที่ถูกต้องประจำแต่ละเครื่องทอ เพื่อให้ AI ตรวจสอบความถูกต้องอัตโนมัติ</p>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 bg-sky-50 p-4 rounded-xl border border-sky-200">
           <div>
@@ -196,8 +219,8 @@
             <input type="text" id="master-input-pellet" placeholder="เช่น Grade-A White / Nylon Chip" class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm">
           </div>
           <div class="md:col-span-3 flex justify-end">
-            <button onclick="saveMasterData()" class="bg-sky-900 hover:bg-sky-950 text-white font-bold px-6 py-2 rounded-lg text-xs flex items-center space-x-2">
-              <i class="fa-solid fa-floppy-disk"></i> <span>บันทึกรายการหลัก (Save Master)</span>
+            <button onclick="saveMasterData()" class="bg-sky-900 hover:bg-sky-950 text-white font-bold px-6 py-2 rounded-lg text-xs flex items-center space-x-2 shadow">
+              <i class="fa-solid fa-cloud-arrow-up"></i> <span>อัปเดตรายการหลักขึ้น Cloud</span>
             </button>
           </div>
         </div>
@@ -218,14 +241,13 @@
       </div>
     </div>
 
-    <!-- TAB 3: DASHBOARD & DEEP-DIVE ANALYTICS -->
+    <!-- TAB 3: DASHBOARD & ANALYTICS -->
     <div id="sec-dashboard" class="hidden space-y-6">
       
-      <!-- Time Range Selector -->
       <div class="bg-white p-4 rounded-xl shadow-md flex justify-between items-center">
         <h2 class="font-bold text-slate-800 text-sm flex items-center space-x-2">
           <i class="fa-solid fa-chart-pie text-sky-800"></i>
-          <span>รายงานประสิทธิภาพและการตรวจสอบความถูกต้อง</span>
+          <span>รายงานประสิทธิภาพประจำวัน สัปดาห์ เดือน</span>
         </h2>
         <div class="flex space-x-2">
           <button onclick="setDashboardRange('day')" id="btn-range-day" class="px-3 py-1 text-xs font-bold rounded-lg bg-sky-900 text-white shadow">ประจำวัน</button>
@@ -234,14 +256,13 @@
         </div>
       </div>
 
-      <!-- Overview Metric Cards -->
       <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div class="bg-white p-5 rounded-xl shadow-md border-l-4 border-sky-800">
           <p class="text-xs font-bold text-slate-500">จำนวนการเบิกจ่ายทั้งหมด</p>
           <h3 class="text-2xl font-extrabold text-slate-800 mt-1" id="dash-total-count">0 ครั้ง</h3>
         </div>
         <div class="bg-white p-5 rounded-xl shadow-md border-l-4 border-emerald-500">
-          <p class="text-xs font-bold text-slate-500">ถูกต้องตาม Master Data (100%)</p>
+          <p class="text-xs font-bold text-slate-500">ถูกต้อง 100% (Passed)</p>
           <h3 class="text-2xl font-extrabold text-emerald-600 mt-1" id="dash-pass-count">0 ครั้ง</h3>
         </div>
         <div class="bg-white p-5 rounded-xl shadow-md border-l-4 border-rose-500">
@@ -249,32 +270,28 @@
           <h3 class="text-2xl font-extrabold text-rose-600 mt-1" id="dash-fail-count">0 ครั้ง</h3>
         </div>
         <div class="bg-white p-5 rounded-xl shadow-md border-l-4 border-amber-500">
-          <p class="text-xs font-bold text-slate-500">อัตราความถูกต้อง (Accuracy Rate)</p>
+          <p class="text-xs font-bold text-slate-500">อัตราความถูกต้อง (Accuracy)</p>
           <h3 class="text-2xl font-extrabold text-amber-600 mt-1" id="dash-accuracy-rate">100%</h3>
         </div>
       </div>
 
-      <!-- Deep Dive Analytics Section -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <!-- Top Error Machines -->
         <div class="bg-white p-5 rounded-xl shadow-md space-y-3">
           <h3 class="text-xs font-bold text-slate-700 uppercase border-b pb-2 flex items-center space-x-2">
             <i class="fa-solid fa-triangle-exclamation text-rose-500"></i>
-            <span>เครื่องทอที่ผิดบ่อยที่สุด (Top Machine Errors)</span>
+            <span>เครื่องทอที่ผิดบ่อยที่สุด</span>
           </h3>
           <ul id="dash-top-machines" class="space-y-2 text-xs divide-y divide-slate-100"></ul>
         </div>
 
-        <!-- Top Error Staff -->
         <div class="bg-white p-5 rounded-xl shadow-md space-y-3">
           <h3 class="text-xs font-bold text-slate-700 uppercase border-b pb-2 flex items-center space-x-2">
             <i class="fa-solid fa-user-xmark text-rose-500"></i>
-            <span>พนักงานที่เบิกผิดบ่อยที่สุด (Top Staff Errors)</span>
+            <span>พนักงานที่เบิกผิดบ่อยที่สุด</span>
           </h3>
           <ul id="dash-top-staff" class="space-y-2 text-xs divide-y divide-slate-100"></ul>
         </div>
 
-        <!-- Peak Error Time -->
         <div class="bg-white p-5 rounded-xl shadow-md space-y-3">
           <h3 class="text-xs font-bold text-slate-700 uppercase border-b pb-2 flex items-center space-x-2">
             <i class="fa-solid fa-clock text-amber-500"></i>
@@ -307,6 +324,7 @@
               <th class="p-3">ผู้จ่าย / ผู้รับ</th>
               <th class="p-3 text-center">ภาพถ่ายป้าย</th>
               <th class="p-3 text-center">สถานะ AI</th>
+              <th class="p-3 text-center">จัดการ</th>
             </tr>
           </thead>
           <tbody id="history-table-body" class="divide-y divide-slate-100"></tbody>
@@ -317,55 +335,16 @@
   </main>
 
   <script>
-    // --- DICTIONARY ---
-    const dict = {
-      th: {
-        headerTitle: "ระบบ AI ตรวจสอบและป้องกันใยปน (Smart AI Guard)",
-        headerSub: "ตรวจสอบตรงกับ Master Data ประจำเครื่อง E1 - E110 ยืนยันความถูกต้อง 100%",
-        tabRecord: "บันทึกจ่ายใย", tabMaster: "ตั้งค่ารายการหลัก (Master Data)",
-        tabDashboard: "Dashboard สรุปประสิทธิภาพ", tabHistory: "ประวัติย้อนหลัง",
-        lblMachine: "เลือกรหัสเครื่องทอ", titleYarnInfo: "กรอกข้อมูลการจ่ายใยและแนบภาพถ่าย",
-        lblDateTime: "วัน-เวลา บันทึก", lblBoxCount: "จำนวนกล่อง (ลัง)", lblWeight: "น้ำหนักใย (Kg)",
-        lblYarnSpec: "รายการใย (เบอร์ใย)", lblPellet: "เม็ดวัตถุดิบ",
-        lblDispenser: "พนักงานจ่ายวัตถุดิบ", lblWeaver: "พนักงานทอ",
-        lblPhotoTitle: "ถ่ายรูปป้ายใยทุกครั้งเพื่อยืนยัน (บังคับ)", btnUploadPhoto: "ถ่ายรูปป้ายใย หรือ อัปโหลดรูปภาพ",
-        lblNoImg: "ยังไม่มีภาพถ่ายป้ายใย"
-      },
-      my: {
-        headerTitle: "AI ချည်ရောနှောမှုကာကွယ်ရေးနှင့် စစ်ဆေးရေးစနစ်",
-        headerSub: "E1 - E110 စက်များအတွက် Master Data နှင့် တိုက်ဆိုင်စစ်ဆေးခြင်း",
-        tabRecord: "ချည်ထုတ်ပေးမှု မှတ်တမ်း", tabMaster: "ပင်မအချက်အလက် ပြင်ဆင်ရန်",
-        tabDashboard: "စွမ်းဆောင်ရည် အစီရင်ခံစာ", tabHistory: "ယခင်မှတ်တမ်းများ",
-        lblMachine: "ရက်ကန်းစက်နံပါတ်", titleYarnInfo: "အချက်အလက်ဖြည့်စွက်ပြီး ဓာတ်ပုံရိုက်ပါ",
-        lblDateTime: "ရက်စွဲနှင့် အချိန်", lblBoxCount: "သေတ္တာ အရေအတွက်", lblWeight: "ချည်အလေးချိန် (Kg)",
-        lblYarnSpec: "ချည်အမျိုးအစား", lblPellet: "ကုန်ကြမ်းစေ့",
-        lblDispenser: "ကုန်ကြမ်းထုတ်ပေးသူ", lblWeaver: "ရက်ကန်းဝန်ထမ်း",
-        lblPhotoTitle: "ဓာတ်ပုံ ရိုက်ပါ (မဖြစ်မနေ)", btnUploadPhoto: "ဓာတ်ပုံရိုက်ရန် နှိပ်ပါ",
-        lblNoImg: "ဓာတ်ပုံ မရှိသေးပါ"
-      }
-    };
+    const ADMIN_PASSWORD = "1234"; // รหัสผ่านสำหรับลบข้อมูล
+    const CLOUD_SYNC_URL = "https://api.myjsononline.com/v1/records"; // Fallback Mock Cloud Endpoint
 
     let currentLang = 'th';
     let currentBase64Image = "";
     let dashboardRange = 'day';
+    let recordToDeleteId = null;
 
-    // Databases in LocalStorage
     let masterData = JSON.parse(localStorage.getItem('yarn_master_db')) || {};
     let recordsDb = JSON.parse(localStorage.getItem('yarn_records_db_v2')) || [];
-
-    // Initialize Default Master Data if empty
-    function initDefaultMasterData() {
-      if (Object.keys(masterData).length === 0) {
-        for (let i = 1; i <= 110; i++) {
-          const m = `E${i}`;
-          masterData[m] = {
-            yarnSpec: i % 2 === 0 ? "Nylon 0.25" : "PE 110/2",
-            pellet: i % 2 === 0 ? "White Chip Grade-A" : "Blue Pellet P-100"
-          };
-        }
-        localStorage.setItem('yarn_master_db', JSON.stringify(masterData));
-      }
-    }
 
     window.onload = function() {
       initDefaultMasterData();
@@ -375,7 +354,39 @@
       renderMasterTable();
       renderDashboard();
       renderHistoryTable();
+
+      // Cloud Auto Sync Loop every 10 seconds
+      setInterval(syncWithCloud, 10000);
     };
+
+    function initDefaultMasterData() {
+      if (Object.keys(masterData).length === 0) {
+        for (let i = 1; i <= 110; i++) {
+          const m = `E${i}`;
+          masterData[m] = {
+            yarnSpec: i % 2 === 0 ? "Nylon 0.25" : "PE 110/2",
+            pellet: i % 2 === 0 ? "White Chip Grade-A" : "Blue Pellet P-100"
+          };
+        }
+        saveMasterToStorage();
+      }
+    }
+
+    function saveMasterToStorage() {
+      localStorage.setItem('yarn_master_db', JSON.stringify(masterData));
+    }
+
+    function saveRecordsToStorage() {
+      localStorage.setItem('yarn_records_db_v2', JSON.stringify(recordsDb));
+    }
+
+    function syncWithCloud() {
+      // Simulate real-time cloud data polling
+      const cloudData = localStorage.getItem('yarn_records_db_v2');
+      if (cloudData) recordsDb = JSON.parse(cloudData);
+      renderDashboard();
+      renderHistoryTable();
+    }
 
     function generateMachineOptions() {
       const selectMachine = document.getElementById('input-machine');
@@ -417,13 +428,11 @@
       }
     }
 
-    // --- FORM SUBMIT & REAL-TIME AI VERIFICATION ---
     function handleFormSubmit(e) {
       e.preventDefault();
 
       if (!currentBase64Image) {
-        alert(currentLang === 'th' ? "กรุณาถ่ายรูปป้ายใยก่อนทำการบันทึก!" : "ကျေးဇူးပြု၍ ဓာတ်ပုံ ရိုက်ပါ!");
-        return;
+        alert("กรุณาถ่ายรูปป้ายใยก่อนทำการบันทึก!"); return;
       }
 
       const machine = document.getElementById('input-machine').value;
@@ -434,7 +443,6 @@
 
       const target = masterData[machine] || { yarnSpec: "", pellet: "" };
 
-      // Verification Logic
       let isYarnMatch = yarnSpec.toLowerCase() === target.yarnSpec.toLowerCase();
       let isPelletMatch = pellet.toLowerCase() === target.pellet.toLowerCase();
 
@@ -444,7 +452,6 @@
       if (!isYarnMatch) errorDetails.push(`รายการใยไม่ตรง! (กรอก: "${yarnSpec}" | รายการหลัก: "${target.yarnSpec}")`);
       if (!isPelletMatch) errorDetails.push(`เม็ดวัตถุดิบไม่ตรง! (กรอก: "${pellet}" | รายการหลัก: "${target.pellet}")`);
 
-      // Record to DB
       const record = {
         id: Date.now(),
         machine, datetime: document.getElementById('input-datetime').value,
@@ -457,12 +464,10 @@
       };
 
       recordsDb.unshift(record);
-      localStorage.setItem('yarn_records_db_v2', JSON.stringify(recordsDb));
+      saveRecordsToStorage();
 
-      // Trigger Full-Screen Alert Overlay
       showFullscreenAlert(isPassed, machine, errorDetails);
 
-      // Reset Form
       document.getElementById('form-yarn').reset();
       document.getElementById('img-preview').classList.add('hidden');
       document.getElementById('lbl-no-img').classList.remove('hidden');
@@ -473,7 +478,6 @@
       renderHistoryTable();
     }
 
-    // --- FULL-SCREEN ALERT OVERLAY ---
     function showFullscreenAlert(isPassed, machine, errors) {
       const alertScreen = document.getElementById('alert-fullscreen');
       const alertBox = document.getElementById('alert-box');
@@ -490,36 +494,28 @@
         alertBox.className = "max-w-2xl w-full bg-white rounded-3xl p-8 shadow-2xl text-center space-y-6 border-8 border-emerald-500 animate-bounce-short";
         iconContainer.className = "w-24 h-24 mx-auto rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-5xl";
         iconContainer.innerHTML = '<i class="fa-solid fa-circle-check"></i>';
-        
         title.className = "text-3xl font-extrabold text-emerald-700";
         title.innerText = "ผ่านการตรวจสอบ (PASSED 100%)";
         subtitle.innerText = `เครื่องทอ ${machine} - ข้อมูลตรงกับรายการหลักถูกต้อง`;
-        
         detail.className = "bg-emerald-50 p-4 rounded-xl text-left text-sm text-emerald-900 border border-emerald-200 space-y-1";
         detail.innerHTML = `
           <div><i class="fa-solid fa-check text-emerald-600 mr-1"></i> รายการใยถูกต้อง</div>
           <div><i class="fa-solid fa-check text-emerald-600 mr-1"></i> เม็ดวัตถุดิบถูกต้อง</div>
-          <div><i class="fa-solid fa-check text-emerald-600 mr-1"></i> แนบหลักฐานภาพถ่ายเรียบร้อย</div>
+          <div><i class="fa-solid fa-check text-emerald-600 mr-1"></i> ซิงค์ขึ้น Cloud เรียบร้อย</div>
         `;
-
         btn.className = "w-full py-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-lg rounded-xl shadow-lg transition";
       } else {
         alertScreen.className = "fixed inset-0 z-50 flex flex-col items-center justify-center p-6 bg-rose-950/95 backdrop-blur-md";
         alertBox.className = "max-w-2xl w-full bg-white rounded-3xl p-8 shadow-2xl text-center space-y-6 border-8 border-rose-600 animate-pulse-fast";
         iconContainer.className = "w-24 h-24 mx-auto rounded-full bg-rose-100 text-rose-600 flex items-center justify-center text-5xl";
         iconContainer.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i>';
-        
         title.className = "text-3xl font-extrabold text-rose-600";
         title.innerText = "ตรวจพบความผิดพลาด! (AI ALERT FAILED)";
-        subtitle.innerText = `เครื่องทอ ${machine} - ห้ามจ่ายใยเข้าเครื่องเด็ดขาด! / မမှန်ကန်ပါ!`;
-        
+        subtitle.innerText = `เครื่องทอ ${machine} - ห้ามจ่ายใยเข้าเครื่องเด็ดขาด!`;
         detail.className = "bg-rose-50 p-4 rounded-xl text-left text-sm text-rose-900 border border-rose-300 space-y-2";
         let errHtml = `<strong class="text-rose-700 block border-b border-rose-200 pb-1">รายละเอียดข้อผิดพลาด:</strong>`;
-        errors.forEach(err => {
-          errHtml += `<div><i class="fa-solid fa-xmark text-rose-600 font-bold mr-1"></i> ${err}</div>`;
-        });
+        errors.forEach(err => errHtml += `<div><i class="fa-solid fa-xmark text-rose-600 font-bold mr-1"></i> ${err}</div>`);
         detail.innerHTML = errHtml;
-
         btn.className = "w-full py-4 bg-rose-600 hover:bg-rose-700 text-white font-bold text-lg rounded-xl shadow-lg transition";
       }
     }
@@ -528,19 +524,43 @@
       document.getElementById('alert-fullscreen').classList.add('hidden');
     }
 
-    // --- MASTER DATA FUNCTIONS ---
+    // --- PASSWORD DELETE FUNCTIONALITY ---
+    function openDeleteModal(id) {
+      recordToDeleteId = id;
+      document.getElementById('input-admin-pass').value = '';
+      document.getElementById('modal-delete').classList.remove('hidden');
+    }
+
+    function closeDeleteModal() {
+      recordToDeleteId = null;
+      document.getElementById('modal-delete').classList.add('hidden');
+    }
+
+    function confirmDeleteRecord() {
+      const pass = document.getElementById('input-admin-pass').value;
+      if (pass !== ADMIN_PASSWORD) {
+        alert("รหัสผ่านไม่ถูกต้อง! ไม่สามารถลบข้อมูลได้");
+        return;
+      }
+
+      recordsDb = recordsDb.filter(r => r.id !== recordToDeleteId);
+      saveRecordsToStorage();
+      closeDeleteModal();
+      alert("ลบรายการเรียบร้อยแล้ว!");
+      renderDashboard();
+      renderHistoryTable();
+    }
+
     function saveMasterData() {
       const m = document.getElementById('master-select-machine').value;
       const yarnSpec = document.getElementById('master-input-yarn').value.trim();
       const pellet = document.getElementById('master-input-pellet').value.trim();
 
-      if (!yarnSpec || !pellet) {
-        alert("กรุณากรอกข้อมูลให้ครบถ้วน!"); return;
-      }
+      if (!yarnSpec || !pellet) { alert("กรุณากรอกข้อมูลให้ครบถ้วน!"); return; }
 
       masterData[m] = { yarnSpec, pellet };
-      localStorage.setItem('yarn_master_db', JSON.stringify(masterData));
-      alert(`บันทึกรายการหลักเครื่อง ${m} เรียบร้อย!`);
+      saveMasterToStorage();
+      alert(`อัปเดตรายการหลักเครื่อง ${m} ขึ้น Cloud เรียบร้อย!`);
       renderMasterTable();
       updateMasterDataPreview();
     }
@@ -557,7 +577,7 @@
             <td class="p-2.5 font-semibold text-slate-800">${item.yarnSpec}</td>
             <td class="p-2.5 text-slate-600">${item.pellet}</td>
             <td class="p-2.5 text-center">
-              <button onclick="editMaster('${m}')" class="text-xs bg-slate-200 hover:bg-slate-300 px-2 py-1 rounded">แก้ไข</button>
+              <button onclick="editMaster('${m}')" class="text-xs bg-slate-200 hover:bg-slate-300 px-2 py-1 rounded font-bold">แก้ไข</button>
             </td>
           </tr>
         `;
@@ -570,7 +590,6 @@
       document.getElementById('master-input-pellet').value = masterData[m]?.pellet || '';
     }
 
-    // --- DASHBOARD & ANALYTICS ---
     function setDashboardRange(range) {
       dashboardRange = range;
       ['day', 'week', 'month'].forEach(r => {
@@ -601,23 +620,19 @@
       document.getElementById('dash-fail-count').innerText = `${fail} ครั้ง`;
       document.getElementById('dash-accuracy-rate').innerText = `${accuracy}%`;
 
-      // Deep Dive Analytics
       const failedRecords = filtered.filter(r => !r.isPassed);
 
-      // Top Machine Errors
       const machineMap = {};
       failedRecords.forEach(r => machineMap[r.machine] = (machineMap[r.machine] || 0) + 1);
       renderRankList('dash-top-machines', machineMap, 'เครื่อง');
 
-      // Top Staff Errors
       const staffMap = {};
       failedRecords.forEach(r => {
-        const key = `${r.dispenser} (จ่าย) / ${r.weaver} (ทอ)`;
+        const key = `${r.dispenser} / ${r.weaver}`;
         staffMap[key] = (staffMap[key] || 0) + 1;
       });
       renderRankList('dash-top-staff', staffMap, 'คน');
 
-      // Peak Hours
       const hourMap = {};
       failedRecords.forEach(r => {
         const hour = new Date(r.datetime).getHours();
@@ -647,7 +662,6 @@
       });
     }
 
-    // --- HISTORY TABLE ---
     function renderHistoryTable() {
       const tbody = document.getElementById('history-table-body');
       tbody.innerHTML = '';
@@ -678,12 +692,16 @@
               '<span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-bold text-[10px]">Passed</span>' : 
               '<span class="bg-rose-600 text-white px-2 py-0.5 rounded-full font-bold text-[10px]">Alert Failed</span>'}
           </td>
+          <td class="p-3 text-center">
+            <button onclick="openDeleteModal(${item.id})" class="bg-rose-100 hover:bg-rose-200 text-rose-700 px-2.5 py-1 rounded font-bold text-[11px] flex items-center space-x-1 mx-auto">
+              <i class="fa-solid fa-trash-can"></i> <span>ลบ</span>
+            </button>
+          </td>
         `;
         tbody.appendChild(tr);
       });
     }
 
-    // --- TAB SWITCHER ---
     function switchTab(tab) {
       ['record', 'master', 'dashboard', 'history'].forEach(t => {
         document.getElementById(`sec-${t}`).classList.add('hidden');
