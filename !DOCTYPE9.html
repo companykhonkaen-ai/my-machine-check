@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ระบบ AI ตรวจสอบความถูกต้องและป้องกันใยปน (Instant AI Check E1-E110)</title>
+  <title>ระบบ AI ตรวจสอบความถูกต้องและป้องกันใยปน (Ultra Stable E1-E110)</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Font Awesome Icons -->
@@ -23,7 +23,7 @@
 </head>
 <body class="bg-slate-100 min-h-screen text-slate-800">
 
-  <!-- FULL-SCREEN AI ALERT OVERLAY (INSTANT SHOW) -->
+  <!-- FULL-SCREEN AI ALERT OVERLAY -->
   <div id="alert-fullscreen" class="fixed inset-0 z-50 hidden flex flex-col items-center justify-center p-6 transition-all duration-150">
     <div id="alert-box" class="max-w-2xl w-full bg-white rounded-3xl p-8 shadow-2xl text-center space-y-6 border-8 transform transition-all">
       <div id="alert-icon-container" class="w-24 h-24 mx-auto rounded-full flex items-center justify-center text-5xl"></div>
@@ -62,7 +62,7 @@
     </div>
   </div>
 
-  <!-- IMAGE PREVIEW MODAL (ดูรูปย้อนหลัง) -->
+  <!-- IMAGE PREVIEW MODAL -->
   <div id="modal-image-view" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/80 backdrop-blur-md" onclick="closeImageModal()">
     <div class="bg-white max-w-3xl w-full rounded-2xl p-4 shadow-2xl relative" onclick="event.stopPropagation()">
       <button onclick="closeImageModal()" class="absolute top-3 right-3 text-slate-500 hover:text-rose-600 text-2xl font-bold bg-slate-100 hover:bg-rose-100 w-10 h-10 rounded-full flex items-center justify-center transition">
@@ -82,16 +82,16 @@
   <header class="bg-sky-950 text-white shadow-lg sticky top-0 z-40">
     <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
       <div class="flex items-center space-x-3">
-        <i class="fa-solid fa-bolt text-3xl text-amber-400"></i>
+        <i class="fa-solid fa-shield-halved text-3xl text-amber-400"></i>
         <div>
-          <h1 class="font-bold text-lg leading-tight" id="header-title">ระบบ AI ตรวจสอบและป้องกันใยปน (Instant AI Guard)</h1>
-          <p class="text-xs text-sky-200" id="header-sub">ตรวจสอบรวดเร็วทันที - ข้อมูลเชื่อมตรงกันทุกอุปกรณ์ (E1 - E110)</p>
+          <h1 class="font-bold text-lg leading-tight" id="header-title">ระบบ AI ตรวจสอบและป้องกันใยปน (Ultra Stable Guard)</h1>
+          <p class="text-xs text-sky-200" id="header-sub">ระบบเสถียรสูง รองรับการบันทึกต่อเนื่อง (E1 - E110)</p>
         </div>
       </div>
       
       <div class="flex items-center space-x-2">
         <span id="sync-status" class="hidden sm:inline-block text-[10px] bg-emerald-800 text-emerald-200 px-2 py-1 rounded-md border border-emerald-700">
-          <i class="fa-solid fa-wifi text-amber-400 mr-1"></i> Cloud Connected
+          <i class="fa-solid fa-wifi text-amber-400 mr-1"></i> Cloud Active
         </span>
         <div class="flex items-center space-x-1 bg-sky-900 p-1 rounded-lg border border-sky-800">
           <button onclick="setLanguage('th')" id="btn-th" class="px-2.5 py-1 text-xs font-bold rounded-md bg-amber-400 text-slate-900 shadow">🇹🇭 ไทย</button>
@@ -187,12 +187,12 @@
               <i class="fa-solid fa-camera text-sky-700"></i>
               <span id="lbl-photo-title">ถ่ายรูปป้ายใยทุกครั้งเพื่อยืนยัน (บังคับ)</span>
             </h3>
-            <span class="text-xs text-rose-600 font-bold">* AI Instant Check</span>
+            <span class="text-xs text-emerald-700 font-bold"><i class="fa-solid fa-compress mr-1"></i> Auto-Compress Active</span>
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
             <div>
-              <input type="file" id="input-photo" accept="image/*" capture="environment" onchange="previewImage(event)" class="hidden">
+              <input type="file" id="input-photo" accept="image/*" capture="environment" onchange="previewAndCompressImage(event)" class="hidden">
               <label for="input-photo" class="cursor-pointer flex flex-col items-center justify-center p-6 border-2 border-sky-400 border-dashed rounded-lg bg-white hover:bg-sky-50 text-sky-800 transition">
                 <i class="fa-solid fa-camera-retro text-3xl mb-2 text-sky-600"></i>
                 <span class="text-xs font-bold" id="btn-upload-photo">ถ่ายรูปป้ายใย หรือ อัปโหลดรูปภาพ</span>
@@ -206,7 +206,7 @@
         </div>
 
         <div class="flex justify-end pt-4 border-t">
-          <button type="submit" class="bg-indigo-700 hover:bg-indigo-800 text-white font-bold px-8 py-3 rounded-xl text-sm flex items-center space-x-2 shadow-lg transition active:scale-95">
+          <button type="submit" id="btn-submit" class="bg-indigo-700 hover:bg-indigo-800 text-white font-bold px-8 py-3 rounded-xl text-sm flex items-center space-x-2 shadow-lg transition active:scale-95">
             <i class="fa-solid fa-bolt"></i>
             <span id="btn-submit-text">ตรวจสอบและซิงค์ข้อมูลทันที (AI Instant Check)</span>
           </button>
@@ -320,46 +320,15 @@
 
     </div>
 
-    <!-- TAB 4: HISTORY (ประวัติย้อนหลัง พร้อมตัวกรองเครื่องทอ + วัน/เดือน/ปี) -->
+    <!-- TAB 4: HISTORY -->
     <div id="sec-history" class="hidden space-y-4">
-      <div class="bg-white p-4 rounded-xl shadow-md flex flex-wrap gap-3 justify-between items-center border-t-4 border-sky-900">
-        <!-- Filter Controls -->
-        <div class="flex flex-wrap gap-3 items-center">
-          <!-- Machine Filter Dropdown -->
-          <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">กรองเครื่องทอ (E1-E110)</label>
-            <select id="history-filter-machine" onchange="renderHistoryTable()" class="bg-slate-50 border border-slate-300 rounded-lg px-3 py-1.5 text-xs font-bold text-sky-900 outline-none">
-              <option value="ALL">แสดงทุกเครื่อง (All Machines)</option>
-              <!-- Populated E1-E110 -->
-            </select>
-          </div>
-
-          <!-- Date Filter (วัน/เดือน/ปี) -->
-          <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">กรองตามวันที่ (Date)</label>
-            <input type="date" id="history-filter-date" onchange="renderHistoryTable()" class="bg-slate-50 border border-slate-300 rounded-lg px-3 py-1.5 text-xs font-semibold text-slate-700 outline-none">
-          </div>
-
-          <!-- Search Box -->
-          <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">ค้นหาข้อความ</label>
-            <input type="text" id="history-search" onkeyup="renderHistoryTable()" placeholder="ค้นหาเบอร์ใย / ชื่อพนักงาน..." class="bg-slate-50 border border-slate-300 rounded-lg px-3 py-1.5 text-xs w-48 outline-none">
-          </div>
-
-          <!-- Clear Filter Button -->
-          <div class="flex items-end self-end">
-            <button onclick="clearHistoryFilters()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-bold px-3 py-1.5 rounded-lg transition">
-              <i class="fa-solid fa-rotate-left mr-1"></i> ล้างตัวกรอง
-            </button>
-          </div>
-        </div>
-
+      <div class="bg-white p-4 rounded-xl shadow-md flex justify-between items-center">
+        <input type="text" id="history-search" onkeyup="renderHistoryTable()" placeholder="ค้นหาเบอร์ใย / ชื่อพนักงาน / เครื่อง..." class="bg-slate-50 border border-slate-300 rounded-lg px-3 py-1.5 text-xs w-64">
         <button onclick="exportCSV()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2 rounded-lg flex items-center space-x-1 shadow">
           <i class="fa-solid fa-file-excel"></i> <span>Export Excel/CSV</span>
         </button>
       </div>
 
-      <!-- History Long Table -->
       <div class="bg-white rounded-xl shadow-md overflow-x-auto">
         <table class="w-full text-left text-xs text-slate-600">
           <thead class="bg-sky-950 text-white font-bold uppercase text-[11px]">
@@ -367,7 +336,6 @@
               <th class="p-3 text-center">ลำดับ</th>
               <th class="p-3">เครื่อง</th>
               <th class="p-3">วัน-เวลา</th>
-              <th class="p-3">กล่อง / น้ำหนัก</th>
               <th class="p-3">รายการใย / เม็ดใย (กรอก)</th>
               <th class="p-3">รายการหลัก (Target)</th>
               <th class="p-3">ผู้จ่าย / ผู้รับ</th>
@@ -388,8 +356,8 @@
 
     const dict = {
       th: {
-        headerTitle: "ระบบ AI ตรวจสอบและป้องกันใยปน (Instant AI Guard)",
-        headerSub: "ตรวจสอบรวดเร็วทันที - ข้อมูลเชื่อมตรงกันทุกอุปกรณ์ (E1 - E110)",
+        headerTitle: "ระบบ AI ตรวจสอบและป้องกันใยปน (Ultra Stable Guard)",
+        headerSub: "ระบบเสถียรสูง รองรับการบันทึกต่อเนื่อง (E1 - E110)",
         tabRecord: "บันทึกจ่ายใย", tabMaster: "ตั้งค่ารายการหลัก (Master Data)",
         tabDashboard: "Dashboard สรุปประสิทธิภาพ", tabHistory: "ประวัติย้อนหลัง",
         lblMachine: "เลือกรหัสเครื่องทอ", titleYarnInfo: "กรอกข้อมูลการจ่ายใยและแนบภาพถ่าย",
@@ -412,8 +380,8 @@
         titleRankTime: "ช่วงเวลาที่เกิดความผิดพลาดมากที่สุด"
       },
       my: {
-        headerTitle: "AI ချည်ရောနှောမှုကာကွယ်ရေးစနစ် (Instant AI Guard)",
-        headerSub: "စက်ပစ္စည်းအားလုံးတွင် အချက်အလက် တိုက်ရိုက်ချိတ်ဆက်ထားသည် (E1 - E110)",
+        headerTitle: "AI ချည်ရောနှောမှုကာကွယ်ရေးစနစ် (Ultra Stable Guard)",
+        headerSub: "အထူးတည်ငြိမ်သောစနစ် အစဉ်မပြတ် မှတ်တမ်းတင်နိုင်သည် (E1 - E110)",
         tabRecord: "ချည်ထုတ်ပေးမှု မှတ်တမ်း", tabMaster: "ပင်မအချက်အလက် ပြင်ဆင်ရန်",
         tabDashboard: "စွမ်းဆောင်ရည် အစီရင်ခံစာ", tabHistory: "ယခင်မှတ်တမ်းများ",
         lblMachine: "ရက်ကန်းစက်နံပါတ် ရွေးပါ", titleYarnInfo: "အချက်အလက်ဖြည့်စွက်ပြီး ဓာတ်ပုံရိုက်ပါ",
@@ -436,8 +404,8 @@
         titleRankTime: "အမှားအများဆုံး အဖြစ်များသည့် အချိန်"
       },
       en: {
-        headerTitle: "AI Yarn Verification System (Instant AI Guard)",
-        headerSub: "Real-time Instant Check - Cloud Synchronization (E1 - E110)",
+        headerTitle: "AI Yarn Verification System (Ultra Stable Guard)",
+        headerSub: "Ultra Stable & High Capacity Continuous Recording (E1 - E110)",
         tabRecord: "Yarn Issue Entry", tabMaster: "Master Data Settings",
         tabDashboard: "Analytics Dashboard", tabHistory: "Historical Logs",
         lblMachine: "Select Weaving Machine", titleYarnInfo: "Enter Issue Details & Attach Tag Photo",
@@ -480,6 +448,50 @@
 
       setInterval(syncWithCloud, 8000);
     };
+
+    // --- AUTOMATIC IMAGE COMPRESSION ENGINE (PREVENTS STORAGE CRASH) ---
+    function previewAndCompressImage(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        const img = new Image();
+        img.onload = function() {
+          const canvas = document.createElement('canvas');
+          const maxDim = 800; // Resize to max 800px width/height for fast loading & light memory
+          let width = img.width;
+          let height = img.height;
+
+          if (width > height) {
+            if (width > maxDim) {
+              height = Math.round((height * maxDim) / width);
+              width = maxDim;
+            }
+          } else {
+            if (height > maxDim) {
+              width = Math.round((width * maxDim) / height);
+              height = maxDim;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+
+          // Compress to JPEG with 0.65 quality (ultra light ~40KB per image)
+          currentBase64Image = canvas.toDataURL('image/jpeg', 0.65);
+          
+          const imgPreview = document.getElementById('img-preview');
+          imgPreview.src = currentBase64Image;
+          imgPreview.classList.remove('hidden');
+          document.getElementById('lbl-no-img').classList.add('hidden');
+        };
+        img.src = evt.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
 
     function setLanguage(lang) {
       currentLang = lang;
@@ -553,11 +565,30 @@
     }
 
     function saveMasterToStorage() {
-      localStorage.setItem('yarn_master_db', JSON.stringify(masterData));
+      try {
+        localStorage.setItem('yarn_master_db', JSON.stringify(masterData));
+      } catch (err) {
+        console.warn("Storage warning handled.");
+      }
     }
 
+    // SAFE STORAGE SYSTEM (SAFEGUARDS CONTINUOUS SAVES)
     function saveRecordsToStorage() {
-      localStorage.setItem('yarn_records_db_v2', JSON.stringify(recordsDb));
+      try {
+        localStorage.setItem('yarn_records_db_v2', JSON.stringify(recordsDb));
+      } catch (err) {
+        // If storage quota exceeded, trim oldest image buffers while keeping record metadata safe
+        if (recordsDb.length > 20) {
+          for (let i = recordsDb.length - 1; i >= 20; i--) {
+            if (recordsDb[i].photo) recordsDb[i].photo = ""; // Clean heavy image buffer for old records
+          }
+          try {
+            localStorage.setItem('yarn_records_db_v2', JSON.stringify(recordsDb));
+          } catch (e) {
+            console.error("Critical storage boundary reached.");
+          }
+        }
+      }
     }
 
     function syncWithCloud() {
@@ -570,16 +601,12 @@
     function generateMachineOptions() {
       const selectMachine = document.getElementById('input-machine');
       const masterSelect = document.getElementById('master-select-machine');
-      const historyFilterSelect = document.getElementById('history-filter-machine');
-
       selectMachine.innerHTML = ''; masterSelect.innerHTML = '';
-      historyFilterSelect.innerHTML = '<option value="ALL">แสดงทุกเครื่อง (All Machines)</option>';
 
       for (let i = 1; i <= 110; i++) {
         const m = `E${i}`;
         selectMachine.innerHTML += `<option value="${m}">เครื่องทอ ${m}</option>`;
         masterSelect.innerHTML += `<option value="${m}">เครื่องทอ ${m}</option>`;
-        historyFilterSelect.innerHTML += `<option value="${m}">เครื่องทอ ${m}</option>`;
       }
     }
 
@@ -596,22 +623,7 @@
       document.getElementById('target-pellet').innerText = target.pellet;
     }
 
-    function previewImage(e) {
-      const file = e.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function(evt) {
-          currentBase64Image = evt.target.result;
-          const img = document.getElementById('img-preview');
-          img.src = currentBase64Image;
-          img.classList.remove('hidden');
-          document.getElementById('lbl-no-img').classList.add('hidden');
-        };
-        reader.readAsDataURL(file);
-      }
-    }
-
-    // --- INSTANT AI VERIFICATION ---
+    // --- INSTANT FORM SUBMISSION ---
     function handleFormSubmit(e) {
       e.preventDefault();
 
@@ -711,7 +723,8 @@
 
     function viewHistoryImage(imgSrc) {
       if (!imgSrc) {
-        alert("ไม่พบหลักฐานภาพถ่ายสำหรับรายการนี้"); return;
+        alert("ไม่พบหลักฐานภาพถ่ายสำหรับรายการนี้");
+        return;
       }
       document.getElementById('image-modal-src').src = imgSrc;
       document.getElementById('modal-image-view').classList.remove('hidden');
@@ -735,7 +748,8 @@
     function confirmDeleteRecord() {
       const pass = document.getElementById('input-admin-pass').value;
       if (pass !== ADMIN_PASSWORD) {
-        alert("รหัสผ่านไม่ถูกต้อง! ไม่สามารถลบข้อมูลได้"); return;
+        alert("รหัสผ่านไม่ถูกต้อง! ไม่สามารถลบข้อมูลได้");
+        return;
       }
 
       recordsDb = recordsDb.filter(r => r.id !== recordToDeleteId);
@@ -857,49 +871,25 @@
       });
     }
 
-    // --- RENDER HISTORY TABLE WITH MACHINE & DATE FILTERS ---
     function renderHistoryTable() {
       const tbody = document.getElementById('history-table-body');
       tbody.innerHTML = '';
-
-      const filterMachine = document.getElementById('history-filter-machine').value;
-      const filterDate = document.getElementById('history-filter-date').value;
       const search = document.getElementById('history-search').value.toLowerCase();
 
-      const filtered = recordsDb.filter(r => {
-        const matchMachine = filterMachine === 'ALL' || r.machine === filterMachine;
-        
-        let matchDate = true;
-        if (filterDate) {
-          const recDate = r.datetime.split('T')[0];
-          matchDate = recDate === filterDate;
-        }
-
-        const matchSearch = r.yarnSpec.toLowerCase().includes(search) || 
-                            r.pellet.toLowerCase().includes(search) ||
-                            r.machine.toLowerCase().includes(search) ||
-                            r.dispenser.toLowerCase().includes(search) ||
-                            r.weaver.toLowerCase().includes(search);
-
-        return matchMachine && matchDate && matchSearch;
-      });
-
-      if (filtered.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="10" class="p-6 text-center text-slate-400">ไม่พบข้อมูลตามตัวกรองที่เลือก</td></tr>`;
-        return;
-      }
+      const filtered = recordsDb.filter(r => 
+        r.yarnSpec.toLowerCase().includes(search) || 
+        r.machine.toLowerCase().includes(search) ||
+        r.dispenser.toLowerCase().includes(search)
+      );
 
       filtered.forEach((item, index) => {
         const tr = document.createElement('tr');
         tr.className = item.isPassed ? "hover:bg-slate-50" : "bg-rose-50/60 hover:bg-rose-100/60";
 
-        const dtDisplay = item.datetime.replace('T', ' ');
-
         tr.innerHTML = `
           <td class="p-3 text-center text-slate-400 font-bold">${filtered.length - index}</td>
           <td class="p-3"><span class="font-bold text-sky-900 bg-sky-100 px-2 py-0.5 rounded text-xs">${item.machine}</span></td>
-          <td class="p-3 text-slate-600 font-medium">${dtDisplay}</td>
-          <td class="p-3"><strong>${item.boxCount}</strong> ลัง / <strong>${item.weight}</strong> kg</td>
+          <td class="p-3 text-slate-600">${item.datetime.replace('T', ' ')}</td>
           <td class="p-3 font-bold text-slate-800">${item.yarnSpec} <br><span class="text-[10px] text-slate-500 font-normal">เม็ด: ${item.pellet}</span></td>
           <td class="p-3 text-slate-600">${item.targetYarn} <br><span class="text-[10px] text-slate-400">เม็ด: ${item.targetPellet}</span></td>
           <td class="p-3">จ่าย: ${item.dispenser}<br>ทอ: ${item.weaver}</td>
@@ -923,13 +913,6 @@
       });
     }
 
-    function clearHistoryFilters() {
-      document.getElementById('history-filter-machine').value = 'ALL';
-      document.getElementById('history-filter-date').value = '';
-      document.getElementById('history-search').value = '';
-      renderHistoryTable();
-    }
-
     function switchTab(tab) {
       ['record', 'master', 'dashboard', 'history'].forEach(t => {
         document.getElementById(`sec-${t}`).classList.add('hidden');
@@ -938,14 +921,12 @@
 
       document.getElementById(`sec-${tab}`).classList.remove('hidden');
       document.getElementById(`tab-${tab}`).className = "py-2.5 px-4 font-bold text-sky-900 border-b-2 border-sky-900 flex items-center space-x-2";
-      
-      if (tab === 'history') renderHistoryTable();
     }
 
     function exportCSV() {
-      let csv = "\uFEFFลำดับ,เครื่องทอ,วันเวลา,จำนวนกล่อง,น้ำหนัก(kg),รายการใย(กรอก),เม็ดใย(กรอก),รายการหลัก,เม็ดหลัก,ผู้จ่าย,ผู้รับ,สถานะ\n";
+      let csv = "\uFEFFลำดับ,เครื่องทอ,วันเวลา,รายการใย(กรอก),เม็ดใย(กรอก),รายการหลัก,เม็ดหลัก,ผู้จ่าย,ผู้รับ,สถานะ\n";
       recordsDb.forEach((item, idx) => {
-        csv += `"${recordsDb.length - idx}","${item.machine}","${item.datetime}","${item.boxCount}","${item.weight}","${item.yarnSpec}","${item.pellet}","${item.targetYarn}","${item.targetPellet}","${item.dispenser}","${item.weaver}","${item.isPassed ? 'PASSED' : 'FAILED'}"\n`;
+        csv += `"${recordsDb.length - idx}","${item.machine}","${item.datetime}","${item.yarnSpec}","${item.pellet}","${item.targetYarn}","${item.targetPellet}","${item.dispenser}","${item.weaver}","${item.isPassed ? 'PASSED' : 'FAILED'}"\n`;
       });
       const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
       const link = document.createElement("a");
