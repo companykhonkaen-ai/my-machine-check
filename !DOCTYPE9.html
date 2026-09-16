@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ระบบ AI ตรวจสอบความถูกต้องและป้องกันใยปน (Cloud Sync E1-E110)</title>
+  <title>ระบบ AI ตรวจสอบความถูกต้องและป้องกันใยปน (Instant AI Check E1-E110)</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Font Awesome Icons -->
@@ -23,8 +23,8 @@
 </head>
 <body class="bg-slate-100 min-h-screen text-slate-800">
 
-  <!-- FULL-SCREEN AI ALERT OVERLAY -->
-  <div id="alert-fullscreen" class="fixed inset-0 z-50 hidden flex flex-col items-center justify-center p-6 transition-all duration-300">
+  <!-- FULL-SCREEN AI ALERT OVERLAY (INSTANT SHOW) -->
+  <div id="alert-fullscreen" class="fixed inset-0 z-50 hidden flex flex-col items-center justify-center p-6 transition-all duration-150">
     <div id="alert-box" class="max-w-2xl w-full bg-white rounded-3xl p-8 shadow-2xl text-center space-y-6 border-8 transform transition-all">
       <div id="alert-icon-container" class="w-24 h-24 mx-auto rounded-full flex items-center justify-center text-5xl"></div>
       <div>
@@ -62,14 +62,30 @@
     </div>
   </div>
 
-  <!-- Header & Language Switcher (TH / MY / EN) -->
+  <!-- IMAGE PREVIEW MODAL (ดูรูปย้อนหลัง) -->
+  <div id="modal-image-view" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/80 backdrop-blur-md" onclick="closeImageModal()">
+    <div class="bg-white max-w-3xl w-full rounded-2xl p-4 shadow-2xl relative" onclick="event.stopPropagation()">
+      <button onclick="closeImageModal()" class="absolute top-3 right-3 text-slate-500 hover:text-rose-600 text-2xl font-bold bg-slate-100 hover:bg-rose-100 w-10 h-10 rounded-full flex items-center justify-center transition">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+      <h3 class="font-bold text-slate-800 mb-3 text-sm flex items-center space-x-2">
+        <i class="fa-solid fa-image text-sky-700"></i>
+        <span>หลักฐานภาพถ่ายป้ายใย (Yarn Tag Evidence)</span>
+      </h3>
+      <div class="h-[450px] bg-slate-900 rounded-xl overflow-hidden flex items-center justify-center border">
+        <img id="image-modal-src" class="max-h-full max-w-full object-contain">
+      </div>
+    </div>
+  </div>
+
+  <!-- Header & Language Switcher -->
   <header class="bg-sky-950 text-white shadow-lg sticky top-0 z-40">
     <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
       <div class="flex items-center space-x-3">
-        <i class="fa-solid fa-cloud-arrow-up text-3xl text-amber-400"></i>
+        <i class="fa-solid fa-bolt text-3xl text-amber-400"></i>
         <div>
-          <h1 class="font-bold text-lg leading-tight" id="header-title">ระบบ AI ตรวจสอบและป้องกันใยปน (Cloud Online Sync)</h1>
-          <p class="text-xs text-sky-200" id="header-sub">ข้อมูลเชื่อมตรงกันทุกอุปกรณ์ (E1 - E110)</p>
+          <h1 class="font-bold text-lg leading-tight" id="header-title">ระบบ AI ตรวจสอบและป้องกันใยปน (Instant AI Guard)</h1>
+          <p class="text-xs text-sky-200" id="header-sub">ตรวจสอบรวดเร็วทันที - ข้อมูลเชื่อมตรงกันทุกอุปกรณ์ (E1 - E110)</p>
         </div>
       </div>
       
@@ -77,11 +93,10 @@
         <span id="sync-status" class="hidden sm:inline-block text-[10px] bg-emerald-800 text-emerald-200 px-2 py-1 rounded-md border border-emerald-700">
           <i class="fa-solid fa-wifi text-amber-400 mr-1"></i> Cloud Connected
         </span>
-        <!-- 3 Language Switchers -->
         <div class="flex items-center space-x-1 bg-sky-900 p-1 rounded-lg border border-sky-800">
-          <button onclick="setLanguage('th')" id="btn-th" class="px-2 py-1 text-xs font-bold rounded-md bg-amber-400 text-slate-900 shadow">🇹🇭 ไทย</button>
-          <button onclick="setLanguage('my')" id="btn-my" class="px-2 py-1 text-xs font-bold rounded-md text-sky-200 hover:text-white myanmar-text">🇲🇲 မြန်မာ</button>
-          <button onclick="setLanguage('en')" id="btn-en" class="px-2 py-1 text-xs font-bold rounded-md text-sky-200 hover:text-white">🇬🇧 ENG</button>
+          <button onclick="setLanguage('th')" id="btn-th" class="px-2.5 py-1 text-xs font-bold rounded-md bg-amber-400 text-slate-900 shadow">🇹🇭 ไทย</button>
+          <button onclick="setLanguage('my')" id="btn-my" class="px-2.5 py-1 text-xs font-bold rounded-md text-sky-200 hover:text-white myanmar-text">🇲🇲 မြန်မာ</button>
+          <button onclick="setLanguage('en')" id="btn-en" class="px-2.5 py-1 text-xs font-bold rounded-md text-sky-200 hover:text-white">🇬🇧 ENG</button>
         </div>
       </div>
     </div>
@@ -172,7 +187,7 @@
               <i class="fa-solid fa-camera text-sky-700"></i>
               <span id="lbl-photo-title">ถ่ายรูปป้ายใยทุกครั้งเพื่อยืนยัน (บังคับ)</span>
             </h3>
-            <span class="text-xs text-rose-600 font-bold">* AI Cloud Enabled</span>
+            <span class="text-xs text-rose-600 font-bold">* AI Instant Check</span>
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
@@ -192,8 +207,8 @@
 
         <div class="flex justify-end pt-4 border-t">
           <button type="submit" class="bg-indigo-700 hover:bg-indigo-800 text-white font-bold px-8 py-3 rounded-xl text-sm flex items-center space-x-2 shadow-lg transition active:scale-95">
-            <i class="fa-solid fa-cloud-arrow-up"></i>
-            <span id="btn-submit-text">ตรวจสอบและซิงค์ข้อมูล (AI Cloud Check)</span>
+            <i class="fa-solid fa-bolt"></i>
+            <span id="btn-submit-text">ตรวจสอบและซิงค์ข้อมูลทันที (AI Instant Check)</span>
           </button>
         </div>
       </form>
@@ -339,11 +354,10 @@
   <script>
     const ADMIN_PASSWORD = "1234";
 
-    // --- 3-LANGUAGE DICTIONARY (TH / MY / EN) ---
     const dict = {
       th: {
-        headerTitle: "ระบบ AI ตรวจสอบและป้องกันใยปน (Cloud Online Sync)",
-        headerSub: "ข้อมูลเชื่อมตรงกันทุกอุปกรณ์ (E1 - E110)",
+        headerTitle: "ระบบ AI ตรวจสอบและป้องกันใยปน (Instant AI Guard)",
+        headerSub: "ตรวจสอบรวดเร็วทันที - ข้อมูลเชื่อมตรงกันทุกอุปกรณ์ (E1 - E110)",
         tabRecord: "บันทึกจ่ายใย", tabMaster: "ตั้งค่ารายการหลัก (Master Data)",
         tabDashboard: "Dashboard สรุปประสิทธิภาพ", tabHistory: "ประวัติย้อนหลัง",
         lblMachine: "เลือกรหัสเครื่องทอ", titleYarnInfo: "กรอกข้อมูลการจ่ายใยและแนบภาพถ่าย",
@@ -351,7 +365,7 @@
         lblYarnSpec: "รายการใย (เบอร์ใย)", lblPellet: "เม็ดวัตถุดิบ",
         lblDispenser: "พนักงานจ่ายวัตถุดิบ", lblWeaver: "พนักงานทอ",
         lblPhotoTitle: "ถ่ายรูปป้ายใยทุกครั้งเพื่อยืนยัน (บังคับ)", btnUploadPhoto: "ถ่ายรูปป้ายใย หรือ อัปโหลดรูปภาพ",
-        lblNoImg: "ยังไม่มีภาพถ่ายป้ายใย", btnSubmitText: "ตรวจสอบและซิงค์ข้อมูล (AI Cloud Check)",
+        lblNoImg: "ยังไม่มีภาพถ่ายป้ายใย", btnSubmitText: "ตรวจสอบและซิงค์ข้อมูลทันที (AI Instant Check)",
         lblMasterTargetTitle: "รายการหลักประจำเครื่องนี้ (Master Target):",
         lblTargetYarn: "รายการใย:", lblTargetPellet: "เม็ดวัตถุดิบ:",
         titleMasterData: "ตั้งค่ารายการหลักประจำเครื่องทอ (Master Data Settings E1-E110)",
@@ -366,7 +380,7 @@
         titleRankTime: "ช่วงเวลาที่เกิดความผิดพลาดมากที่สุด"
       },
       my: {
-        headerTitle: "AI ချည်ရောနှောမှုကာကွယ်ရေးနှင့် စစ်ဆေးရေးစနစ် (Cloud Sync)",
+        headerTitle: "AI ချည်ရောနှောမှုကာကွယ်ရေးစနစ် (Instant AI Guard)",
         headerSub: "စက်ပစ္စည်းအားလုံးတွင် အချက်အလက် တိုက်ရိုက်ချိတ်ဆက်ထားသည် (E1 - E110)",
         tabRecord: "ချည်ထုတ်ပေးမှု မှတ်တမ်း", tabMaster: "ပင်မအချက်အလက် ပြင်ဆင်ရန်",
         tabDashboard: "စွမ်းဆောင်ရည် အစီရင်ခံစာ", tabHistory: "ယခင်မှတ်တမ်းများ",
@@ -375,7 +389,7 @@
         lblYarnSpec: "ချည်အမျိုးအစား", lblPellet: "ကုန်ကြမ်းစေ့",
         lblDispenser: "ကုန်ကြမ်းထုတ်ပေးသူ", lblWeaver: "ရက်ကန်းဝန်ထမ်း",
         lblPhotoTitle: "ဓာတ်ပုံရိုက်ပါ (မဖြစ်မနေ)", btnUploadPhoto: "ဓာတ်ပုံရိုက်ရန် နှိပ်ပါ",
-        lblNoImg: "ဓာတ်ပုံ မရှိသေးပါ", btnSubmitText: "စစ်ဆေးပြီး အချက်အလက် ပေးပို့ပါ (AI Check)",
+        lblNoImg: "ဓာတ်ပုံ မရှိသေးပါ", btnSubmitText: "ချက်ချင်း စစ်ဆေးပြီး ပေးပို့ပါ (AI Instant Check)",
         lblMasterTargetTitle: "ဤစက်အတွက် ပင်မသတ်မှတ်ချက် (Master Target):",
         lblTargetYarn: "ချည်အမျိုးအစား:", lblTargetPellet: "ကုန်ကြမ်းစေ့:",
         titleMasterData: "ရက်ကန်းစက်များအတွက် ပင်မအချက်အလက် ပြင်ဆင်ရန် (E1-E110)",
@@ -390,8 +404,8 @@
         titleRankTime: "အမှားအများဆုံး အဖြစ်များသည့် အချိန်"
       },
       en: {
-        headerTitle: "AI Yarn Verification & Anti-Mix System (Cloud Online Sync)",
-        headerSub: "Real-time Cloud Data Synchronization (E1 - E110)",
+        headerTitle: "AI Yarn Verification System (Instant AI Guard)",
+        headerSub: "Real-time Instant Check - Cloud Synchronization (E1 - E110)",
         tabRecord: "Yarn Issue Entry", tabMaster: "Master Data Settings",
         tabDashboard: "Analytics Dashboard", tabHistory: "Historical Logs",
         lblMachine: "Select Weaving Machine", titleYarnInfo: "Enter Issue Details & Attach Tag Photo",
@@ -399,7 +413,7 @@
         lblYarnSpec: "Yarn Specification", lblPellet: "Raw Material Pellets",
         lblDispenser: "Dispensing Staff", lblWeaver: "Weaving Staff",
         lblPhotoTitle: "Take Tag Photo for AI Check (Mandatory)", btnUploadPhoto: "Capture Tag Photo or Upload",
-        lblNoImg: "No Tag Photo Attached", btnSubmitText: "Verify & Cloud Sync (AI Check)",
+        lblNoImg: "No Tag Photo Attached", btnSubmitText: "Verify & Sync Instantly (AI Instant Check)",
         lblMasterTargetTitle: "Target Master Specs for Machine:",
         lblTargetYarn: "Target Yarn Spec:", lblTargetPellet: "Target Pellets:",
         titleMasterData: "Machine Master Data Configuration (E1-E110)",
@@ -432,7 +446,7 @@
       renderDashboard();
       renderHistoryTable();
 
-      setInterval(syncWithCloud, 10000);
+      setInterval(syncWithCloud, 8000);
     };
 
     function setLanguage(lang) {
@@ -483,7 +497,6 @@
       document.getElementById('title-rank-staff').innerText = t.titleRankStaff;
       document.getElementById('title-rank-time').innerText = t.titleRankTime;
 
-      // Active Language Button Styles
       ['th', 'my', 'en'].forEach(l => {
         const btn = document.getElementById(`btn-${l}`);
         if (l === lang) {
@@ -562,6 +575,7 @@
       }
     }
 
+    // --- INSTANT AI VERIFICATION ---
     function handleFormSubmit(e) {
       e.preventDefault();
 
@@ -578,6 +592,7 @@
 
       const target = masterData[machine] || { yarnSpec: "", pellet: "" };
 
+      // Instant Comparison Execution (0ms delay)
       let isYarnMatch = yarnSpec.toLowerCase() === target.yarnSpec.toLowerCase();
       let isPelletMatch = pellet.toLowerCase() === target.pellet.toLowerCase();
 
@@ -601,6 +616,7 @@
       recordsDb.unshift(record);
       saveRecordsToStorage();
 
+      // Show Fullscreen Alert Instantly
       showFullscreenAlert(isPassed, machine, errorDetails);
 
       document.getElementById('form-yarn').reset();
@@ -626,7 +642,7 @@
 
       if (isPassed) {
         alertScreen.className = "fixed inset-0 z-50 flex flex-col items-center justify-center p-6 bg-emerald-950/90 backdrop-blur-md";
-        alertBox.className = "max-w-2xl w-full bg-white rounded-3xl p-8 shadow-2xl text-center space-y-6 border-8 border-emerald-500 animate-bounce-short";
+        alertBox.className = "max-w-2xl w-full bg-white rounded-3xl p-8 shadow-2xl text-center space-y-6 border-8 border-emerald-500";
         iconContainer.className = "w-24 h-24 mx-auto rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-5xl";
         iconContainer.innerHTML = '<i class="fa-solid fa-circle-check"></i>';
         title.className = "text-3xl font-extrabold text-emerald-700";
@@ -657,6 +673,20 @@
 
     function closeFullscreenAlert() {
       document.getElementById('alert-fullscreen').classList.add('hidden');
+    }
+
+    // --- VIEW IMAGE MODAL (ดูรูปย้อนหลัง) ---
+    function viewHistoryImage(imgSrc) {
+      if (!imgSrc) {
+        alert("ไม่พบหลักฐานภาพถ่ายสำหรับรายการนี้");
+        return;
+      }
+      document.getElementById('image-modal-src').src = imgSrc;
+      document.getElementById('modal-image-view').classList.remove('hidden');
+    }
+
+    function closeImageModal() {
+      document.getElementById('modal-image-view').classList.add('hidden');
     }
 
     function openDeleteModal(id) {
@@ -819,7 +849,9 @@
           <td class="p-3 text-slate-600">${item.targetYarn} <br><span class="text-[10px] text-slate-400">เม็ด: ${item.targetPellet}</span></td>
           <td class="p-3">จ่าย: ${item.dispenser}<br>ทอ: ${item.weaver}</td>
           <td class="p-3 text-center">
-            <button onclick="window.open('${item.photo}')" class="bg-slate-800 text-white px-2 py-1 rounded text-[10px] font-bold">ดูภาพ</button>
+            <button onclick="viewHistoryImage('${item.photo}')" class="bg-sky-800 hover:bg-sky-900 text-white px-2.5 py-1 rounded text-[11px] font-bold shadow transition flex items-center space-x-1 mx-auto">
+              <i class="fa-solid fa-eye"></i> <span>ดูป้าย</span>
+            </button>
           </td>
           <td class="p-3 text-center">
             ${item.isPassed ? 
